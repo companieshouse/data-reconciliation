@@ -45,7 +45,7 @@ public class CompareCountRouteTest {
     }
 
     @Test
-    void testOracleContainsMoreRecordsThanMongo() throws InterruptedException {
+    void testEndpointAIsGreaterThanEndpointB() throws InterruptedException {
         mockCorporateBodyCountEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(BigDecimal.valueOf(15)));
         mockCompanyProfileCountEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(10L));
         mockResult.allMessages().body().isEqualTo("A has 5 more things than B");
@@ -54,7 +54,7 @@ public class CompareCountRouteTest {
     }
 
     @Test
-    void testMongoContainsMoreRecordsThanOracle() throws InterruptedException {
+    void testEndpointBIsGreaterThanEndpointA() throws InterruptedException {
         mockCorporateBodyCountEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(BigDecimal.valueOf(10)));
         mockCompanyProfileCountEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(20L));
         mockResult.allMessages().body().isEqualTo("B has 10 more things than A");
@@ -63,7 +63,7 @@ public class CompareCountRouteTest {
     }
 
     @Test
-    void testOracleAndMongoDBContainSameNumberOfRecords() throws InterruptedException {
+    void testEndpointsAreTheSame() throws InterruptedException {
         mockCorporateBodyCountEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(BigDecimal.valueOf(10)));
         mockCompanyProfileCountEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(10));
         mockResult.allMessages().body().isEqualTo("A and B contain the same number of things");
