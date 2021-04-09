@@ -8,7 +8,7 @@
     </parent>
     <name>data-reconciliation</name>
     <description>Application to compare Oracle and MongoDB data</description>
-    <artifactId>data-reconciliation-poc</artifactId>
+    <artifactId>data-reconciliation</artifactId>
     <version>0.0.1</version>
     <properties>
         <oracle.ojdbc8.version>12.2.0.1.0</oracle.ojdbc8.version>
