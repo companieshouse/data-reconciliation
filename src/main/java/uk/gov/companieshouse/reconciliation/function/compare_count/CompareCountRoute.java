@@ -1,8 +1,6 @@
 package uk.gov.companieshouse.reconciliation.function.compare_count;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -29,9 +27,6 @@ import java.math.BigDecimal;
  */
 @Component
 public class CompareCountRoute extends RouteBuilder {
-
-    @Autowired
-    private ApplicationContext context;
 
     @Override
     public void configure() {

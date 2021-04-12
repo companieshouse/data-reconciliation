@@ -41,6 +41,8 @@ public class CompareCountRouteTest {
 
     @AfterEach
     void after() {
+        mockCorporateBodyCountEndpoint.reset();
+        mockCompanyProfileCountEndpoint.reset();
         mockResult.reset();
     }
 
