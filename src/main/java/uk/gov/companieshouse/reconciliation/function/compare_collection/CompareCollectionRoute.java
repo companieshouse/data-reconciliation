@@ -39,7 +39,7 @@ public class CompareCollectionRoute extends RouteBuilder {
                     List<String> targetClean = targetBody.stream()
                             .map(obj -> {
                                 Map<?, ?> entry = (Map<?, ?>) obj;
-                                return (String) entry.get("RESULT");
+                                return entry.get("RESULT").toString();
                             })
                             .collect(Collectors.toList());
                     base.getIn().setHeader("SrcList", new ResourceList(targetClean, base.getIn().getHeader("SrcName", String.class)));
