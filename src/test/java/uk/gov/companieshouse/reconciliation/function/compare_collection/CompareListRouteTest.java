@@ -56,6 +56,15 @@ public class CompareListRouteTest {
         MockEndpoint.assertIsSatisfied(context);
     }
 
+    @Test
+    void testCompareCollectionsHandleNulls() throws InterruptedException {
+        mockFruitTreeEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(Arrays.asList(Collections.singletonMap("RESULT", "apple"), Collections.singletonMap("RESULT", null))));
+        mockFruitBasketEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(Arrays.asList("apple", "orange", "pineapple")));
+        mockCompareResult.allMessages().body().isEqualTo("item,source\r\n,Fruit Tree\r\norange,Fruit Basket\r\npineapple,Fruit Basket\r\n".getBytes());
+        producerTemplate.sendBodyAndHeaders(0, createHeaders());
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
     private Map<String, Object> createHeaders() {
         Map<String, Object> headers = new HashMap<>();
         headers.put("Src", "mock:fruitTree");
