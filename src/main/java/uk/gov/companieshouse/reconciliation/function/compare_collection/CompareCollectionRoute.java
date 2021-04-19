@@ -7,6 +7,7 @@ import uk.gov.companieshouse.reconciliation.function.compare_collection.transfor
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -38,8 +39,10 @@ public class CompareCollectionRoute extends RouteBuilder {
                     List<?> targetBody = src.getIn().getBody(List.class);
                     List<String> targetClean = targetBody.stream()
                             .map(obj -> {
-                                Map<?, ?> entry = (Map<?, ?>) obj;
-                                return entry.get("RESULT").toString();
+                                return Optional.ofNullable((Map<?, ?>) obj)
+                                        .map(e -> e.get("RESULT"))
+                                        .map(Object::toString)
+                                        .orElse(null);
                             })
                             .collect(Collectors.toList());
                     base.getIn().setHeader("SrcList", new ResourceList(targetClean, base.getIn().getHeader("SrcName", String.class)));
