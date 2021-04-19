@@ -11,7 +11,7 @@ public class CompanyCountTrigger extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("{{endpoint.cron.tab}}")
+        from("{{endpoint.company_count.cron.tab}}")
                 .setBody(constant("{{query.oracle.corporate_body_count}}"))
                 .setHeader("Src", simple("{{endpoint.oracle.corporate_body_count}}"))
                 .setHeader("SrcName", simple("Oracle"))

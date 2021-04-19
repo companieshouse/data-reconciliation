@@ -5,6 +5,7 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.mongodb.MongoDbConstants;
 import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -17,31 +18,31 @@ import org.springframework.test.context.TestPropertySource;
 @SpringBootTest
 @DirtiesContext
 @TestPropertySource(locations = "classpath:application-stubbed.properties")
-public class CompanyCountTriggerTest {
+public class CompanyNumberCompareTriggerTest {
 
     @Autowired
     private CamelContext context;
 
-    @EndpointInject("mock:compare_count")
-    private MockEndpoint compareCount;
+    @EndpointInject("mock:compare_collection")
+    private MockEndpoint compareCollection;
 
-    @Produce("direct:company_count_trigger")
+    @Produce("direct:company_collection_trigger")
     private ProducerTemplate producerTemplate;
 
     @AfterEach
     void after() {
-        compareCount.reset();
+        compareCollection.reset();
     }
 
     @Test
-    void testCreateMessage() throws InterruptedException {
-        compareCount.expectedHeaderReceived("Src", "mock:corporate_body_count");
-        compareCount.expectedHeaderReceived("SrcName", "Oracle");
-        compareCount.expectedHeaderReceived("Target", "mock:company_profile_count");
-        compareCount.expectedHeaderReceived("TargetName", "MongoDB");
-        compareCount.expectedHeaderReceived("Comparison", "company profiles");
-        compareCount.expectedHeaderReceived("Destination", "mock:result");
-        compareCount.expectedBodyReceived().body().isEqualTo("SELECT 1 FROM DUAL");
+    void testCreateCompanyNumberCompareMessage() throws InterruptedException {
+        compareCollection.expectedHeaderReceived("Src", "mock:fruitTree");
+        compareCollection.expectedHeaderReceived("SrcName", "Oracle");
+        compareCollection.expectedHeaderReceived("Target", "mock:fruitBasket");
+        compareCollection.expectedHeaderReceived("TargetName", "MongoDB");
+        compareCollection.expectedHeaderReceived("Destination", "mock:result");
+        compareCollection.expectedBodyReceived().body().isEqualTo("SELECT '12345678' FROM DUAL");
+        compareCollection.expectedHeaderReceived(MongoDbConstants.DISTINCT_QUERY_FIELD, "_id");
         producerTemplate.sendBody(0);
         MockEndpoint.assertIsSatisfied(context);
     }
