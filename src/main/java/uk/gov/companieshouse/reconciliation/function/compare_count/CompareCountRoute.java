@@ -50,9 +50,6 @@ public class CompareCountRoute extends RouteBuilder {
                             .subtract(exchange.getIn().getHeader("TargetCount", BigDecimal.class));
                     exchange.getIn().setHeader("Weight", weight);
                     exchange.getIn().setHeader("WeightAbs", weight.abs());
-                })
-                // Ensures data is correct for CSV
-                .process(exchange -> {
                     List<Map<String, Object>> results = new ArrayList<>();
                     Map<String, Object> headers = new LinkedHashMap<>();
                     headers.put(exchange.getMessage().getHeader("SrcName", String.class), exchange.getMessage().getHeader("SrcName", String.class));

@@ -2,7 +2,10 @@ package uk.gov.companieshouse.reconciliation.company;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.s3.AWS2S3Constants;
+import org.apache.camel.component.aws2.ses.Ses2Constants;
 import org.springframework.stereotype.Component;
+
+import java.util.Collections;
 
 /**
  * Trigger a comparison of corporate body counts in Oracle and MongoDB.
@@ -19,10 +22,12 @@ public class CompanyCountTrigger extends RouteBuilder {
                 .setHeader("Target", simple("{{endpoint.mongodb.company_profile_count}}"))
                 .setHeader("TargetName", simple("MongoDB"))
                 .setHeader("Comparison", simple("company profiles"))
-                .setHeader("Destination", simple("{{endpoint.output}}"))
+                .setHeader("Destination", simple("{{endpoint.ses.company_profile_count}}"))
                 .setHeader("Upload", simple("{{endpoint.s3.company_profile_count}}"))
                 .setHeader("Presign", simple("{{endpoint.s3presigner.company_profile_count}}"))
-                .setHeader(AWS2S3Constants.KEY, constant("company/count_${date:now:yyyyMMdd}.csv"))
+                .setHeader(Ses2Constants.SUBJECT, constant("Subject"))
+                .setHeader(Ses2Constants.TO, constant(Collections.singletonList("dgroves@companieshouse.gov.uk")))
+                .setHeader(AWS2S3Constants.KEY, simple("company/count_${date:now:yyyyMMdd}.csv"))
                 .to("{{function.name.compare_count}}");
     }
 }

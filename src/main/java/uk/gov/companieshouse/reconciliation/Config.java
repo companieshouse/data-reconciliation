@@ -8,6 +8,7 @@ import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import software.amazon.awssdk.services.ses.SesClient;
 
 import java.net.URI;
 
@@ -38,4 +39,15 @@ public class Config {
                 .build();
     }
 
+    @Bean("testSesClient")
+    SesClient sesClient(@Value("${ses.endpoint.override}") String sesEndpointOverride,
+                        @Value("${aws.access.key}") String awsAccessKey,
+                        @Value("${aws.secret.key}") String awsSecretKey,
+                        @Value("${aws.region}") String awsRegion) {
+        return SesClient.builder()
+                .endpointOverride(URI.create(sesEndpointOverride))
+                .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(awsAccessKey, awsSecretKey)))
+                .region(Region.of(awsRegion))
+                .build();
+    }
 }
