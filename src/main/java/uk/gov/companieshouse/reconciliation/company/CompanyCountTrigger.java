@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.reconciliation.company;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.aws2.s3.AWS2S3Constants;
 import org.springframework.stereotype.Component;
 
 /**
@@ -19,6 +20,9 @@ public class CompanyCountTrigger extends RouteBuilder {
                 .setHeader("TargetName", simple("MongoDB"))
                 .setHeader("Comparison", simple("company profiles"))
                 .setHeader("Destination", simple("{{endpoint.output}}"))
+                .setHeader("Upload", simple("{{endpoint.s3.company_profile_count}}"))
+                .setHeader("Presign", simple("{{endpoint.s3presigner.company_profile_count}}"))
+                .setHeader(AWS2S3Constants.KEY, constant("company/count_${date:now:yyyyMMdd}.csv"))
                 .to("{{function.name.compare_count}}");
     }
 }

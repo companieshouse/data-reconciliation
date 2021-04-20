@@ -1,9 +1,15 @@
 package uk.gov.companieshouse.reconciliation.function.compare_count;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.aws2.s3.AWS2S3Constants;
+import org.apache.camel.component.aws2.ses.Ses2Constants;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Compare counts of resources from two endpoints with each other.
@@ -45,13 +51,30 @@ public class CompareCountRoute extends RouteBuilder {
                     exchange.getIn().setHeader("Weight", weight);
                     exchange.getIn().setHeader("WeightAbs", weight.abs());
                 })
+                // Ensures data is correct for CSV
+                .process(exchange -> {
+                    List<Map<String, Object>> results = new ArrayList<>();
+                    Map<String, Object> headers = new LinkedHashMap<>();
+                    headers.put(exchange.getMessage().getHeader("SrcName", String.class), exchange.getMessage().getHeader("SrcName", String.class));
+                    headers.put(exchange.getMessage().getHeader("TargetName", String.class), exchange.getMessage().getHeader("TargetName", String.class));
+                    results.add(headers);
+
+                    Map<String, Object> counts = new LinkedHashMap<>();
+                    counts.put(exchange.getMessage().getHeader("SrcName", String.class), exchange.getMessage().getHeader("SrcCount", String.class));
+                    counts.put(exchange.getMessage().getHeader("TargetName", String.class), exchange.getMessage().getHeader("TargetCount", String.class));
+                    results.add(counts);
+                    exchange.getIn().setBody(results);
+                })
+                .marshal().csv()
+                .toD("${header.Upload}")
+                .toD("${header.Presign}")
                 .choice()
                     .when(header("Weight").isLessThan(0))
-                        .setBody(simple("${header.TargetName} has ${header.WeightAbs} more ${header.Comparison} than ${header.SrcName}"))
+                        .setBody(simple("${header.TargetName} has ${header.WeightAbs} more ${header.Comparison} than ${header.SrcName}.\nResults available at ${body}."))
                     .when(header("Weight").isGreaterThan(0))
-                        .setBody(simple("${header.SrcName} has ${header.WeightAbs} more ${header.Comparison} than ${header.TargetName}"))
+                        .setBody(simple("${header.SrcName} has ${header.WeightAbs} more ${header.Comparison} than ${header.TargetName}.\nResults available at ${body}."))
                     .otherwise()
-                        .setBody(simple("${header.SrcName} and ${header.TargetName} contain the same number of ${header.Comparison}"))
+                        .setBody(simple("${header.SrcName} and ${header.TargetName} contain the same number of ${header.Comparison}.\nResults available at ${body}."))
                 .end()
                 .toD("${header.Destination}");
     }
