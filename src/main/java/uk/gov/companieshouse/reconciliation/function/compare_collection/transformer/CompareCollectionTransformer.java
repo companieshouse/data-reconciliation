@@ -7,8 +7,10 @@ import uk.gov.companieshouse.reconciliation.function.compare_collection.entity.R
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Transforms two lists into a list of key-value pairings representing the symmetric difference between both lists
@@ -26,32 +28,39 @@ public class CompareCollectionTransformer {
      * @return A {@link java.util.List list} of {@link java.util.Map key-value pairings} representing the
      * symmetric difference between both lists and the endpoints their elements are exclusive to.
      */
-    public List<Map<String, Object>> transform(@Header("SrcList") ResourceList srcResourceList, @Header("TargetList") ResourceList targetResourceList) {
-        List<String> allItems = union(srcResourceList, targetResourceList);
-        return symmetricDifference(srcResourceList, targetResourceList, allItems);
+    public List<Map<String, Object>> transform(@Header("SrcList") ResourceList srcResourceList, @Header("TargetList") ResourceList targetResourceList, @Header("ElasticList") ResourceList elasticList) {
+        Set<String> allItems = union(srcResourceList, targetResourceList, elasticList);
+        return symmetricDifference(srcResourceList, targetResourceList, elasticList, allItems);
     }
 
-    private List<String> union(ResourceList srcList, ResourceList targetList) {
-        List<String> allItems = new ArrayList<>();
+    private Set<String> union(ResourceList srcList, ResourceList targetList, ResourceList elasticList) {
+        Set<String> allItems = new LinkedHashSet<>();
         allItems.addAll(srcList.getResultList());
         allItems.addAll(targetList.getResultList());
+        allItems.addAll(elasticList.getResultList());
         return allItems;
     }
 
-    private List<Map<String, Object>> symmetricDifference(ResourceList srcList, ResourceList targetList, List<String> allItems) {
+    private List<Map<String, Object>> symmetricDifference(ResourceList srcList, ResourceList targetList, ResourceList elasticList, Set<String> allItems) {
         List<Map<String, Object>> result = new ArrayList<>();
         addResultHeaders(result);
         result.addAll(allItems
                 .stream()
-                .filter(a -> !(srcList.contains(a) && targetList.contains(a)))
+                .filter(a -> !(srcList.contains(a) && targetList.contains(a) && elasticList.contains(a)))
                 .collect(ArrayList::new, (a, b) -> {
                     Map<String, Object> row = new HashMap<>();
                     row.put("item", b);
-                    if (srcList.contains(b)) {
-                        row.put("source", srcList.getResultDesc());
-                    } else {
-                        row.put("source", targetList.getResultDesc());
+                    List<String> sources = new ArrayList<>();
+                    if(srcList.contains(b)){
+                        sources.add(srcList.getResultDesc());
                     }
+                    if(targetList.contains(b)){
+                        sources.add(targetList.getResultDesc());
+                    }
+                    if(elasticList.contains(b)){
+                        sources.add(elasticList.getResultDesc());
+                    }
+                    row.put("source", String.join("; ", sources));
                     a.add(row);
                 }, List::addAll));
         return result;

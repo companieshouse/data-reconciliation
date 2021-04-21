@@ -58,6 +58,16 @@ public class CompareCollectionRoute extends RouteBuilder {
                     base.getIn().setHeader("TargetList", new ResourceList(targetClean, base.getIn().getHeader("TargetName", String.class)));
                     return base;
                 })
+                .enrich()
+                .simple("direct:elastic")
+                .aggregationStrategy((base, target) -> {
+                    List<?> targetBody = target.getIn().getBody(List.class);
+                    List<String> targetClean = targetBody.stream()
+                            .map(obj -> (String) obj)
+                            .collect(Collectors.toList());
+                    base.getIn().setHeader("ElasticList", new ResourceList(targetClean, "Elasticsearch"));
+                    return base;
+                })
                 .bean(CompareCollectionTransformer.class)
                 .marshal().csv()
                 .log("${body}")
