@@ -1,0 +1,10 @@
+{
+  "query": {
+    "match": {
+      "kind": "searchresults#company"
+    }
+  },
+  "stored_fields": [
+    "_id"
+  ]
+}

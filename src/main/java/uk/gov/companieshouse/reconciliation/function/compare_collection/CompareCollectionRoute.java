@@ -1,13 +1,24 @@
 package uk.gov.companieshouse.reconciliation.function.compare_collection;
 
+import org.apache.camel.AggregationStrategy;
+import org.apache.camel.Exchange;
+import org.apache.camel.Predicate;
+import org.apache.camel.builder.AggregationStrategies;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.elasticsearch.ElasticsearchScrollRequestIterator;
+import org.elasticsearch.search.SearchHit;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.reconciliation.function.compare_collection.entity.ResourceList;
 import uk.gov.companieshouse.reconciliation.function.compare_collection.transformer.CompareCollectionTransformer;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 /**
@@ -29,6 +40,7 @@ import java.util.stream.Collectors;
  */
 @Component
 public class CompareCollectionRoute extends RouteBuilder {
+
 
     @Override
     public void configure() throws Exception {
@@ -58,19 +70,16 @@ public class CompareCollectionRoute extends RouteBuilder {
                     base.getIn().setHeader("TargetList", new ResourceList(targetClean, base.getIn().getHeader("TargetName", String.class)));
                     return base;
                 })
-                .enrich()
-                .simple("direct:elastic")
-                .aggregationStrategy((base, target) -> {
-                    List<?> targetBody = target.getIn().getBody(List.class);
-                    List<String> targetClean = targetBody.stream()
-                            .map(obj -> (String) obj)
-                            .collect(Collectors.toList());
-                    base.getIn().setHeader("ElasticList", new ResourceList(targetClean, "Elasticsearch"));
-                    return base;
-                })
+                .choice()
+                    .when(header("ElasticsearchAlphaQuery").isNotNull())
+                        .setHeader("ElasticsearchQuery", header("ElasticsearchAlphaQuery"))
+                        .enrich("direct:elastic")
+                    .when(header("ElasticsearchCompanyQuery").isNotNull())
+                        .setHeader("ElasticsearchQuery", header("ElasticsearchCompanyQuery"))
+                        .enrich("direct:elastic")
+                .end()
                 .bean(CompareCollectionTransformer.class)
                 .marshal().csv()
-                .log("${body}")
                 .toD("${header.Destination}");
     }
 }

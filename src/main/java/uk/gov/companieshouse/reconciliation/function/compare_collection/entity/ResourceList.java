@@ -31,6 +31,14 @@ public class ResourceList {
         return Collections.unmodifiableList(resultList);
     }
 
+    public boolean add(String e) {
+        return resultList.add(e);
+    }
+
+    public int size() {
+        return resultList.size();
+    }
+
     /**
      * @return A description of the endpoint this list of resources was obtained from.
      */

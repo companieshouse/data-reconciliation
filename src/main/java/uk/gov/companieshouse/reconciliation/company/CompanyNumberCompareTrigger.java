@@ -21,6 +21,8 @@ public class CompanyNumberCompareTrigger extends RouteBuilder {
                 .setHeader("TargetName", simple("MongoDB"))
                 .setHeader("Destination", simple("{{endpoint.output}}"))
                 .setHeader(MongoDbConstants.DISTINCT_QUERY_FIELD, constant("_id"))
+                .setHeader("ElasticsearchAlphaQuery", constant("{{query.elasticsearch.alpha.all}}"))
+//                .setHeader("ElasticsearchCompanyQuery", constant("{{query.elasticsearch.primary.company}}"))
                 .to("{{function.name.compare_collection}}");
     }
 }

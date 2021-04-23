@@ -1,0 +1,8 @@
+{
+  "query": {
+    "match_all": {}
+  },
+  "stored_fields": [
+    "_id"
+  ]
+}
