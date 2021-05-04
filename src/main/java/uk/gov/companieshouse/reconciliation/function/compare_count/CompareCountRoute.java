@@ -2,8 +2,11 @@ package uk.gov.companieshouse.reconciliation.function.compare_count;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
+import uk.gov.companieshouse.reconciliation.function.compare_collection.entity.ResourceList;
+import uk.gov.companieshouse.reconciliation.function.compare_count.transformer.CompareCountTransformer;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 
 /**
  * Compare counts of resources from two endpoints with each other.
@@ -45,14 +48,33 @@ public class CompareCountRoute extends RouteBuilder {
                     exchange.getIn().setHeader("Weight", weight);
                     exchange.getIn().setHeader("WeightAbs", weight.abs());
                 })
+                .enrich().simple(("${header.Src}")).aggregationStrategy((base, src) -> {
+                    base.getIn().setHeader("SrcList", new ResourceList(Collections.singletonList(src.getIn().getHeader("SrcCount", String.class)),
+                            src.getIn().getHeader("SrcName", String.class)));
+                    return base;
+                })
+                .enrich().simple("${header.Target}").aggregationStrategy((base, target) -> {
+                    base.getIn().setHeader("TargetList", new ResourceList(Collections.singletonList(target.getIn().getHeader("TargetCount", String.class)),
+                            target.getIn().getHeader("TargetName", String.class)));
+                    return base;
+                })
+                .bean(CompareCountTransformer.class)
+                .marshal().csv()
+                .toD("${header.Upload}")
+                .toD("${header.Presign}")
                 .choice()
                     .when(header("Weight").isLessThan(0))
-                        .setBody(simple("${header.TargetName} has ${header.WeightAbs} more ${header.Comparison} than ${header.SrcName}"))
+                        .setHeader("CompareCountBody", simple("${header.TargetName} has ${header.WeightAbs} more ${header.Comparison} than ${header.SrcName}." +
+                                "\nResults available at ${body}"))
                     .when(header("Weight").isGreaterThan(0))
-                        .setBody(simple("${header.SrcName} has ${header.WeightAbs} more ${header.Comparison} than ${header.TargetName}"))
+                        .setHeader("CompareCountBody", simple("${header.SrcName} has ${header.WeightAbs} more ${header.Comparison} than ${header.TargetName}." +
+                                "\nResults available at ${body}"))
                     .otherwise()
-                        .setBody(simple("${header.SrcName} and ${header.TargetName} contain the same number of ${header.Comparison}"))
+                        .setHeader("CompareCountBody",simple("${header.SrcName} and ${header.TargetName} contain the same number of ${header.Comparison}." +
+                                "\nResults available at ${body}"))
                 .end()
-                .toD("${header.Destination}");
+                .log("${header.CompareCountBody}")
+
+                .to("{{function.name.company_email}}");
     }
 }

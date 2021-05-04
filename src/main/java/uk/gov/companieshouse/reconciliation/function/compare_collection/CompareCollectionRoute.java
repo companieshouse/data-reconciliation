@@ -60,7 +60,11 @@ public class CompareCollectionRoute extends RouteBuilder {
                 })
                 .bean(CompareCollectionTransformer.class)
                 .marshal().csv()
-                .log("${body}")
-                .toD("${header.Destination}");
+                .toD("${header.Upload}")
+                .toD("${header.Presign}")
+                .setHeader("CompareCollectionBody", simple("Finished comparison for ${header.Comparison} in ${header.SrcName} and ${header.TargetName}.\nResults available at ${body}"))
+                .log("${header.CompareCollectionBody}")
+
+                .to("{{function.name.company_email}}");
     }
 }

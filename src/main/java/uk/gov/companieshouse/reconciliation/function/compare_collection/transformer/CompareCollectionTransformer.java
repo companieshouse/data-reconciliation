@@ -46,11 +46,11 @@ public class CompareCollectionTransformer {
                 .filter(a -> !(srcList.contains(a) && targetList.contains(a)))
                 .collect(ArrayList::new, (a, b) -> {
                     Map<String, Object> row = new HashMap<>();
-                    row.put("item", b);
+                    row.put("Company Number", b);
                     if (srcList.contains(b)) {
-                        row.put("source", srcList.getResultDesc());
+                        row.put("Exclusive To", srcList.getResultDesc());
                     } else {
-                        row.put("source", targetList.getResultDesc());
+                        row.put("Exclusive To", targetList.getResultDesc());
                     }
                     a.add(row);
                 }, List::addAll));
@@ -59,8 +59,8 @@ public class CompareCollectionTransformer {
 
     private void addResultHeaders(List<Map<String, Object>> result) {
         Map<String, Object> headers = new LinkedHashMap<>();
-        headers.put("item", "item");
-        headers.put("source", "source");
+        headers.put("Company Number", "Company Number");
+        headers.put("Exclusive To", "Exclusive To");
         result.add(headers);
     }
 }
