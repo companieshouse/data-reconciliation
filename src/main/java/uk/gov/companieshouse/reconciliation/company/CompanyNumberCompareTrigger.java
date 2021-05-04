@@ -8,6 +8,13 @@ import org.springframework.stereotype.Component;
 /**
  * Trigger a comparison between corporate bodies' and foreign branches' incorporation numbers on Oracle with company
  * profile IDs on MongoDB.
+ *
+ * The following request headers should be set when a message is sent to this route:
+ *
+ * CompanyCollection: A description representing the type of job to be ran.
+ * AWS2S3Constants.KEY: The key (name) which should be appended to CSV files.
+ * AWS2S3Constants.DOWNLOAD_LINK_EXPIRATION_TIME: The time which can be configured to expire download links.
+ * MongoDbConstants.DISTINCT_QUERY_FIELD: The unique field used as an identifier for MongoDB
  */
 @Component
 public class CompanyNumberCompareTrigger extends RouteBuilder {

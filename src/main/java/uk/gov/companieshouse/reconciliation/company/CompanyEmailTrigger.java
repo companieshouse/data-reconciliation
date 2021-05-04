@@ -7,6 +7,15 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+/**
+ * Trigger a email broadcast to relevant stakeholders located inside the mailing list property.
+ * Inside the email would be the results gathered from the different comparison jobs ran against company profiles.
+ *
+ * The following request headers should be set when a message is sent to this route:
+ *
+ * Ses2Constants.SUBJECT: The subject or title which should be set for the email when its sent out.
+ * Ses2Constants.TO: The recipients who would be receiving the email (configurable via applications.properties).
+ */
 @Component
 public class CompanyEmailTrigger extends RouteBuilder {
 

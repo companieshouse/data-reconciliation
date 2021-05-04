@@ -19,14 +19,20 @@ import java.util.Collections;
  * TargetName: A human-readable description of the second endpoint.
  * Comparison: A human-readable description of the thing being compared.
  * Destination: The endpoint to which results will be sent.
+ * Upload: The endpoint which will be used to store CSV files into the S3 bucket.
+ * Presign: The endpoint which will be used to download CSV files from specific S3 bucket.
  *
- * The response body will contain a brief description about which endpoint has more resources than the other. The
- * following response headers will also be set by this route:
+ * The response body will contain a brief description about which endpoint has more resources than the other.
+ * The results would also than be marshalled into a CSV format to be stored inside a S3 bucket.
+ * Than using the S3 bucket it would also generate a download link to the respective CSV file.
+ *
+ * The following response headers will also be set by this route:
  *
  * Weight: A signed integer. If Weight < 0 then the second endpoint has more resources than the first endpoint. If
  * Weight = 0 then both endpoints have an equal number of endpoints. If Weight > 0 then the first endpoint has more
  * resources than the first endpoint.
  * WeightAbs: An unsigned integer indicating how many more resources one endpoint has than another.
+ * CompareCountBody: The body composed of results gathered from this comparison.
  */
 @Component
 public class CompareCountRoute extends RouteBuilder {

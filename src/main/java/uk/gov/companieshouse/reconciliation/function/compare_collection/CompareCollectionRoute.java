@@ -20,12 +20,20 @@ import java.util.stream.Collectors;
  * Target: The second endpoint from which a list of resources will be obtained.
  * TargetName: A human-readable description of the second endpoint.
  * Destination: The endpoint to which results will be sent.
+ * Comparison: A human-readable description of the thing being compared.
+ * Upload: The endpoint which will be used to store CSV files into the S3 bucket.
+ * Presign: The endpoint which will be used to download CSV files from specific S3 bucket.
  *
- * The response body will tabulate which resources are exclusive to each endpoint. The following response headers are
- * set by this route:
+ * The response body will tabulate which resources are exclusive to each endpoint.
+ * The results would also than be marshalled into a CSV format to be stored inside a S3 bucket.
+ * Than using the S3 bucket it would also generate a download link to the respective CSV file.
+ *
+ * The following response headers are set by this route:
  *
  * SrcList: A list of resources obtained from the first endpoint.
  * TargetList: A list of resources obtained from the second endpoint.
+ * CompareCollectionBody: The body composed of results gathered from this comparison.
+ *
  */
 @Component
 public class CompareCollectionRoute extends RouteBuilder {

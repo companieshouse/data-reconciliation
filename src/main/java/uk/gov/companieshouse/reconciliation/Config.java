@@ -12,9 +12,15 @@ import software.amazon.awssdk.services.ses.SesClient;
 
 import java.net.URI;
 
+/**
+ * Configuration class to be used in conjunction with various AWS services.
+**/
 @Configuration
 public class Config {
 
+    /**
+     * Creates a bean with configurable properties and endpoint in order to access the AWS S3 storage.
+     **/
     @Bean("testS3Client")
     S3Client s3Client(@Value("${s3.endpoint.override}") String s3EndpointOverride,
                       @Value("${aws.access.key}") String awsAccessKey,
@@ -27,6 +33,9 @@ public class Config {
                 .build();
     }
 
+    /**
+     * Creates a bean with configurable properties and endpoint in order to access the AWS S3 Presigner.
+     **/
     @Bean("testPresigner")
     S3Presigner s3Presigner(@Value("${s3.endpoint.override}") String s3EndpointOverride,
                             @Value("${aws.access.key}") String awsAccessKey,
@@ -39,6 +48,9 @@ public class Config {
                 .build();
     }
 
+    /**
+     * Creates a bean with configurable properties and endpoint in order to access the AWS SES (Simple Email Service).
+     **/
     @Bean("testSesClient")
     SesClient sesClient(@Value("${ses.endpoint.override}") String sesEndpointOverride,
                         @Value("${aws.access.key}") String awsAccessKey,
