@@ -35,29 +35,8 @@ public class CompareCollectionRoute extends RouteBuilder {
         from("direct:compare_collection")
                 .enrich()
                 .simple("${header.Src}")
-                .aggregationStrategy((base, src) -> {
-                    List<?> targetBody = src.getIn().getBody(List.class);
-                    List<String> targetClean = targetBody.stream()
-                            .map(obj -> {
-                                return Optional.ofNullable((Map<?, ?>) obj)
-                                        .map(e -> e.get("RESULT"))
-                                        .map(Object::toString)
-                                        .orElse(null);
-                            })
-                            .collect(Collectors.toList());
-                    base.getIn().setHeader("SrcList", new ResourceList(targetClean, base.getIn().getHeader("SrcName", String.class)));
-                    return base;
-                })
                 .enrich()
                 .simple("${header.Target}")
-                .aggregationStrategy((base, target) -> {
-                    List<?> targetBody = target.getIn().getBody(List.class);
-                    List<String> targetClean = targetBody.stream()
-                            .map(obj -> (String) obj)
-                            .collect(Collectors.toList());
-                    base.getIn().setHeader("TargetList", new ResourceList(targetClean, base.getIn().getHeader("TargetName", String.class)));
-                    return base;
-                })
                 .bean(CompareCollectionTransformer.class)
                 .marshal().csv()
                 .log("${body}")

@@ -11,37 +11,33 @@ import java.util.Collections;
 import java.util.LinkedList;
 
 @Component
-public class ElasticsearchRoute extends RouteBuilder {
+public class ElasticsearchCollectionRoute extends RouteBuilder {
 
     @Value("${endpoint.elasticsearch.threads}")
     private int numberOfThreads;
 
     @Override
     public void configure() throws Exception {
-        from("direct:elasticsearch")
+        from("direct:elasticsearch-collection")
                 .setBody(header("ElasticsearchQuery"))
-                .to("${header.ElasticsearchEndpoint}")
+                .toD("${header.ElasticsearchEndpoint}")
                 .split()
                 .body()
-                .streaming()
-                .parallelProcessing()
-                .threads(numberOfThreads, numberOfThreads)
-                .aggregate((AggregationStrategy) (prev, curr) -> {
+                .aggregationStrategy((prev, curr) -> {
                     if (prev == null) {
-                        ResourceList elasticsearchResults = new ResourceList(Collections.synchronizedList(new LinkedList<>()), "Elasticsearch");
+                        ResourceList elasticsearchResults = new ResourceList(Collections.synchronizedList(new LinkedList<>()), curr.getIn().getHeader("ElasticsearchDescription", String.class));
                         elasticsearchResults.add(curr.getIn().getBody(SearchHit.class).getId());
-                        curr.getIn().setHeader("ElasticList", elasticsearchResults);
+                        curr.getIn().setHeader(curr.getIn().getHeader("ElasticsearchTargetHeader", String.class), elasticsearchResults);
                         return curr;
                     }
-                    ResourceList results = prev.getIn().getHeader("ElasticList", ResourceList.class);
+                    ResourceList results = prev.getIn().getHeader(prev.getIn().getHeader("ElasticsearchTargetHeader", String.class), ResourceList.class);
                     results.add(curr.getIn().getBody(SearchHit.class).getId());
-                    if(results.size() % 100000 == 0) {
+                    Integer logIndices = curr.getIn().getHeader("ElasticsearchLogIndices", Integer.class);
+                    if(logIndices != null && results.size() % logIndices == 0) {
                         this.log.info("Indexed {} entries", results.size());
                     }
                     return prev;
                 })
-                .constant(true)
-                .completionTimeout(30000L)
-                .stop();
+                .process();
     }
 }
