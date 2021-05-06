@@ -51,6 +51,11 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel.springboot</groupId>
+            <artifactId>camel-kafka-starter</artifactId>
+            <version>${apache.camel.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel.springboot</groupId>
             <artifactId>camel-elasticsearch-rest-starter</artifactId>
             <version>${apache.camel.version}</version>
         </dependency>
