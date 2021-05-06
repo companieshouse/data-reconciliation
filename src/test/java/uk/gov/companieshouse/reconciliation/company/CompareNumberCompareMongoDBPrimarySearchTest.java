@@ -18,7 +18,7 @@ import org.springframework.test.context.TestPropertySource;
 @SpringBootTest
 @DirtiesContext
 @TestPropertySource(locations = "classpath:application-stubbed.properties")
-public class CompanyNumberCompareOracleMongoDBTriggerTest {
+public class CompareNumberCompareMongoDBPrimarySearchTest {
 
     @Autowired
     private CamelContext context;
@@ -26,7 +26,7 @@ public class CompanyNumberCompareOracleMongoDBTriggerTest {
     @EndpointInject("mock:compare_collection")
     private MockEndpoint compareCollection;
 
-    @Produce("direct:company_collection_trigger")
+    @Produce("direct:company_collection_mongo_primary_trigger")
     private ProducerTemplate producerTemplate;
 
     @AfterEach
@@ -35,19 +35,21 @@ public class CompanyNumberCompareOracleMongoDBTriggerTest {
     }
 
     @Test
-    void testCreateCompanyNumberCompareMessage() throws InterruptedException {
-        compareCollection.expectedHeaderReceived("OracleQuery", "SELECT '12345678' FROM DUAL");
-        compareCollection.expectedHeaderReceived("OracleEndpoint", "mock:fruitTree");
-        compareCollection.expectedHeaderReceived("OracleDescription", "Oracle");
-        compareCollection.expectedHeaderReceived("OracleTargetHeader", "SrcList");
-        compareCollection.expectedHeaderReceived("Src", "direct:oracle-collection");
+    void testCorrectHeadersHasBeenSet() throws InterruptedException {
         compareCollection.expectedHeaderReceived("MongoEndpoint", "mock:fruitBasket");
         compareCollection.expectedHeaderReceived("MongoDescription", "MongoDB");
-        compareCollection.expectedHeaderReceived("MongoTargetHeader", "TargetList");
-        compareCollection.expectedHeaderReceived("Target", "direct:mongodb-collection");
+        compareCollection.expectedHeaderReceived("MongoTargetHeader", "SrcList");
+        compareCollection.expectedHeaderReceived("Src", "direct:mongodb-collection");
+        compareCollection.expectedHeaderReceived("ElasticsearchEndpoint", "mock:elasticsearch-stub");
+        compareCollection.expectedHeaderReceived("ElasticsearchQuery", "test");
+        compareCollection.expectedHeaderReceived("ElasticsearchDescription", "Primary Index");
+        compareCollection.expectedHeaderReceived("ElasticsearchTargetHeader", "TargetList");
+        compareCollection.expectedHeaderReceived("ElasticsearchLogIndices", "100000");
+        compareCollection.expectedHeaderReceived("Target", "direct:elasticsearch-collection");
         compareCollection.expectedHeaderReceived("Destination", "mock:result");
         compareCollection.expectedHeaderReceived(MongoDbConstants.DISTINCT_QUERY_FIELD, "_id");
         producerTemplate.sendBody(0);
         MockEndpoint.assertIsSatisfied(context);
     }
+
 }
