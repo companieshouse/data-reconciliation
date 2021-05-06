@@ -81,6 +81,6 @@ public class CompareCountRoute extends RouteBuilder {
                 .end()
                 .log("${header.CompareCountBody}")
 
-                .to("{{function.name.company_email}}");
+                .to("{{endpoint.company_email}}");
     }
 }

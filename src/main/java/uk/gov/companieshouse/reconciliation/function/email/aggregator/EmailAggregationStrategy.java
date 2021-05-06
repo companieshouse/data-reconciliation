@@ -11,6 +11,13 @@ import java.util.Optional;
  */
 public class EmailAggregationStrategy implements AggregationStrategy {
 
+    private static final String CHARACTER_DELIMITER = "\n";
+    private static final String COMPANY_COUNT  = "CompanyCount";
+    private static final String COMPANY_COLLECTION = "CompanyCollection";
+    private static final String COMPARE_COUNT_BODY = "CompareCountBody";
+    private static final String COMPARE_COLLECTION_BODY = "CompareCollectionBody";
+    private static final String AGGREGATION_COMPLETE = "AggregationComplete";
+
     /**
      *
      * This aggregation strategy keeps track of previous headers located inside the exchange
@@ -30,14 +37,14 @@ public class EmailAggregationStrategy implements AggregationStrategy {
         else {
             assignHeaders(oldExchange, newExchange);
 
-            String companyCountHeader = newExchange.getIn().getHeader("CompanyCount", String.class);
-            String companyCollectionHeader = newExchange.getIn().getHeader("CompanyCollection", String.class);
-            String compareCountBody = newExchange.getIn().getHeader("CompareCountBody", String.class);
-            String compareCollectionBody = newExchange.getIn().getHeader("CompareCollectionBody", String.class);
+            String companyCountHeader = newExchange.getIn().getHeader(COMPANY_COUNT, String.class);
+            String companyCollectionHeader = newExchange.getIn().getHeader(COMPANY_COLLECTION , String.class);
+            String compareCountBody = newExchange.getIn().getHeader(COMPARE_COUNT_BODY, String.class);
+            String compareCollectionBody = newExchange.getIn().getHeader(COMPARE_COLLECTION_BODY, String.class);
 
             if (companyCountHeader != null && companyCollectionHeader != null) {
-                newExchange.getIn().setBody(compareCountBody + "\n" + compareCollectionBody);
-                newExchange.getIn().setHeader("AggregationComplete", "true");
+                newExchange.getIn().setBody(compareCountBody + CHARACTER_DELIMITER + compareCollectionBody);
+                newExchange.getIn().setHeader(AGGREGATION_COMPLETE, "true");
             }
 
             return newExchange;
@@ -45,16 +52,16 @@ public class EmailAggregationStrategy implements AggregationStrategy {
     }
 
     private void assignHeaders(Exchange oldExchange, Exchange newExchange) {
-        Optional.ofNullable(oldExchange.getIn().getHeader("CompanyCount", String.class))
-                .ifPresent(header -> newExchange.getIn().setHeader("CompanyCount", header));
+        Optional.ofNullable(oldExchange.getIn().getHeader(COMPANY_COUNT, String.class))
+                .ifPresent(header -> newExchange.getIn().setHeader(COMPANY_COUNT, header));
 
-        Optional.ofNullable(oldExchange.getIn().getHeader("CompanyCollection", String.class))
-                .ifPresent(header -> newExchange.getIn().setHeader("CompanyCollection", header));
+        Optional.ofNullable(oldExchange.getIn().getHeader(COMPANY_COLLECTION, String.class))
+                .ifPresent(header -> newExchange.getIn().setHeader(COMPANY_COLLECTION, header));
 
-        Optional.ofNullable(oldExchange.getIn().getHeader("CompareCountBody", String.class))
-                .ifPresent(header -> newExchange.getIn().setHeader("CompareCountBody", header));
+        Optional.ofNullable(oldExchange.getIn().getHeader(COMPARE_COUNT_BODY, String.class))
+                .ifPresent(header -> newExchange.getIn().setHeader(COMPARE_COUNT_BODY, header));
 
-        Optional.ofNullable(oldExchange.getIn().getHeader("CompareCollectionBody", String.class))
-                .ifPresent(header -> newExchange.getIn().setHeader("CompareCollectionBody", header));
+        Optional.ofNullable(oldExchange.getIn().getHeader(COMPARE_COLLECTION_BODY, String.class))
+                .ifPresent(header -> newExchange.getIn().setHeader(COMPARE_COLLECTION_BODY, header));
     }
 }

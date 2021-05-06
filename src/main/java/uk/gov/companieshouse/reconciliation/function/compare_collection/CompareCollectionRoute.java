@@ -73,6 +73,6 @@ public class CompareCollectionRoute extends RouteBuilder {
                 .setHeader("CompareCollectionBody", simple("Finished comparison for ${header.Comparison} in ${header.SrcName} and ${header.TargetName}.\nResults available at ${body}"))
                 .log("${header.CompareCollectionBody}")
 
-                .to("{{function.name.company_email}}");
+                .to("{{endpoint.company_email}}");
     }
 }

@@ -24,10 +24,10 @@ public class CompanyEmailTrigger extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("{{function.name.company_email}}")
+        from("{{endpoint.company_email}}")
                 .setHeader(Ses2Constants.SUBJECT, simple("Company Profile Comparisons (${date:now:dd/MM/yyyy})"))
                 .setHeader(Ses2Constants.TO, constant(mailingList))
                 .setHeader("Destination", simple("{{endpoint.ses.broadcast_email}}"))
-                .toD("{{function.name.send_email}}");
+                .to("{{function.name.send_email}}");
     }
 }

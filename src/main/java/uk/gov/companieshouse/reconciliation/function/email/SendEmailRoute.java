@@ -21,7 +21,7 @@ public class SendEmailRoute extends RouteBuilder {
     @Override
     public void configure() throws Exception {
 
-        from("{{function.name.send_email}}")
+        from("direct:send_email")
                 .aggregate(constant(true), new EmailAggregationStrategy())
                 .completion(header("AggregationComplete").isEqualTo("true"))
                 .log("Email Body: ${body}")
