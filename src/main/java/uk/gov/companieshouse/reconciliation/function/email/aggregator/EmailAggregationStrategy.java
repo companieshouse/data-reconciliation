@@ -2,6 +2,10 @@ package uk.gov.companieshouse.reconciliation.function.email.aggregator;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
+import uk.gov.companieshouse.reconciliation.model.ResourceLink;
+import uk.gov.companieshouse.reconciliation.model.ResourceLinksWrapper;
+
+import java.util.ArrayList;
 import java.util.Optional;
 
 /**
@@ -14,8 +18,6 @@ public class EmailAggregationStrategy implements AggregationStrategy {
     private static final String CHARACTER_DELIMITER = "\n";
     private static final String COMPANY_COUNT  = "CompanyCount";
     private static final String COMPANY_COLLECTION = "CompanyCollection";
-    private static final String COMPARE_COUNT_BODY = "CompareCountBody";
-    private static final String COMPARE_COLLECTION_BODY = "CompareCollectionBody";
     private static final String AGGREGATION_COMPLETE = "AggregationComplete";
 
     /**
@@ -32,18 +34,30 @@ public class EmailAggregationStrategy implements AggregationStrategy {
     @Override
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         if (oldExchange == null) {
+            ResourceLinksWrapper downloadLinks = new ResourceLinksWrapper(new ArrayList<>());
+
+            newExchange.getIn().setHeader("ResourceLinks", downloadLinks);
             return newExchange;
         }
         else {
-            assignHeaders(oldExchange, newExchange);
+            //assignHeaders(oldExchange, newExchange);
+
+            if (oldExchange.getIn().getHeaders().containsKey("ResourceLinks")) {
+
+            }
+
+            if (newExchange.getIn().getHeaders().containsKey("CompareCountLink")) {
+                ResourceLink companyCountLink = new ResourceLink(newExchange.getIn().getHeader("CompareCountLink", String.class),
+                        newExchange.getIn().getHeader("CompareCountDescription", String.class));
+            }
+
+
+
 
             String companyCountHeader = newExchange.getIn().getHeader(COMPANY_COUNT, String.class);
             String companyCollectionHeader = newExchange.getIn().getHeader(COMPANY_COLLECTION , String.class);
-            String compareCountBody = newExchange.getIn().getHeader(COMPARE_COUNT_BODY, String.class);
-            String compareCollectionBody = newExchange.getIn().getHeader(COMPARE_COLLECTION_BODY, String.class);
 
             if (companyCountHeader != null && companyCollectionHeader != null) {
-                newExchange.getIn().setBody(compareCountBody + CHARACTER_DELIMITER + compareCollectionBody);
                 newExchange.getIn().setHeader(AGGREGATION_COMPLETE, "true");
             }
 
@@ -58,10 +72,10 @@ public class EmailAggregationStrategy implements AggregationStrategy {
         Optional.ofNullable(oldExchange.getIn().getHeader(COMPANY_COLLECTION, String.class))
                 .ifPresent(header -> newExchange.getIn().setHeader(COMPANY_COLLECTION, header));
 
-        Optional.ofNullable(oldExchange.getIn().getHeader(COMPARE_COUNT_BODY, String.class))
-                .ifPresent(header -> newExchange.getIn().setHeader(COMPARE_COUNT_BODY, header));
+        Optional.ofNullable(oldExchange.getIn().getHeader("CompareCountLink", String.class))
+                .ifPresent(header -> newExchange.getIn().setHeader("CompareCountLink", header));
 
-        Optional.ofNullable(oldExchange.getIn().getHeader(COMPARE_COLLECTION_BODY, String.class))
-                .ifPresent(header -> newExchange.getIn().setHeader(COMPARE_COLLECTION_BODY, header));
+        Optional.ofNullable(oldExchange.getIn().getHeader("CompareCountDescription", String.class))
+                .ifPresent(header -> newExchange.getIn().setHeader("CompareCountDescription", header));
     }
 }

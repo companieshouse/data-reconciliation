@@ -68,16 +68,14 @@ public class CompareCountRoute extends RouteBuilder {
                 .marshal().csv()
                 .toD("${header.Upload}")
                 .toD("${header.Presign}")
+                .setHeader("CompareCountLink", body())
                 .choice()
                     .when(header("Weight").isLessThan(0))
-                        .setHeader("CompareCountBody", simple("${header.TargetName} has ${header.WeightAbs} more ${header.Comparison} than ${header.SrcName}." +
-                                "\nResults available at ${body}"))
+                        .setHeader("CompareCountDescription", simple("${header.TargetName} has ${header.WeightAbs} more ${header.Comparison} than ${header.SrcName}."))
                     .when(header("Weight").isGreaterThan(0))
-                        .setHeader("CompareCountBody", simple("${header.SrcName} has ${header.WeightAbs} more ${header.Comparison} than ${header.TargetName}." +
-                                "\nResults available at ${body}"))
+                        .setHeader("CompareCountDescription", simple("${header.SrcName} has ${header.WeightAbs} more ${header.Comparison} than ${header.TargetName}."))
                     .otherwise()
-                        .setHeader("CompareCountBody",simple("${header.SrcName} and ${header.TargetName} contain the same number of ${header.Comparison}." +
-                                "\nResults available at ${body}"))
+                        .setHeader("CompareCountDescription",simple("${header.SrcName} and ${header.TargetName} contain the same number of ${header.Comparison}."))
                 .end()
                 .log("${header.CompareCountBody}")
 

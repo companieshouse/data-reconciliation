@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.reconciliation.model.EmailSendData;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 
 @Component
 public class KafkaRoute extends RouteBuilder {
@@ -18,6 +19,7 @@ public class KafkaRoute extends RouteBuilder {
                             EmailSendData.builder()
                                     .withTo("kpang@companieshouse.gov.uk")
                                     .withSubject("Company profile comparisons")
+                                    .withResourceLinks(Arrays.asList(exchange.getIn().getHeader("CompanyCountBody")))
                                     .withDate(LocalDate.now())
                                     .build()
                     );

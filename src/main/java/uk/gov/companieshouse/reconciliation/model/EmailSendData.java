@@ -1,17 +1,20 @@
 package uk.gov.companieshouse.reconciliation.model;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class EmailSendData {
 
     private String to;
     private String subject;
     private LocalDate date;
+    private List<ResourceLink> resourceLinkList;
 
-    public EmailSendData(String to, String subject, LocalDate date) {
+    public EmailSendData(String to, String subject, LocalDate date, List<ResourceLink> resourceLinkList) {
         this.to = to;
         this.subject = subject;
         this.date = date;
+        this.resourceLinkList = resourceLinkList;
     }
 
     public String getTo() {
@@ -26,6 +29,10 @@ public class EmailSendData {
         return date;
     }
 
+    public List<ResourceLink> getResourceLinkList() {
+        return resourceLinkList;
+    }
+
     public static Builder builder() {
         return new Builder();
     }
@@ -35,6 +42,7 @@ public class EmailSendData {
         private String to;
         private String subject;
         private LocalDate date;
+        private List<ResourceLink> resourceLinkList;
 
         public Builder withTo(String to) {
             this.to = to;
@@ -51,8 +59,13 @@ public class EmailSendData {
             return this;
         }
 
+        public Builder withResourceLinks(List<ResourceLink> resourceLinkList) {
+            this.resourceLinkList = resourceLinkList;
+            return this;
+        }
+
         public EmailSendData build() {
-            return new EmailSendData(to, subject, date);
+            return new EmailSendData(to, subject, date, resourceLinkList);
         }
     }
 }
