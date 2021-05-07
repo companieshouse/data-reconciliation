@@ -1,9 +1,9 @@
 package uk.gov.companieshouse.reconciliation;
 
+import email.email_send;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.reconciliation.model.EmailSendData;
-import uk.gov.companieshouse.reconciliation.model.EmailSendModel;
 
 import java.time.LocalDate;
 
@@ -15,20 +15,28 @@ public class KafkaRoute extends RouteBuilder {
         from("cron:kafkacron?schedule=0/30 * * * * ?")
                 .process(exchange -> {
                     exchange.getIn().setBody(
-                            new EmailSendModel.Builder()
-                                    .withApplicationId("data-reconciliation")
-                                    .withMessageId("company-profile-email")
-                                    .withMessageType("company-profile-email")
-                                    .withEmailSendData(new EmailSendData.Builder()
-                                            .withTo("kpang@companieshouse.gov.uk")
-                                            .withSubject("Company profile comparisons")
-                                            .withDate(LocalDate.now())
-                                            .build())
-                                   .withEmailAddress("test@companieshouse.gov.uk")
-                                   .build()
+                            EmailSendData.builder()
+                                    .withTo("kpang@companieshouse.gov.uk")
+                                    .withSubject("Company profile comparisons")
+                                    .withDate(LocalDate.now())
+                                    .build()
                     );
                 })
+                .marshal().json()
+                .process(exchange -> {
+                    exchange.getIn().setBody(email_send.newBuilder()
+                            .setData(exchange.getIn().getBody(String.class))
+                            .setAppId("data-reconciliation")
+                            .setMessageId("company-profile-email")
+                            .setEmailAddress("dgroves@companieshouse.gov.uk")
+                            .setMessageType("company-profile-email")
+                            .setCreatedAt("01 January 1980")
+                            .build());
+                })
                 .marshal().avro()
+                .process(exchange -> {
+                    exchange.getIn().removeHeader("Content-Type");
+                })
                 .to("kafka://email-send?schemaRegistryURL=chs-kafka:8081&brokers=chs-kafka:9092&valueSerializer=org.apache.kafka.common.serialization.ByteArraySerializer&requestRequiredAcks=-1&retries=10&maxBlockMs=1000&requestTimeoutMs=1000");
     }
 }

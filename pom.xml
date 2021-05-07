@@ -70,6 +70,11 @@
             <version>${apache.camel.version}</version>
         </dependency>
         <dependency>
+            <groupId>uk.gov.companieshouse</groupId>
+            <artifactId>kafka-models</artifactId>
+            <version>1.0.22</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jdbc</artifactId>
         </dependency>

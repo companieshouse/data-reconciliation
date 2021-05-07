@@ -26,6 +26,10 @@ public class EmailSendData {
         return date;
     }
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static class Builder {
 
         private String to;
