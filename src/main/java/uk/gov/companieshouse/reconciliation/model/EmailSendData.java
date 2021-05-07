@@ -1,36 +1,50 @@
 package uk.gov.companieshouse.reconciliation.model;
 
-import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * Data used by the CHS notification API to render a template.
+ */
 public class EmailSendData {
 
-    private String to;
-    private String subject;
-    private LocalDate date;
-    private List<ResourceLink> resourceLinkList;
+    private final String to;
+    private final String subject;
+    private final String date;
+    private final List<ResourceLink> resourceLinks;
 
-    public EmailSendData(String to, String subject, LocalDate date, List<ResourceLink> resourceLinkList) {
+    public EmailSendData(String to, String subject, String date, List<ResourceLink> resourceLinks) {
         this.to = to;
         this.subject = subject;
         this.date = date;
-        this.resourceLinkList = resourceLinkList;
+        this.resourceLinks = resourceLinks;
     }
 
+    /**
+     * @return The recipient(s) the email will be sent to.
+     */
     public String getTo() {
         return to;
     }
 
+    /**
+     * @return The email's subject.
+     */
     public String getSubject() {
         return subject;
     }
 
-    public LocalDate getDate() {
+    /**
+     * @return The date results have been generated on.
+     */
+    public String getDate() {
         return date;
     }
 
-    public List<ResourceLink> getResourceLinkList() {
-        return resourceLinkList;
+    /**
+     * @return Tuple of {@link ResourceLink links to results} and a description.
+     */
+    public List<ResourceLink> getResourceLinks() {
+        return resourceLinks;
     }
 
     public static Builder builder() {
@@ -41,7 +55,7 @@ public class EmailSendData {
 
         private String to;
         private String subject;
-        private LocalDate date;
+        private String date;
         private List<ResourceLink> resourceLinkList;
 
         public Builder withTo(String to) {
@@ -54,7 +68,7 @@ public class EmailSendData {
             return this;
         }
 
-        public Builder withDate(LocalDate date) {
+        public Builder withDate(String date) {
             this.date = date;
             return this;
         }

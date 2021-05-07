@@ -70,9 +70,9 @@ public class CompareCollectionRoute extends RouteBuilder {
                 .marshal().csv()
                 .toD("${header.Upload}")
                 .toD("${header.Presign}")
-                .setHeader("CompareCollectionBody", simple("Finished comparison for ${header.Comparison} in ${header.SrcName} and ${header.TargetName}.\nResults available at ${body}"))
+                .setHeader("CompareCollectionLink", body())
+                .setHeader("CompareCollectionDescription", simple("Comparison for ${header.Comparison} in ${header.SrcName} and ${header.TargetName}."))
                 .log("${header.CompareCollectionBody}")
-
-                .to("{{endpoint.company_email}}");
+                .to("{{endpoint.output}}");
     }
 }
