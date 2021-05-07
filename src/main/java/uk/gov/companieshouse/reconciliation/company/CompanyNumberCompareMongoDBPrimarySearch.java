@@ -4,6 +4,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mongodb.MongoDbConstants;
 import org.springframework.stereotype.Component;
 
+/**
+ * Trigger a comparison between company profiles in MongoDB and company profiles that have been indexed in the
+ * Elasticsearch primary index.
+ */
 @Component
 public class CompanyNumberCompareMongoDBPrimarySearch extends RouteBuilder {
 

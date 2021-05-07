@@ -18,6 +18,9 @@ import java.util.concurrent.LinkedBlockingDeque;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+/**
+ * All {@link SearchHit search hits} returned by an Elasticsearch sliced scrolling search.
+ */
 public class ElasticsearchSlicedScrollIterator implements Runnable, Iterator<SearchHit> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ElasticsearchSlicedScrollIterator.class);

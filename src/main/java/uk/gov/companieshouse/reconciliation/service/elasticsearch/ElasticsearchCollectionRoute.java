@@ -1,6 +1,5 @@
 package uk.gov.companieshouse.reconciliation.service.elasticsearch;
 
-import org.apache.camel.AggregationStrategy;
 import org.apache.camel.builder.RouteBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.springframework.beans.factory.annotation.Value;

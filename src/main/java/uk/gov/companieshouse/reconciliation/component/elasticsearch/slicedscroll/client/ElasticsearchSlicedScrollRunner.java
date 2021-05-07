@@ -7,6 +7,9 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
+/**
+ * Initiates and manages a single slice of a scrolling search session.
+ */
 public class ElasticsearchSlicedScrollRunner implements Runnable {
 
     private final ElasticsearchScrollingSearchClient scrollingSearchClient;

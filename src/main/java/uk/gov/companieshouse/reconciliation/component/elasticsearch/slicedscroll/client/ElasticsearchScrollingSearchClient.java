@@ -20,6 +20,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Retrieves search hits from an Elasticsearch search index using a sliced scrolling search.
+ */
 public class ElasticsearchScrollingSearchClient implements AutoCloseable {
 
     private final RestHighLevelClient client;
@@ -36,6 +39,16 @@ public class ElasticsearchScrollingSearchClient implements AutoCloseable {
         this.validator = validator;
     }
 
+    /**
+     * Initiates a new sliced scrolling search session.
+     *
+     * @param query A JSON entity used to control both the query that will be executed against the search index and the
+     *              source fields that should be returned in the response.
+     * @param sliceId The id of the sliced scrolling search session that will be created.
+     * @param noOfSlices The total number of slices that will be created.
+     * @return A {@link SearchResponse search response instance} containing search hits returned by the index.
+     * @throws IOException If an error is raised by Elasticsearch.
+     */
     public SearchResponse firstSearch(String query, int sliceId, int noOfSlices) throws IOException {
         if(!validator.validateSliceConfiguration(sliceId, noOfSlices)) {
             throw new IllegalArgumentException("Invalid client configuration [sliceId=" + sliceId + ", noOfSlices=" + noOfSlices + "]");
@@ -53,6 +66,13 @@ public class ElasticsearchScrollingSearchClient implements AutoCloseable {
         return client.search(searchRequest);
     }
 
+    /**
+     * Retrieves further results using the scroll ID of the scrolling search session that was initiated.
+     *
+     * @param scrollId The scroll ID that was created during the first search.
+     * @return A {@link SearchResponse search response instance} containing further search hits returned by the index.
+     * @throws IOException If an error is raised by Elasticsearch.
+     */
     public SearchResponse scroll(String scrollId) throws IOException {
         if(scrollId == null) {
             throw new IllegalArgumentException("Scroll ID is null");
@@ -64,6 +84,13 @@ public class ElasticsearchScrollingSearchClient implements AutoCloseable {
         return client.searchScroll(searchScrollRequest);
     }
 
+    /**
+     * Deletes open scrolling search sessions.
+     *
+     * @param scrollIds The IDs of the scrolling searches that should be closed.
+     * @return A {@link ClearScrollResponse response} indicating the result of the operation.
+     * @throws IOException If an error is raised by Elasticsearch.
+     */
     public ClearScrollResponse clearScroll(List<String> scrollIds) throws IOException {
         ClearScrollRequest clearScrollRequest = new ClearScrollRequest();
         clearScrollRequest.setScrollIds(scrollIds);
