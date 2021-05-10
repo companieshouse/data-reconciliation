@@ -59,8 +59,6 @@ public class CompareCollectionRouteTest {
 
     @Test
     void testCompareCollectionsHandleNulls() throws InterruptedException {
-        //mockFruitTreeEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(Arrays.asList(Collections.singletonMap("RESULT", "apple"), Collections.singletonMap("RESULT", null))));
-        //mockFruitBasketEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(Arrays.asList("apple", "orange", "pineapple")));
         mockFruitTreeEndpoint.returnReplyHeader("SrcList", ExpressionBuilder.constantExpression(new ResourceList(Arrays.asList("apple", null), "Fruit Tree")));
         mockFruitBasketEndpoint.returnReplyHeader("TargetList", ExpressionBuilder.constantExpression(new ResourceList(Arrays.asList("apple", "orange", "pineapple"), "Fruit Basket")));
         mockCompareResult.allMessages().body().isEqualTo("item,source\r\n,Fruit Tree\r\norange,Fruit Basket\r\npineapple,Fruit Basket\r\n".getBytes());
