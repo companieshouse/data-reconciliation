@@ -48,7 +48,6 @@ public class CompanyNumberCompareTriggerTest {
         compareCollection.expectedHeaderReceived("Target", "mock:fruitBasket");
         compareCollection.expectedHeaderReceived("TargetName", "MongoDB");
         compareCollection.expectedHeaderReceived("Comparison", "company profiles");
-        compareCollection.expectedHeaderReceived("CompanyCollection", "CompanyCollection");
         compareCollection.expectedHeaderReceived("Upload", "mock:s3_bucket_destination");
         compareCollection.expectedHeaderReceived("Presign", "mock:s3_download_link");
         compareCollection.expectedHeaderReceived(AWS2S3Constants.KEY, "company/collection_"+currentDate+".csv");

@@ -40,7 +40,7 @@ public class DisqualifiedOfficerCompareTriggerTest {
         compareCollection.expectedHeaderReceived("SrcName", "Oracle");
         compareCollection.expectedHeaderReceived("Target", "mock:officer_compare_target");
         compareCollection.expectedHeaderReceived("TargetName", "MongoDB");
-        compareCollection.expectedHeaderReceived("Destination", "mock:result");
+        compareCollection.expectedHeaderReceived("Destination", "mock:send_email");
         compareCollection.expectedHeaderReceived(MongoDbConstants.DISTINCT_QUERY_FIELD, "officer_id_raw");
         compareCollection.expectedBodyReceived().constant("SELECT '1234567890' FROM DUAL");
         producerTemplate.sendBody(0);

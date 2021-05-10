@@ -48,18 +48,4 @@
 //                .build();
 //    }
 //
-//    /**
-//     * Creates a bean with configurable properties and endpoint in order to access the AWS SES (Simple Email Service).
-//     **/
-//    @Bean("testSesClient")
-//    SesClient sesClient(@Value("${ses.endpoint.override}") String sesEndpointOverride,
-//                        @Value("${aws.access.key}") String awsAccessKey,
-//                        @Value("${aws.secret.key}") String awsSecretKey,
-//                        @Value("${aws.region}") String awsRegion) {
-//        return SesClient.builder()
-//                .endpointOverride(URI.create(sesEndpointOverride))
-//                .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(awsAccessKey, awsSecretKey)))
-//                .region(Region.of(awsRegion))
-//                .build();
-//    }
 //}

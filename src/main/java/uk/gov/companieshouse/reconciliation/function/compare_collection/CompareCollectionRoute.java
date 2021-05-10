@@ -72,7 +72,7 @@ public class CompareCollectionRoute extends RouteBuilder {
                 .toD("${header.Presign}")
                 .setHeader("CompareCollectionLink", body())
                 .setHeader("CompareCollectionDescription", simple("Comparison for ${header.Comparison} in ${header.SrcName} and ${header.TargetName}."))
-                .log("${header.CompareCollectionBody}")
+                .log("Compare Collection: ${header.CompareCollectionDescription}")
                 .to("{{endpoint.output}}");
     }
 }

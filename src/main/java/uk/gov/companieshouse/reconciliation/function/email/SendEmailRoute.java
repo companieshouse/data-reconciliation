@@ -13,9 +13,9 @@ public class SendEmailRoute extends RouteBuilder {
     @Override
     public void configure() throws Exception {
 
-        from("direct:send_email")
+        from("direct:send-email")
                 .aggregate(constant(true), new EmailAggregationStrategy())
                 .completionSize(2)
-                .toD("direct:send-to-kafka");
+                .toD("{{endpoint.kafka.sender}}");
     }
 }

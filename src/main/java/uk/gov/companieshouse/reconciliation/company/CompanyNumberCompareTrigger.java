@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
  *
  * The following request headers should be set when a message is sent to this route:
  *
- * CompanyCollection: A description representing the type of job to be ran.
  * AWS2S3Constants.KEY: The key (name) which should be appended to CSV files.
  * AWS2S3Constants.DOWNLOAD_LINK_EXPIRATION_TIME: The time which can be configured to expire download links.
  * MongoDbConstants.DISTINCT_QUERY_FIELD: The unique field used as an identifier for MongoDB
@@ -28,7 +27,6 @@ public class CompanyNumberCompareTrigger extends RouteBuilder {
                 .setHeader("Target", simple("{{endpoint.mongodb.company_profile_collection}}"))
                 .setHeader("TargetName", simple("MongoDB"))
                 .setHeader("Comparison", simple("company profiles"))
-                .setHeader("CompanyCollection", constant("CompanyCollection"))
                 .setHeader("Upload", simple("{{endpoint.s3.upload}}"))
                 .setHeader("Presign", simple("{{endpoint.s3presigner.download}}"))
                 .setHeader(AWS2S3Constants.KEY, simple("company/collection_${date:now:yyyyMMdd}.csv"))

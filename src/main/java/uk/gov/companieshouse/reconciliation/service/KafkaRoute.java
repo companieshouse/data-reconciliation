@@ -35,15 +35,19 @@ public class KafkaRoute extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
+
+        String currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern(emailDateFormat));
+
         from("direct:send-to-kafka")
+                .routeId("kafka1")
                 .process(exchange ->
                     exchange.getIn().setBody(
                             EmailSendData.builder()
                                     .withTo(emailRecipientList)
-                                    .withSubject(EMAIL_SUBJECT)
+                                    .withSubject(EMAIL_SUBJECT + " ("+currentDate+")")
                                     .withResourceLinks(exchange.getIn()
                                             .getHeader("ResourceLinks", ResourceLinksWrapper.class).getDownloadLinkList())
-                                    .withDate(LocalDate.now().format(DateTimeFormatter.ofPattern(emailDateFormat)))
+                                    .withDate(currentDate)
                                     .build()
                     )
                 )
