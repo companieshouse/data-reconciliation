@@ -116,6 +116,7 @@ public class ElasticsearchSlicedScrollIterator implements Runnable, Iterator<Sea
                 LOGGER.warn("Error clearing scrolling search", e);
             } finally {
                 synchronized (this) {
+                    this.executorService.shutdown();
                     this.done = true;
                     this.notifyAll();
                 }
