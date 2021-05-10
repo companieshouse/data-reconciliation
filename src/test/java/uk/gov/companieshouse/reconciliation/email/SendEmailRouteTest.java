@@ -34,6 +34,9 @@ public class SendEmailRouteTest {
     @EndpointInject("mock:kafka-endpoint")
     private MockEndpoint kafkaEndpoint;
 
+    @EndpointInject("mock:second-kafka-endpoint")
+    private MockEndpoint secondKafkaEndpoint;
+
     @Produce("direct:send-email")
     private ProducerTemplate producerTemplate;
 
@@ -67,16 +70,6 @@ public class SendEmailRouteTest {
         producerTemplate.send(firstExchange);
         producerTemplate.send(secondExchange);
 
-        MockEndpoint.assertIsSatisfied(context);
-    }
-
-    @Test
-    void testSendEmailThrowsExceptionWhenHeadersAreNotProvided() throws InterruptedException {
-        kafkaEndpoint.expectedMessageCount(0);
-
-        Executable actual = () -> producerTemplate.sendBody(0);
-
-        assertThrows(Exception.class, actual);
         MockEndpoint.assertIsSatisfied(context);
     }
 }
