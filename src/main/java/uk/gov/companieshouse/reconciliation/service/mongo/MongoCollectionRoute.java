@@ -8,6 +8,15 @@ import uk.gov.companieshouse.reconciliation.function.compare_collection.entity.R
 import java.util.Collections;
 import java.util.LinkedList;
 
+/**
+ * Retrieves and aggregates results from a mongo.collection.distinct query.<br>
+ * <br>
+ * IN:<br>
+ * <br>
+ * header(MongoEndpoint): The endpoint from which results will be fetched.<br>
+ * header(MongoDescription): A description of the {@link ResourceList resource list} that will be aggregated.<br>
+ * header(MongoTargetHeader): The header in which results will be aggregated as a {@link ResourceList resource list}.<br>
+ */
 @Component
 public class MongoCollectionRoute extends RouteBuilder {
 

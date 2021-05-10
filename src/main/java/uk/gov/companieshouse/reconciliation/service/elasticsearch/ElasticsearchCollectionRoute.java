@@ -9,6 +9,17 @@ import uk.gov.companieshouse.reconciliation.function.compare_collection.entity.R
 import java.util.Collections;
 import java.util.LinkedList;
 
+/**
+ * Retrieves hits from an Elasticsearch search index.<br>
+ * <br>
+ * IN:<br>
+ * <br>
+ * header(ElasticsearchQuery): The query that will be run against Elasticsearch.<br>
+ * header(ElasticsearchLogIndices): An {@link java.lang.Integer integer} used to determine the interval at which the
+ * number of search hits will be logged.<br>
+ * header(ElasticsearchDescription): A description of the {@link ResourceList resource list} that will be aggregated.<br>
+ * header(ElasticsearchTargetHeader): The header in which results will be aggregated as a {@link ResourceList resource list}.<br>
+ */
 @Component
 public class ElasticsearchCollectionRoute extends RouteBuilder {
 
