@@ -16,7 +16,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import uk.gov.companieshouse.reconciliation.model.ResourceLink;
 import uk.gov.companieshouse.reconciliation.model.ResourceLinksWrapper;
-
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertNull;

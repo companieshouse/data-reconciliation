@@ -12,7 +12,6 @@ import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
@@ -20,7 +19,6 @@ import org.springframework.test.context.TestPropertySource;
 import uk.gov.companieshouse.reconciliation.model.ResourceLinksWrapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @CamelSpringBootTest
 @SpringBootTest

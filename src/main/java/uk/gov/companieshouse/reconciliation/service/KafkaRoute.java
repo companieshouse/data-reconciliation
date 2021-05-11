@@ -62,7 +62,9 @@ public class KafkaRoute extends RouteBuilder {
                             .setCreatedAt(LocalDate.now().format(DateTimeFormatter.ofPattern(emailDateFormat)))
                             .build())
                 )
+                .log("${body}")
                 .marshal().avro()
+                .log("${body}")
                 .process(exchange ->
                     exchange.getIn().removeHeader("Content-Type")
                 )
