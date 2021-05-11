@@ -1,0 +1,1 @@
+class=uk.gov.companieshouse.reconciliation.component.elasticsearch.slicedscroll.ElasticsearchSlicedScrollComponent

@@ -32,6 +32,23 @@ public class ResourceList {
     }
 
     /**
+     * Add a new item to this ResourceList instance.
+     *
+     * @param e The element that will be added.
+     * @return True if the element was added successfully, otherwise false.
+     */
+    public boolean add(String e) {
+        return resultList.add(e);
+    }
+
+    /**
+     * @return The number of elements held by this ResourceList instance.
+     */
+    public int size() {
+        return resultList.size();
+    }
+
+    /**
      * @return A description of the endpoint this list of resources was obtained from.
      */
     public String getResultDesc() {

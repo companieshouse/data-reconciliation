@@ -1,0 +1,8 @@
+{
+  "query": {
+    "match": {
+      "kind": "searchresults#company"
+    }
+  },
+  "_source": false
+}
