@@ -60,7 +60,7 @@ public class ElasticsearchScrollingSearchClient implements AutoCloseable {
         searchRequest.scroll(new TimeValue(timeout, TimeUnit.SECONDS))
                 .source()
                 .query(searchSourceBuilder.query())
-                .slice(new SliceBuilder(sliceId, noOfSlices))
+                .slice(new SliceBuilder("_id", sliceId, noOfSlices))
                 .fetchSource(searchSourceBuilder.fetchSource())
                 .size(size);
         return client.search(searchRequest);
