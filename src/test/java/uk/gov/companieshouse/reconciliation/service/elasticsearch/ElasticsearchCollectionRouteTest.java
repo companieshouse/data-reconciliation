@@ -12,17 +12,22 @@ import org.elasticsearch.common.text.Text;
 import org.elasticsearch.search.SearchHit;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
+import uk.gov.companieshouse.reconciliation.component.elasticsearch.slicedscroll.client.ElasticsearchSlicedScrollIterator;
 import uk.gov.companieshouse.reconciliation.function.compare_collection.entity.ResourceList;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @CamelSpringBootTest
 @SpringBootTest
@@ -39,6 +44,9 @@ public class ElasticsearchCollectionRouteTest {
     @EndpointInject("mock:elasticsearch-stub")
     private MockEndpoint elasticsearchEndpoint;
 
+    @Mock
+    private ElasticsearchSlicedScrollIterator iterator;
+
     @AfterEach
     void after() {
         elasticsearchEndpoint.reset();
@@ -46,17 +54,19 @@ public class ElasticsearchCollectionRouteTest {
 
     @Test
     void testStoreResourceListInRequiredHeader() throws InterruptedException {
+        when(iterator.hasNext()).thenReturn(true, false);
+        when(iterator.next()).thenReturn(new SearchHit(123, "12345678", new Text("{}"), new HashMap<>()));
         elasticsearchEndpoint.expectedBodyReceived().constant("QUERY");
         elasticsearchEndpoint.whenAnyExchangeReceived(exchange ->
-            exchange.getIn().setBody(Collections.singletonList(
-                    new SearchHit(123, "12345678", new Text("{}"), new HashMap<>())
-            ).iterator())
+            exchange.getIn().setBody(iterator)
         );
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeaders(getHeaders());
         Exchange actual = producer.send(exchange);
         assertEquals("Description", ((ResourceList)actual.getIn().getHeaders().get("Output")).getResultDesc());
-        assertEquals("12345678", ((ResourceList)actual.getIn().getHeaders().get("Output")).getResultList().get(0));
+        assertTrue(((ResourceList)actual.getIn().getHeaders().get("Output")).getResultList().contains("12345678"));
+        verify(iterator, times(2)).hasNext();
+        verify(iterator, times(1)).next();
         MockEndpoint.assertIsSatisfied(context);
     }
 

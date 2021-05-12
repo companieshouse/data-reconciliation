@@ -10,7 +10,6 @@ import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
@@ -19,10 +18,9 @@ import uk.gov.companieshouse.reconciliation.function.compare_collection.entity.R
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @CamelSpringBootTest
 @SpringBootTest
@@ -66,7 +64,8 @@ public class OracleCollectionRouteTest {
 
         //then
         assertEquals("description", resourceList.getResultDesc());
-        assertEquals(Arrays.asList("12345678", "ABCD1234"), resourceList.getResultList());
+        assertTrue(resourceList.getResultList().contains("12345678"));
+        assertTrue(resourceList.getResultList().contains("ABCD1234"));
         MockEndpoint.assertIsSatisfied(camelContext);
     }
 }

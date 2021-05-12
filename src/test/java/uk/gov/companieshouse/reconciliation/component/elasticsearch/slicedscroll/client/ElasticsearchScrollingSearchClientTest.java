@@ -26,6 +26,7 @@ public class ElasticsearchScrollingSearchClientTest {
 
     private static final String QUERY_MATCH_ALL = "{\"query\": {\"match_all\":{}}}";
     private static final String SCROLL_ID = "F00DFACE";
+    private static final String SLICE_FIELD = "_uid";
 
     @Mock
     private RestHighLevelClient restHighLevelClient;
@@ -43,7 +44,7 @@ public class ElasticsearchScrollingSearchClientTest {
 
     @BeforeEach
     void setUp() {
-        client = new ElasticsearchScrollingSearchClient(restHighLevelClient, "index", 500, 30L, validator);
+        client = new ElasticsearchScrollingSearchClient(restHighLevelClient, "index", 500, 30L, SLICE_FIELD, validator);
     }
 
     @Test

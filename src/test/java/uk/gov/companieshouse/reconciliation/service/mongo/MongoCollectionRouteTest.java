@@ -18,9 +18,9 @@ import org.springframework.test.context.TestPropertySource;
 import uk.gov.companieshouse.reconciliation.function.compare_collection.entity.ResourceList;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @CamelSpringBootTest
 @SpringBootTest
@@ -64,7 +64,8 @@ public class MongoCollectionRouteTest {
 
         //then
         assertEquals("description", resourceList.getResultDesc());
-        assertEquals(Arrays.asList("12345678", "ABCD1234"), resourceList.getResultList());
+        assertTrue(resourceList.getResultList().contains("12345678"));
+        assertTrue(resourceList.getResultList().contains("ABCD1234"));
         MockEndpoint.assertIsSatisfied(camelContext);
     }
 }

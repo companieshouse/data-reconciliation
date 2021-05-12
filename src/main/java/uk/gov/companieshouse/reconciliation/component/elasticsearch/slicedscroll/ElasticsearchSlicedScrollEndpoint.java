@@ -46,6 +46,9 @@ public class ElasticsearchSlicedScrollEndpoint extends DefaultEndpoint {
     @UriParam(defaultValue = "500")
     private Integer maximumSliceSize = 500;
 
+    @UriParam(defaultValue = "_uid")
+    private String sliceField = "_uid";
+
     @UriParam(defaultValue = "60")
     private Long timeoutInSeconds = 60L;
 
@@ -57,7 +60,7 @@ public class ElasticsearchSlicedScrollEndpoint extends DefaultEndpoint {
     }
 
     public Producer createProducer() throws Exception {
-        return new ElasticsearchSlicedScrollProducer(this, clientFactory.build(hostname, portNumber, protocol, indexName, maximumSliceSize, timeoutInSeconds));
+        return new ElasticsearchSlicedScrollProducer(this, clientFactory.build(hostname, portNumber, protocol, indexName, maximumSliceSize, timeoutInSeconds, sliceField));
     }
 
     public Consumer createConsumer(Processor processor) {
@@ -130,6 +133,14 @@ public class ElasticsearchSlicedScrollEndpoint extends DefaultEndpoint {
 
     public void setTimeoutInSeconds(Long timeoutInSeconds) {
         this.timeoutInSeconds = timeoutInSeconds;
+    }
+
+    public String getSliceField() {
+        return sliceField;
+    }
+
+    public void setSliceField(String sliceField) {
+        this.sliceField = sliceField;
     }
 
     public ElasticsearchScrollingSearchClientFactory getClientFactory() {
