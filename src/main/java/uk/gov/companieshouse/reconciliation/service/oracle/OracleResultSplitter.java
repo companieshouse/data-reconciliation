@@ -14,8 +14,8 @@ import java.util.stream.Collectors;
 public class OracleResultSplitter {
     public Iterator<String> split(@Body List<Map<String, Object>> result) {
         return result.stream()
-                .map(e -> (String)e.get("RESULT"))
                 .filter(Objects::nonNull)
+                .map(e -> e.get("RESULT").toString())
                 .collect(Collectors.toList()).iterator();
     }
 }
