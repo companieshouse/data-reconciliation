@@ -11,6 +11,26 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 /**
+ * Route is responsible for sending out the required data to chs-email-sender,
+ * which eventually makes it way to an email template created in chs-notification-api.
+ *
+ * Accomplished via: using below fields which creates the email-send kafka model schema.
+ *
+ * emailRecipientList: the list of recipients the email would go to.
+ * emailApplicationId: applicationId as required by the email-send model, used for chs-notification-api.
+ * emailMessageId: messageId as required by the email-send model.
+ * emailMessageType: messageType as required by the email-send mode, used for chs-notification-api.
+ * emailSender: the sender of the email, as required by the email-send model.
+ * emailDateFormat: a date format passed to be used in the Created At field for the email-send-model.
+ *
+ * For the data field inside the email-send model, we contain the generic To, Subject, Date, fields - but also:
+ * ResourceLink: keeps track of download links and relevant description for comparison results.
+ * ResourceLinksWrapper: wrapper class to be used with Apache Camel to represent a list of ResourceLink.
+ *
+ * The email-send body is populated from values passed in from the properties file.
+ * Than is marshaled into a Avro format, before finally being sent to the chs-email-sender service.
+ *
+ * NOTE: due to versions incompatibility on kafka-producer, the Content-Type header has to be removed.
  *
  */
 @Component
@@ -27,6 +47,9 @@ public class KafkaRoute extends RouteBuilder {
     @Value("${email.message.id}")
     private String emailMessageId;
 
+    @Value("${email.message.type}")
+    private String emailMessageType;
+
     @Value("${email.sender}")
     private String emailSender;
 
@@ -37,14 +60,14 @@ public class KafkaRoute extends RouteBuilder {
     public void configure() throws Exception {
 
         String currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern(emailDateFormat));
+        String fullSubject = EMAIL_SUBJECT + " ("+currentDate+")";
 
         from("direct:send-to-kafka")
-                .routeId("kafka1")
                 .process(exchange ->
                     exchange.getIn().setBody(
                             EmailSendData.builder()
                                     .withTo(emailRecipientList)
-                                    .withSubject(EMAIL_SUBJECT + " ("+currentDate+")")
+                                    .withSubject(fullSubject)
                                     .withResourceLinks(exchange.getIn()
                                             .getHeader("ResourceLinks", ResourceLinksWrapper.class).getDownloadLinkList())
                                     .withDate(currentDate)
@@ -57,14 +80,12 @@ public class KafkaRoute extends RouteBuilder {
                             .setData(exchange.getIn().getBody(String.class))
                             .setAppId(emailApplicationId)
                             .setMessageId(emailMessageId)
-                            .setMessageType(emailApplicationId)
+                            .setMessageType(emailMessageType)
                             .setEmailAddress(emailSender)
                             .setCreatedAt(LocalDate.now().format(DateTimeFormatter.ofPattern(emailDateFormat)))
                             .build())
                 )
-                .log("${body}")
                 .marshal().avro()
-                .log("${body}")
                 .process(exchange ->
                     exchange.getIn().removeHeader("Content-Type")
                 )

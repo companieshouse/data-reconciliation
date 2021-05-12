@@ -77,7 +77,7 @@ public class CompareCountRoute extends RouteBuilder {
                     .otherwise()
                         .setHeader("CompareCountDescription",simple("${header.SrcName} and ${header.TargetName} contain the same number of ${header.Comparison}."))
                 .end()
-                .log("CompareCount: ${header.CompareCountDescription}")
+                .log("Compare Count: ${header.CompareCountDescription}")
                 .to("{{endpoint.output}}");
     }
 }

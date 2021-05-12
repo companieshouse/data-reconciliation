@@ -71,7 +71,7 @@ public class CompareCollectionRoute extends RouteBuilder {
                 .toD("${header.Upload}")
                 .toD("${header.Presign}")
                 .setHeader("CompareCollectionLink", body())
-                .setHeader("CompareCollectionDescription", simple("Comparison for ${header.Comparison} in ${header.SrcName} and ${header.TargetName}."))
+                .setHeader("CompareCollectionDescription", simple("Comparisons completed for ${header.Comparison} in ${header.SrcName} and ${header.TargetName}."))
                 .log("Compare Collection: ${header.CompareCollectionDescription}")
                 .to("{{endpoint.output}}");
     }
