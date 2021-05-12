@@ -1,17 +1,17 @@
 package uk.gov.companieshouse.reconciliation.function.compare_collection.entity;
 
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 /**
  * A list of resources fetched from an endpoint.
  */
 public class ResourceList {
 
-    private final List<String> resultList;
+    private final Collection<String> resultList;
     private final String resultDesc;
 
-    public ResourceList(List<String> resultList, String resultDesc) {
+    public ResourceList(Collection<String> resultList, String resultDesc) {
         this.resultList = resultList;
         this.resultDesc = resultDesc;
     }
@@ -27,18 +27,18 @@ public class ResourceList {
     /**
      * @return A view of the list of resources encapsulated by this ResourceList instance.
      */
-    public List<String> getResultList() {
-        return Collections.unmodifiableList(resultList);
+    public Collection<String> getResultList() {
+        return Collections.unmodifiableCollection(resultList);
     }
 
     /**
      * Add a new item to this ResourceList instance.
      *
-     * @param e The element that will be added.
+     * @param element The element that will be added.
      * @return True if the element was added successfully, otherwise false.
      */
-    public boolean add(String e) {
-        return resultList.add(e);
+    public boolean add(String element) {
+        return resultList.add(element);
     }
 
     /**

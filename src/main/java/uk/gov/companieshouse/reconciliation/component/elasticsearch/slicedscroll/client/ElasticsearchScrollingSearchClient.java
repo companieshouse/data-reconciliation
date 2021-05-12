@@ -29,13 +29,15 @@ public class ElasticsearchScrollingSearchClient implements AutoCloseable {
     private final String index;
     private final int size;
     private final long timeout;
+    private final String sliceField;
     private final ElasticsearchSlicedScrollValidator validator;
 
-    public ElasticsearchScrollingSearchClient(RestHighLevelClient client, String index, int size, long timeout, ElasticsearchSlicedScrollValidator validator) {
+    public ElasticsearchScrollingSearchClient(RestHighLevelClient client, String index, int size, long timeout, String sliceField, ElasticsearchSlicedScrollValidator validator) {
         this.client = client;
         this.index = index;
         this.size = size;
         this.timeout = timeout;
+        this.sliceField = sliceField;
         this.validator = validator;
     }
 
@@ -60,7 +62,7 @@ public class ElasticsearchScrollingSearchClient implements AutoCloseable {
         searchRequest.scroll(new TimeValue(timeout, TimeUnit.SECONDS))
                 .source()
                 .query(searchSourceBuilder.query())
-                .slice(new SliceBuilder("_id", sliceId, noOfSlices))
+                .slice(new SliceBuilder(sliceField, sliceId, noOfSlices))
                 .fetchSource(searchSourceBuilder.fetchSource())
                 .size(size);
         return client.search(searchRequest);

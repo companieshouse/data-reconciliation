@@ -36,13 +36,16 @@ public class DisqualifiedOfficerCompareTriggerTest {
 
     @Test
     void testCreateOfficerCompareMessage() throws InterruptedException {
-        compareCollection.expectedHeaderReceived("Src", "mock:officer_compare_src");
-        compareCollection.expectedHeaderReceived("SrcName", "Oracle");
-        compareCollection.expectedHeaderReceived("Target", "mock:officer_compare_target");
-        compareCollection.expectedHeaderReceived("TargetName", "MongoDB");
+        compareCollection.expectedHeaderReceived("OracleQuery", "SELECT '1234567890' FROM DUAL");
+        compareCollection.expectedHeaderReceived("OracleEndpoint", "mock:officer_compare_src");
+        compareCollection.expectedHeaderReceived("OracleDescription", "Oracle");
+        compareCollection.expectedHeaderReceived("OracleTargetHeader", "SrcList");
+        compareCollection.expectedHeaderReceived("Src", "direct:oracle-collection");
+        compareCollection.expectedHeaderReceived("MongoEndpoint", "mock:officer_compare_target");
+        compareCollection.expectedHeaderReceived("MongoDescription", "MongoDB");
+        compareCollection.expectedHeaderReceived("Target", "direct:mongodb-collection");
         compareCollection.expectedHeaderReceived("Destination", "mock:result");
         compareCollection.expectedHeaderReceived(MongoDbConstants.DISTINCT_QUERY_FIELD, "officer_id_raw");
-        compareCollection.expectedBodyReceived().constant("SELECT '1234567890' FROM DUAL");
         producerTemplate.sendBody(0);
         MockEndpoint.assertIsSatisfied(context);
     }

@@ -10,11 +10,11 @@ import org.elasticsearch.client.RestHighLevelClient;
  */
 public class ElasticsearchScrollingSearchClientFactory {
 
-    public ElasticsearchScrollingSearchClient build(String hostname, int port, String scheme, String index, int size, long timeout) {
+    public ElasticsearchScrollingSearchClient build(String hostname, int port, String scheme, String index, int size, long timeout, String sliceField) {
         return new ElasticsearchScrollingSearchClient(new RestHighLevelClient(
                 RestClient.builder(
                     new HttpHost(hostname, port, scheme)
                 )
-        ), index, size, timeout, new ElasticsearchSlicedScrollValidator());
+        ), index, size, timeout, sliceField, new ElasticsearchSlicedScrollValidator());
     }
 }
