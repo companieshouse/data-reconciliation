@@ -22,7 +22,7 @@ import java.time.format.DateTimeFormatter;
 @SpringBootTest
 @DirtiesContext
 @TestPropertySource(locations = "classpath:application-stubbed.properties")
-public class CompanyNumberCompareTriggerTest {
+public class CompanyNumberCompareOracleMongoDBTriggerTest {
 
     @Autowired
     private CamelContext context;
@@ -43,16 +43,21 @@ public class CompanyNumberCompareTriggerTest {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         String currentDate = LocalDate.now().format(formatter);
 
-        compareCollection.expectedHeaderReceived("Src", "mock:fruitTree");
-        compareCollection.expectedHeaderReceived("SrcName", "Oracle");
-        compareCollection.expectedHeaderReceived("Target", "mock:fruitBasket");
-        compareCollection.expectedHeaderReceived("TargetName", "MongoDB");
+        compareCollection.expectedHeaderReceived("OracleQuery", "SELECT '12345678' FROM DUAL");
+        compareCollection.expectedHeaderReceived("OracleEndpoint", "mock:fruitTree");
+        compareCollection.expectedHeaderReceived("OracleDescription", "Oracle");
+        compareCollection.expectedHeaderReceived("OracleTargetHeader", "SrcList");
+        compareCollection.expectedHeaderReceived("Src", "direct:oracle-collection");
+        compareCollection.expectedHeaderReceived("MongoEndpoint", "mock:fruitBasket");
+        compareCollection.expectedHeaderReceived("MongoDescription", "MongoDB");
+        compareCollection.expectedHeaderReceived("MongoTargetHeader", "TargetList");
+        compareCollection.expectedHeaderReceived("Target", "direct:mongodb-collection");
+        compareCollection.expectedHeaderReceived("Destination", "mock:result");
         compareCollection.expectedHeaderReceived("Comparison", "company profiles");
         compareCollection.expectedHeaderReceived("Upload", "mock:s3_bucket_destination");
         compareCollection.expectedHeaderReceived("Presign", "mock:s3_download_link");
         compareCollection.expectedHeaderReceived(AWS2S3Constants.KEY, "company/collection_"+currentDate+".csv");
         compareCollection.expectedHeaderReceived(AWS2S3Constants.DOWNLOAD_LINK_EXPIRATION_TIME, 2000L);
-        compareCollection.expectedBodyReceived().body().isEqualTo("SELECT '12345678' FROM DUAL");
         compareCollection.expectedHeaderReceived(MongoDbConstants.DISTINCT_QUERY_FIELD, "_id");
         producerTemplate.sendBody(0);
         MockEndpoint.assertIsSatisfied(context);

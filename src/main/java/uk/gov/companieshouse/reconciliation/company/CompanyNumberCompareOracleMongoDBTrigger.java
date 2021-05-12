@@ -16,16 +16,21 @@ import org.springframework.stereotype.Component;
  * MongoDbConstants.DISTINCT_QUERY_FIELD: The unique field used as an identifier for MongoDB
  */
 @Component
-public class CompanyNumberCompareTrigger extends RouteBuilder {
+public class CompanyNumberCompareOracleMongoDBTrigger extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
         from("{{endpoint.company_collection.cron.tab}}")
-                .setBody(constant("{{query.oracle.corporate_body_collection}}"))
-                .setHeader("Src", simple("{{endpoint.oracle.corporate_body_collection}}"))
-                .setHeader("SrcName", simple("Oracle"))
-                .setHeader("Target", simple("{{endpoint.mongodb.company_profile_collection}}"))
-                .setHeader("TargetName", simple("MongoDB"))
+                .setHeader("OracleQuery", simple("{{query.oracle.corporate_body_collection}}"))
+                .setHeader("OracleEndpoint", simple("{{endpoint.oracle.corporate_body_collection}}"))
+                .setHeader("OracleDescription", constant("Oracle"))
+                .setHeader("OracleTargetHeader", constant("SrcList"))
+                .setHeader("Src", simple("{{endpoint.oracle.collection}}"))
+                .setHeader("MongoEndpoint", simple("{{endpoint.mongodb.company_profile_collection}}"))
+                .setHeader("MongoDescription", constant("MongoDB"))
+                .setHeader("MongoTargetHeader", constant("TargetList"))
+                .setHeader("Target", simple("{{endpoint.mongodb.collection}}"))
+                .setHeader("Destination", simple("{{endpoint.output}}"))
                 .setHeader("Comparison", simple("company profiles"))
                 .setHeader("Upload", simple("{{endpoint.s3.upload}}"))
                 .setHeader("Presign", simple("{{endpoint.s3presigner.download}}"))
