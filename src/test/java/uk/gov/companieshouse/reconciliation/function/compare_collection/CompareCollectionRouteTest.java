@@ -16,7 +16,6 @@ import org.springframework.test.context.TestPropertySource;
 import uk.gov.companieshouse.reconciliation.function.compare_collection.entity.ResourceList;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 

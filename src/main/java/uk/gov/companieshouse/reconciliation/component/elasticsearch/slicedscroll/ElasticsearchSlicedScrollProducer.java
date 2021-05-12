@@ -26,7 +26,7 @@ public class ElasticsearchSlicedScrollProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) {
-        exchange.getIn().setBody(new ElasticsearchSlicedScrollIterator(client, endpoint.getNumberOfSegments(), exchange.getIn().getBody(String.class), new ElasticsearchSlicedScrollRunnerFactory(), Executors.newFixedThreadPool(endpoint.getMaximumSliceSize())));
+        exchange.getIn().setBody(new ElasticsearchSlicedScrollIterator(client, endpoint.getNumberOfSegments(), exchange.getIn().getBody(String.class), new ElasticsearchSlicedScrollRunnerFactory(), Executors.newFixedThreadPool(endpoint.getNumberOfSegments() + 1)));
     }
 
     public void close() {
