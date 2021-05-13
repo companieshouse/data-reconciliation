@@ -16,6 +16,6 @@ public class SendEmailRoute extends RouteBuilder {
         from("direct:send-email")
                 .aggregate(constant(true), new EmailAggregationStrategy())
                 .completionSize(2)
-                .toD("{{endpoint.kafka.sender}}");
+                .to("{{endpoint.kafka.sender}}");
     }
 }

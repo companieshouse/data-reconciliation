@@ -15,6 +15,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
 @CamelSpringBootTest
@@ -39,8 +41,11 @@ public class CompanyCountTriggerTest {
 
     @Test
     void testCreateMessage() throws InterruptedException {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-        String currentDate = LocalDate.now().format(formatter);
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hhmmss");
+        LocalDateTime now = LocalDateTime.now();
+        String currentDate = now.format(dateFormatter);
+        String currentTime = now.format(timeFormatter);
 
         compareCount.expectedHeaderReceived("Src", "mock:corporate_body_count");
         compareCount.expectedHeaderReceived("SrcName", "Oracle");
@@ -49,7 +54,7 @@ public class CompanyCountTriggerTest {
         compareCount.expectedHeaderReceived("Comparison", "company profiles");
         compareCount.expectedHeaderReceived("Upload", "mock:s3_bucket_destination");
         compareCount.expectedHeaderReceived("Presign", "mock:s3_download_link");
-        compareCount.expectedHeaderReceived(AWS2S3Constants.KEY, "company/count_"+currentDate+".csv");
+        compareCount.expectedHeaderReceived(AWS2S3Constants.KEY, "company/count_"+currentDate+"-"+currentTime+".csv");
         compareCount.expectedHeaderReceived(AWS2S3Constants.DOWNLOAD_LINK_EXPIRATION_TIME, 2000L);
         compareCount.expectedBodyReceived().body().isEqualTo("SELECT 1 FROM DUAL");
         producerTemplate.sendBody(0);

@@ -82,11 +82,6 @@
             <version>${apache.camel.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.camel.springboot</groupId>
-            <artifactId>camel-aws2-ses-starter</artifactId>
-            <version>${apache.camel.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-aws2-s3</artifactId>
             <version>${apache.camel.version}</version>

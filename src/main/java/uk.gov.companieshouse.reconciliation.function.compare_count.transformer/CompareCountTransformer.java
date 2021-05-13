@@ -31,18 +31,15 @@ public class CompareCountTransformer {
 
     private List<Map<String, Object>> getResults(ResourceList srcResourceList, ResourceList targetResourceList){
         List<Map<String, Object>> results = new ArrayList<>();
-
-        Map<String, Object> names = new LinkedHashMap<>();
-        names.put("srcName", srcResourceList.getResultDesc());
-        names.put("targetName", targetResourceList.getResultDesc());
-        results.add(names);
-
-        Map<String, Object> counts = new LinkedHashMap<>();
-        counts.put("srcCount", srcResourceList.getResultList().iterator().next());
-        counts.put("targetCount", srcResourceList.getResultList().iterator().next());
-        results.add(counts);
-
+        addRow(results, srcResourceList.getResultDesc(), targetResourceList.getResultDesc());
+        addRow(results, srcResourceList.getResultList().iterator().next(), srcResourceList.getResultList().iterator().next());
         return results;
     }
 
+    private void addRow(List<Map<String, Object>> table, Object srcValue, Object targetValue) {
+        Map<String, Object> values = new LinkedHashMap<>();
+        values.put("src", srcValue);
+        values.put("target", targetValue);
+        table.add(values);
+    }
 }
