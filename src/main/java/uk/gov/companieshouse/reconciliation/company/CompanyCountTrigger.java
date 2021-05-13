@@ -25,7 +25,7 @@ public class CompanyCountTrigger extends RouteBuilder {
                 .setHeader("Target", simple("{{endpoint.mongodb.company_profile_count}}"))
                 .setHeader("TargetName", simple("MongoDB"))
                 .setHeader("Comparison", simple("company profiles"))
-                .setHeader("Destination", simple("{{endpoint.output}}"))
+                .setHeader("Destination", simple("{{endpoint.company.output}}"))
                 .setHeader("Upload", simple("{{endpoint.s3.upload}}"))
                 .setHeader("Presign", simple("{{endpoint.s3presigner.download}}"))
                 .setHeader(AWS2S3Constants.KEY, simple("company/count_${date:now:yyyyMMdd}-${date:now:hhmmss}.csv"))

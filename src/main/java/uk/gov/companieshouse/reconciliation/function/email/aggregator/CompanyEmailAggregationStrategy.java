@@ -10,7 +10,7 @@ import java.util.Optional;
 /**
  * Aggregates comparison messages into a {@link uk.gov.companieshouse.reconciliation.model.ResourceLinksWrapper collection of links}.
  */
-public class EmailAggregationStrategy implements AggregationStrategy {
+public class CompanyEmailAggregationStrategy implements AggregationStrategy {
 
     private static final String RESOURCE_LINKS_HEADER = "ResourceLinks";
     private static final String COMPARE_COUNT_LINK_HEADER = "CompareCountLink";

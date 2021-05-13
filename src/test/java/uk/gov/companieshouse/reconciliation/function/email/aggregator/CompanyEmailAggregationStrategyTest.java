@@ -19,14 +19,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
-public class EmailAggregationStrategyTest {
+public class CompanyEmailAggregationStrategyTest {
 
-    private EmailAggregationStrategy emailAggregationStrategy;
+    private CompanyEmailAggregationStrategy companyEmailAggregationStrategy;
     private CamelContext context;
 
     @BeforeEach
     void setUp() {
-        emailAggregationStrategy = new EmailAggregationStrategy();
+        companyEmailAggregationStrategy = new CompanyEmailAggregationStrategy();
         context = new DefaultCamelContext();
     }
 
@@ -38,7 +38,7 @@ public class EmailAggregationStrategyTest {
         exchange.getIn().setHeader("CompareCountDescription", "Description");
 
         //when
-        Exchange result = emailAggregationStrategy.aggregate(null, exchange);
+        Exchange result = companyEmailAggregationStrategy.aggregate(null, exchange);
         ResourceLink wrapper = result.getIn().getHeader("ResourceLinks", ResourceLinksWrapper.class).getDownloadLinkList().get(0);
 
         //then
@@ -61,7 +61,7 @@ public class EmailAggregationStrategyTest {
         newExchange.getIn().setHeader("CompareCollectionDescription", "CollectionDescription");
 
         //when
-        Exchange result = emailAggregationStrategy.aggregate(oldExchange, newExchange);
+        Exchange result = companyEmailAggregationStrategy.aggregate(oldExchange, newExchange);
         ResourceLinksWrapper wrapper = result.getIn().getHeader("ResourceLinks", ResourceLinksWrapper.class);
         ResourceLink compareCollectionLink = wrapper.getDownloadLinkList().get(1);
 
@@ -77,7 +77,7 @@ public class EmailAggregationStrategyTest {
         Exchange exchange = new DefaultExchange(context);
 
         //when
-        Executable actual = () -> emailAggregationStrategy.aggregate(null, exchange);
+        Executable actual = () -> companyEmailAggregationStrategy.aggregate(null, exchange);
 
         //then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, actual);
