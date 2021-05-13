@@ -29,7 +29,6 @@ public class CompareCollectionRoute extends RouteBuilder {
                 .simple("${header.Target}")
                 .bean(CompareCollectionTransformer.class)
                 .marshal().csv()
-                .log("${body}")
                 .toD("${header.Destination}");
     }
 }
