@@ -34,9 +34,13 @@ public class CompareCollectionRoute extends RouteBuilder {
                 .toD("${header.Upload}")
                 .toD("${header.Presign}")
                 .setHeader("CompareCollectionLink", body())
-                .setHeader("CompareCollectionDescription", simple("Comparisons completed for ${header.Comparison} in ${header.SrcName} and ${header.TargetName}."))
+                .choice()
+                .when(header("ElasticsearchDescription"))
+                    .setHeader("CompareCollectionDescription", simple("Comparisons completed for ${header.Comparison} in ${header.MongoDescription} and ${header.ElasticsearchDescription}."))
+                .when(header("OracleDescription"))
+                    .setHeader("CompareCollectionDescription", simple("Comparisons completed for ${header.Comparison} in ${header.MongoDescription} and ${header.OracleDescription}."))
+                .end()
                 .log("Compare Collection: ${header.CompareCollectionDescription}")
                 .toD("${header.Destination}");
-
     }
 }

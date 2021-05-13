@@ -32,7 +32,6 @@ import java.util.Collections;
  * Weight = 0 then both endpoints have an equal number of endpoints. If Weight > 0 then the first endpoint has more
  * resources than the first endpoint.
  * WeightAbs: An unsigned integer indicating how many more resources one endpoint has than another.
- * CompareCountBody: The body composed of results gathered from this comparison.
  */
 @Component
 public class CompareCountRoute extends RouteBuilder {
@@ -78,6 +77,6 @@ public class CompareCountRoute extends RouteBuilder {
                         .setHeader("CompareCountDescription",simple("${header.SrcName} and ${header.TargetName} contain the same number of ${header.Comparison}."))
                 .end()
                 .log("Compare Count: ${header.CompareCountDescription}")
-                .to("{{endpoint.output}}");
+                .toD("${header.Destination}");
     }
 }

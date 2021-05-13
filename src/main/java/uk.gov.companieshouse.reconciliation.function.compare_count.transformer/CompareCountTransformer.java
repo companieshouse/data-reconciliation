@@ -38,8 +38,8 @@ public class CompareCountTransformer {
         results.add(names);
 
         Map<String, Object> counts = new LinkedHashMap<>();
-        counts.put("srcCount", srcResourceList.getResultList().get(0));
-        counts.put("targetCount", targetResourceList.getResultList().get(0));
+        counts.put("srcCount", srcResourceList.getResultList().iterator().next());
+        counts.put("targetCount", srcResourceList.getResultList().iterator().next());
         results.add(counts);
 
         return results;
