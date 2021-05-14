@@ -13,10 +13,8 @@ import java.util.Optional;
 public class CompanyEmailAggregationStrategy implements AggregationStrategy {
 
     private static final String RESOURCE_LINKS_HEADER = "ResourceLinks";
-    private static final String COMPARE_COUNT_LINK_HEADER = "CompareCountLink";
-    private static final String COMPARE_COLLECTION_LINK_HEADER = "CompareCollectionLink";
-    private static final String COMPARE_COUNT_DESCRIPTION_HEADER = "CompareCountDescription";
-    private static final String COMPARE_COLLECTION_DESCRIPTION_HEADER = "CompareCollectionDescription";
+    private static final String LINK_REFERENCE_HEADER = "ResourceLinkReference";
+    private static final String LINK_DESCRIPTION_HEADER = "ResourceLinkDescription";
 
     /**
      * Aggregates comparison messages.<br>
@@ -39,14 +37,11 @@ public class CompanyEmailAggregationStrategy implements AggregationStrategy {
         //on first invocation, oldExchange will be null as this is the first message that we are aggregating
         Exchange exchange = Optional.ofNullable(oldExchange).orElse(newExchange);
         ResourceLinksWrapper downloadLinks = createOrGetResourceLinks(exchange);
-        Optional<String> compareCountLink = header(newExchange, COMPARE_COUNT_LINK_HEADER);
-        Optional<String> compareCollectionLink = header(newExchange, COMPARE_COLLECTION_LINK_HEADER);
-        if (compareCountLink.isPresent()) {
-            downloadLinks.addDownloadLink(compareCountLink.get(), newExchange.getIn().getHeader(COMPARE_COUNT_DESCRIPTION_HEADER, String.class));
-        } else if (compareCollectionLink.isPresent()) {
-            downloadLinks.addDownloadLink(compareCollectionLink.get(), newExchange.getIn().getHeader(COMPARE_COLLECTION_DESCRIPTION_HEADER, String.class));
+        Optional<String> linkReference = header(newExchange, LINK_REFERENCE_HEADER);
+        if (linkReference.isPresent()) {
+            downloadLinks.addDownloadLink(linkReference.get(), header(newExchange, LINK_DESCRIPTION_HEADER).orElse(null));
         } else {
-            throw new IllegalArgumentException("Expected links not present: CompareCountLink, CompareCollectionLink");
+            throw new IllegalArgumentException("Mandatory header not present: ResourceLinkReference");
         }
         return exchange;
     }

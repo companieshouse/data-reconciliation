@@ -50,7 +50,7 @@ public class CompareCountRouteTest {
     void testEndpointAIsGreaterThanEndpointB() throws InterruptedException {
         mockCorporateBodyCountEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(BigDecimal.valueOf(15)));
         mockCompanyProfileCountEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(10L));
-        mockResult.allMessages().header("CompareCountDescription").isEqualTo("A has 5 more things than B.");
+        mockResult.allMessages().header("ResourceLinkDescription").isEqualTo("A has 5 more things than B.");
         template.sendBodyAndHeaders(0, createHeaders());
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -59,7 +59,7 @@ public class CompareCountRouteTest {
     void testEndpointBIsGreaterThanEndpointA() throws InterruptedException {
         mockCorporateBodyCountEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(BigDecimal.valueOf(10)));
         mockCompanyProfileCountEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(20L));
-        mockResult.allMessages().header("CompareCountDescription").isEqualTo("B has 10 more things than A.");
+        mockResult.allMessages().header("ResourceLinkDescription").isEqualTo("B has 10 more things than A.");
         template.sendBodyAndHeaders(0, createHeaders());
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -68,7 +68,7 @@ public class CompareCountRouteTest {
     void testEndpointsAreTheSame() throws InterruptedException {
         mockCorporateBodyCountEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(BigDecimal.valueOf(10)));
         mockCompanyProfileCountEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(10));
-        mockResult.allMessages().header("CompareCountDescription").isEqualTo("A and B contain the same number of things.");
+        mockResult.allMessages().header("ResourceLinkDescription").isEqualTo("A and B contain the same number of things.");
         template.sendBodyAndHeaders(0, createHeaders());
         MockEndpoint.assertIsSatisfied(context);
     }

@@ -19,27 +19,10 @@ import java.util.HashSet;
 @Component
 public class MongoCollectionRoute extends RouteBuilder {
 
-    @Value("${results.initial.capacity}")
-    private int initialCapacity;
-
     @Override
     public void configure() throws Exception {
         from("direct:mongodb-collection")
                 .toD("${header.MongoEndpoint}")
-                .split()
-                .body()
-                .aggregationStrategy((prev, curr) -> {
-                    String result = curr.getIn().getBody(String.class);
-                    if(prev == null) {
-                        ResourceList resourceList = new ResourceList(new HashSet<>(initialCapacity), curr.getIn().getHeader("MongoDescription", String.class));
-                        resourceList.add(result);
-                        curr.getIn().setHeader(curr.getIn().getHeader("MongoTargetHeader", String.class), resourceList);
-                        return curr;
-                    }
-                    ResourceList resourceList = prev.getIn().getHeader(prev.getIn().getHeader("MongoTargetHeader", String.class), ResourceList.class);
-                    resourceList.add(result);
-                    return prev;
-                })
-                .process();
+                .bean(MongoDistinctSelectionTransformer.class);
     }
 }

@@ -33,14 +33,14 @@ public class CompareCollectionRoute extends RouteBuilder {
                 .marshal().csv()
                 .toD("${header.Upload}")
                 .toD("${header.Presign}")
-                .setHeader("CompareCollectionLink", body())
+                .setHeader("ResourceLinkReference", body())
                 .choice()
                 .when(header("ElasticsearchDescription"))
-                    .setHeader("CompareCollectionDescription", simple("Comparisons completed for ${header.Comparison} in ${header.MongoDescription} and ${header.ElasticsearchDescription}."))
+                    .setHeader("ResourceLinkDescription", simple("Comparisons completed for ${header.Comparison} in ${header.MongoDescription} and ${header.ElasticsearchDescription}."))
                 .when(header("OracleDescription"))
-                    .setHeader("CompareCollectionDescription", simple("Comparisons completed for ${header.Comparison} in ${header.MongoDescription} and ${header.OracleDescription}."))
+                    .setHeader("ResourceLinkDescription", simple("Comparisons completed for ${header.Comparison} in ${header.MongoDescription} and ${header.OracleDescription}."))
                 .end()
-                .log("Compare Collection: ${header.CompareCollectionDescription}")
+                .log("Compare Collection: ${header.ResourceLinkDescription}")
                 .toD("${header.Destination}");
     }
 }

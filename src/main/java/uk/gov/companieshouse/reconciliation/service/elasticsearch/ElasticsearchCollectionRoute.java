@@ -24,28 +24,11 @@ import java.util.Iterator;
 @Component
 public class ElasticsearchCollectionRoute extends RouteBuilder {
 
-    @Value("${results.initial.capacity}")
-    private int initialCapacity;
-
     @Override
     public void configure() throws Exception {
         from("direct:elasticsearch-collection")
                 .setBody(header("ElasticsearchQuery"))
-                .enrich()
-                .simple("${header.ElasticsearchEndpoint}")
-                .aggregationStrategy((curr, es) -> {
-                    ResourceList indices = new ResourceList(new HashSet<>(initialCapacity), curr.getIn().getHeader("ElasticsearchDescription", String.class));
-                    Iterator<SearchHit> it = es.getIn().getBody(ElasticsearchSlicedScrollIterator.class);
-                    while (it.hasNext()) {
-                        indices.add(it.next().getId());
-                        Integer logIndices = curr.getIn().getHeader("ElasticsearchLogIndices", Integer.class);
-                        if (logIndices != null && indices.size() % logIndices == 0) {
-                            this.log.info("Indexed {} entries", indices.size());
-                        }
-                    }
-                    this.log.info("Indexed {} entries", indices.size());
-                    curr.getIn().setHeader(curr.getIn().getHeader("ElasticsearchTargetHeader", String.class), indices);
-                    return curr;
-                });
+                .toD("${header.ElasticsearchEndpoint}")
+                .bean(ElasticsearchTransformer.class);
     }
 }

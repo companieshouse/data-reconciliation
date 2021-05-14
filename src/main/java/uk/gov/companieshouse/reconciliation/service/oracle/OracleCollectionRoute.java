@@ -26,26 +26,7 @@ public class OracleCollectionRoute extends RouteBuilder {
     public void configure() throws Exception {
         from("direct:oracle-collection")
                 .setBody(header("OracleQuery"))
-                .enrich()
-                .simple("${header.OracleEndpoint}")
-                .split()
-                .method(OracleResultSplitter.class)
-                .aggregationStrategy((prev, curr) -> {
-                    String result = curr.getIn().getBody(String.class);
-                    if(prev == null) {
-                        ResourceList resourceList = new ResourceList(new HashSet<>(initialCapacity), curr.getIn().getHeader("OracleDescription", String.class));
-                        if(result != null) {
-                            resourceList.add(result);
-                        }
-                        curr.getIn().setHeader(curr.getIn().getHeader("OracleTargetHeader", String.class), resourceList);
-                        return curr;
-                    }
-                    ResourceList resourceList = prev.getIn().getHeader(prev.getIn().getHeader("OracleTargetHeader", String.class), ResourceList.class);
-                    if(result != null) {
-                        resourceList.add(result);
-                    }
-                    return prev;
-                })
-                .process();
+                .toD("${header.OracleEndpoint}")
+                .bean(OracleResultCollectionTransformer.class);
     }
 }

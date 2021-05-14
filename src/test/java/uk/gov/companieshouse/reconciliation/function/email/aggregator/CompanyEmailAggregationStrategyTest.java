@@ -12,33 +12,30 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.reconciliation.model.ResourceLink;
 import uk.gov.companieshouse.reconciliation.model.ResourceLinksWrapper;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
-public class CompanyEmailAggregationStrategyTest {
+public class EmailAggregationStrategyTest {
 
-    private CompanyEmailAggregationStrategy companyEmailAggregationStrategy;
+    private EmailAggregationStrategy emailAggregationStrategy;
     private CamelContext context;
 
     @BeforeEach
     void setUp() {
-        companyEmailAggregationStrategy = new CompanyEmailAggregationStrategy();
+        emailAggregationStrategy = new EmailAggregationStrategy();
         context = new DefaultCamelContext();
     }
 
     @Test
-    void testAddResourceLinksContainingCompareCountLink() {
+    void testAddResourceLink() {
         //given
         Exchange exchange = new DefaultExchange(context);
-        exchange.getIn().setHeader("CompareCountLink", "Link");
-        exchange.getIn().setHeader("CompareCountDescription", "Description");
+        exchange.getIn().setHeader("ResourceLinkReference", "Link");
+        exchange.getIn().setHeader("ResourceLinkDescription", "Description");
 
         //when
-        Exchange result = companyEmailAggregationStrategy.aggregate(null, exchange);
+        Exchange result = emailAggregationStrategy.aggregate(null, exchange);
         ResourceLink wrapper = result.getIn().getHeader("ResourceLinks", ResourceLinksWrapper.class).getDownloadLinkList().get(0);
 
         //then
@@ -48,39 +45,15 @@ public class CompanyEmailAggregationStrategyTest {
     }
 
     @Test
-    void testAddResourceLinksContainingCompareCollectionLink() {
-        //given
-        Exchange oldExchange = new DefaultExchange(context);
-        oldExchange.getIn().setHeader("CompareCountLink", "CountLink");
-        oldExchange.getIn().setHeader("CompareCountDescription", "CountDescription");
-        List<ResourceLink> links = new ArrayList<>();
-        links.add(new ResourceLink("Link", "Description"));
-        oldExchange.getIn().setHeader("ResourceLinks", new ResourceLinksWrapper(links));
-        Exchange newExchange = new DefaultExchange(context);
-        newExchange.getIn().setHeader("CompareCollectionLink", "CollectionLink");
-        newExchange.getIn().setHeader("CompareCollectionDescription", "CollectionDescription");
-
-        //when
-        Exchange result = companyEmailAggregationStrategy.aggregate(oldExchange, newExchange);
-        ResourceLinksWrapper wrapper = result.getIn().getHeader("ResourceLinks", ResourceLinksWrapper.class);
-        ResourceLink compareCollectionLink = wrapper.getDownloadLinkList().get(1);
-
-        //then
-        assertEquals(oldExchange, result);
-        assertEquals("CollectionLink", compareCollectionLink.getDownloadLink());
-        assertEquals("CollectionDescription", compareCollectionLink.getDescription());
-    }
-
-    @Test
-    void testThrowIllegalArgumentExceptionIfNeitherHeaderPresent() {
+    void testThrowIllegalArgumentExceptionIfResourceLinkAbsent() {
         //given
         Exchange exchange = new DefaultExchange(context);
 
         //when
-        Executable actual = () -> companyEmailAggregationStrategy.aggregate(null, exchange);
+        Executable actual = () -> emailAggregationStrategy.aggregate(null, exchange);
 
         //then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, actual);
-        assertEquals("Expected links not present: CompareCountLink, CompareCollectionLink", exception.getMessage());
+        assertEquals("Mandatory header not present: ResourceLinkReference", exception.getMessage());
     }
 }
