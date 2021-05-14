@@ -57,11 +57,11 @@ public class SendEmailRouteTest {
                 });
 
         Exchange firstExchange = ExchangeBuilder.anExchange(context)
-                .withHeader("CompareCountLink", "Compare Count Link")
+                .withHeader("ResourceLinkReference", "Compare Count Link")
                 .build();
 
         Exchange secondExchange = ExchangeBuilder.anExchange(context)
-                .withHeader("CompareCollectionLink", "Compare Collection Link")
+                .withHeader("ResourceLinkReference", "Compare Collection Link")
                 .build();
 
         kafkaEndpoint.expectedMessageCount(1);
