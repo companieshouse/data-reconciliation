@@ -69,7 +69,7 @@ public class CompareCollectionRouteTest {
         Map<String, Object> headers = new HashMap<>();
         headers.put("Src", "mock:fruitTree");
         headers.put("Target", "mock:fruitBasket");
-        headers.put("Destination", "mock:compare_result");
+        headers.put("Destination", "mock:result");
         return headers;
     }
 }

@@ -4,6 +4,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.component.aws2.s3.AWS2S3Constants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.mongodb.MongoDbConstants;
 import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
@@ -46,6 +47,10 @@ public class CompanyNumberCompareOracleMongoDBTriggerTest {
         compareCollection.expectedHeaderReceived("MongoTargetHeader", "TargetList");
         compareCollection.expectedHeaderReceived("Target", "direct:mongodb-collection");
         compareCollection.expectedHeaderReceived("Destination", "mock:result");
+        compareCollection.expectedHeaderReceived("Comparison", "company profiles");
+        compareCollection.expectedHeaderReceived("Upload", "mock:s3_bucket_destination");
+        compareCollection.expectedHeaderReceived("Presign", "mock:s3_download_link");
+        compareCollection.expectedHeaderReceived(AWS2S3Constants.DOWNLOAD_LINK_EXPIRATION_TIME, 2000L);
         compareCollection.expectedHeaderReceived(MongoDbConstants.DISTINCT_QUERY_FIELD, "_id");
         producerTemplate.sendBody(0);
         MockEndpoint.assertIsSatisfied(context);

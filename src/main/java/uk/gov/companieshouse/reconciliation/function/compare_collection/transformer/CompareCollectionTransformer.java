@@ -22,6 +22,7 @@ public class CompareCollectionTransformer {
     /**
      * Transform two lists into a list of key-value pairings representing the symmetric difference between both lists
      * and the endpoints their elements are exclusive to.
+     * The headers of the two columns is set to Company Number & Exclusive To respectively.
      *
      * @param srcResourceList    A {@link ResourceList list of results} obtained from the first endpoint.
      * @param targetResourceList A {@link ResourceList list of results} obtained from the second endpoint.
@@ -49,8 +50,8 @@ public class CompareCollectionTransformer {
 
     private void addResultHeaders(List<Map<String, Object>> result) {
         Map<String, Object> headers = new LinkedHashMap<>();
-        headers.put("item", "item");
-        headers.put("source", "source");
+        headers.put("Company Number", "Company Number");
+        headers.put("Exclusive To", "Exclusive To");
         result.add(headers);
     }
 

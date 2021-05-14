@@ -4,6 +4,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.component.aws2.s3.AWS2S3Constants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
 import org.junit.jupiter.api.AfterEach;
@@ -40,7 +41,9 @@ public class CompanyCountTriggerTest {
         compareCount.expectedHeaderReceived("Target", "mock:company_profile_count");
         compareCount.expectedHeaderReceived("TargetName", "MongoDB");
         compareCount.expectedHeaderReceived("Comparison", "company profiles");
-        compareCount.expectedHeaderReceived("Destination", "mock:result");
+        compareCount.expectedHeaderReceived("Upload", "mock:s3_bucket_destination");
+        compareCount.expectedHeaderReceived("Presign", "mock:s3_download_link");
+        compareCount.expectedHeaderReceived(AWS2S3Constants.DOWNLOAD_LINK_EXPIRATION_TIME, 2000L);
         compareCount.expectedBodyReceived().body().isEqualTo("SELECT 1 FROM DUAL");
         producerTemplate.sendBody(0);
         MockEndpoint.assertIsSatisfied(context);

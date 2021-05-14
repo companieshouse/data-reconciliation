@@ -44,7 +44,7 @@ public class DisqualifiedOfficerCompareTriggerTest {
         compareCollection.expectedHeaderReceived("MongoEndpoint", "mock:officer_compare_target");
         compareCollection.expectedHeaderReceived("MongoDescription", "MongoDB");
         compareCollection.expectedHeaderReceived("Target", "direct:mongodb-collection");
-        compareCollection.expectedHeaderReceived("Destination", "mock:result");
+        compareCollection.expectedHeaderReceived("Destination", "mock:log-result");
         compareCollection.expectedHeaderReceived(MongoDbConstants.DISTINCT_QUERY_FIELD, "officer_id_raw");
         producerTemplate.sendBody(0);
         MockEndpoint.assertIsSatisfied(context);

@@ -52,6 +52,16 @@
             <version>${apache.camel.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.apache.camel.springboot</groupId>
+            <artifactId>camel-kafka-starter</artifactId>
+            <version>${apache.camel.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel.springboot</groupId>
+            <artifactId>camel-avro-starter</artifactId>
+            <version>${apache.camel.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.elasticsearch</groupId>
             <artifactId>elasticsearch</artifactId>
             <version>${elasticsearch.version}</version>
@@ -70,6 +80,16 @@
             <groupId>org.apache.camel.springboot</groupId>
             <artifactId>camel-csv-starter</artifactId>
             <version>${apache.camel.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-aws2-s3</artifactId>
+            <version>${apache.camel.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>uk.gov.companieshouse</groupId>
+            <artifactId>kafka-models</artifactId>
+            <version>1.0.22</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
