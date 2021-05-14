@@ -10,6 +10,7 @@ import org.apache.camel.builder.ExchangeBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
+import org.apache.camel.test.spring.junit5.UseAdviceWith;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 @DirtiesContext
 @TestPropertySource(locations = "classpath:application-stubbed.properties")
+@UseAdviceWith
 public class SendEmailRouteTest {
 
     @Autowired
@@ -46,15 +48,16 @@ public class SendEmailRouteTest {
     @Test
     void testSendEmailAggregatesTwoMessage() throws Exception {
         AdviceWith.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
-                    @Override
-                    public void configure() throws Exception {
-                        interceptSendToEndpoint("mock:kafka-endpoint").process(
-                                exchange -> {
-                                    ResourceLinksWrapper downloadsList = exchange.getIn().getHeader("ResourceLinks", ResourceLinksWrapper.class);
-                                    assertEquals(2, downloadsList.getDownloadLinkList().size());
-                                });
-                    }
-                });
+            @Override
+            public void configure() throws Exception {
+                interceptSendToEndpoint("mock:kafka-endpoint")
+                        .process(exchange -> {
+                            ResourceLinksWrapper downloadsList = exchange.getIn().getHeader("ResourceLinks", ResourceLinksWrapper.class);
+                            assertEquals(3, downloadsList.getDownloadLinkList().size());
+                        });
+            }
+        });
+        context.start();
 
         Exchange firstExchange = ExchangeBuilder.anExchange(context)
                 .withHeader("ResourceLinkReference", "Compare Count Link")
@@ -64,9 +67,14 @@ public class SendEmailRouteTest {
                 .withHeader("ResourceLinkReference", "Compare Collection Link")
                 .build();
 
+        Exchange thirdExchange = ExchangeBuilder.anExchange(context)
+                .withHeader("ResourceLinkReference", "Compare Elasticsearch Mongo Link")
+                .build();
+
         kafkaEndpoint.expectedMessageCount(1);
         producerTemplate.send(firstExchange);
         producerTemplate.send(secondExchange);
+        producerTemplate.send(thirdExchange);
 
         MockEndpoint.assertIsSatisfied(context);
     }
