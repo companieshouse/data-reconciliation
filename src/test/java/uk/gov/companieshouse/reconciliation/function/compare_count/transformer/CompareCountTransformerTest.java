@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.reconciliation.function.compare_count;
+package uk.gov.companieshouse.reconciliation.function.compare_count.transformer;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

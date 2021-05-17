@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.reconciliation.function.compare_count;
+package uk.gov.companieshouse.reconciliation.function.compare_count.transformer;
 
 import org.apache.camel.Header;
 import org.springframework.stereotype.Component;
