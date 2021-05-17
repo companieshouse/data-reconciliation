@@ -20,16 +20,16 @@ public class CompanyCountTrigger extends RouteBuilder {
     public void configure() throws Exception {
         from("{{endpoint.company_count.cron.tab}}")
                 .setBody(constant("{{query.oracle.corporate_body_count}}"))
-                .setHeader("Src", simple("{{endpoint.oracle.corporate_body_count}}"))
-                .setHeader("SrcName", simple("Oracle"))
-                .setHeader("Target", simple("{{endpoint.mongodb.company_profile_count}}"))
-                .setHeader("TargetName", simple("MongoDB"))
-                .setHeader("Comparison", simple("company profiles"))
-                .setHeader("Destination", simple("{{endpoint.output}}"))
-                .setHeader("Upload", simple("{{endpoint.s3.upload}}"))
-                .setHeader("Presign", simple("{{endpoint.s3presigner.download}}"))
+                .setHeader("Src", constant("{{endpoint.oracle.corporate_body_count}}"))
+                .setHeader("SrcName", constant("Oracle"))
+                .setHeader("Target", constant("{{endpoint.mongodb.company_profile_count}}"))
+                .setHeader("TargetName", constant("MongoDB"))
+                .setHeader("Comparison", constant("company profiles"))
+                .setHeader("Destination", constant("{{endpoint.output}}"))
+                .setHeader("Upload", constant("{{endpoint.s3.upload}}"))
+                .setHeader("Presign", constant("{{endpoint.s3presigner.download}}"))
                 .setHeader(AWS2S3Constants.KEY, simple("company/count_${date:now:yyyyMMdd}T${date:now:hhmmss}.csv"))
-                .setHeader(AWS2S3Constants.DOWNLOAD_LINK_EXPIRATION_TIME, simple("{{aws.expiry}}"))
+                .setHeader(AWS2S3Constants.DOWNLOAD_LINK_EXPIRATION_TIME, constant("{{aws.expiry}}"))
                 .to("{{function.name.compare_count}}");
     }
 }

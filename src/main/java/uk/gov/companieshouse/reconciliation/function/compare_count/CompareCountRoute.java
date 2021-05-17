@@ -3,7 +3,6 @@ package uk.gov.companieshouse.reconciliation.function.compare_count;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.reconciliation.function.compare_collection.entity.ResourceList;
-import uk.gov.companieshouse.reconciliation.function.compare_count.transformer.CompareCountTransformer;
 
 import java.math.BigDecimal;
 import java.util.Collections;
