@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.reconciliation.company;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.aws2.s3.AWS2S3Constants;
 import org.apache.camel.component.mongodb.MongoDbConstants;
 import org.springframework.stereotype.Component;
 
@@ -26,7 +27,11 @@ public class CompanyNumberCompareMongoDBPrimarySearch extends RouteBuilder {
                 .setHeader("ElasticsearchLogIndices", simple("{{endpoint.elasticsearch.log_indices}}"))
                 .setHeader("Target", simple("{{endpoint.elasticsearch.collection}}"))
                 .setHeader("Comparison", simple("primary search index"))
-                .setHeader("Destination", simple("{{endpoint.log.output}}"))
+                .setHeader("Destination", simple("{{endpoint.output}}"))
+                .setHeader("Upload", simple("{{endpoint.s3.upload}}"))
+                .setHeader("Presign", simple("{{endpoint.s3presigner.download}}"))
+                .setHeader(AWS2S3Constants.KEY, simple("company/collection_primary_mongo_${date:now:yyyyMMdd}T${date:now:hhmmss}.csv"))
+                .setHeader(AWS2S3Constants.DOWNLOAD_LINK_EXPIRATION_TIME, simple("{{aws.expiry}}"))
                 .to("{{function.name.compare_collection}}");
     }
 }
