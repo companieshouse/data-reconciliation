@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.reconciliation.service.elasticsearch;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.caffeine.CaffeineConstants;
 import org.elasticsearch.search.SearchHit;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -27,8 +28,17 @@ public class ElasticsearchCollectionRoute extends RouteBuilder {
     @Override
     public void configure() throws Exception {
         from("direct:elasticsearch-collection")
-                .setBody(header("ElasticsearchQuery"))
-                .toD("${header.ElasticsearchEndpoint}")
-                .bean(ElasticsearchTransformer.class);
+                .setHeader(CaffeineConstants.ACTION, constant(CaffeineConstants.ACTION_GET))
+                .setHeader(CaffeineConstants.KEY, constant("elasticsearchCache"))
+                .to("{{endpoint.cache}}")
+                .choice()
+                .when(body().isNull())
+                    .setBody(header("ElasticsearchQuery"))
+                    .toD("${header.ElasticsearchEndpoint}")
+                    .bean(ElasticsearchTransformer.class)
+                    .setHeader(CaffeineConstants.ACTION, constant(CaffeineConstants.ACTION_PUT))
+                    .setHeader(CaffeineConstants.KEY, constant("elasticsearchCache"))
+                .end()
+                .to("{{endpoint.cache}}");
     }
 }

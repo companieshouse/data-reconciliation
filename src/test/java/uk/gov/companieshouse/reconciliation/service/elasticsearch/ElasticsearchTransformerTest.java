@@ -40,8 +40,7 @@ public class ElasticsearchTransformerTest {
         when(iterator.next()).thenReturn(new SearchHit(123, "12345678", new Text("{}"), new HashMap<>()));
 
         //when
-        transformer.transform(iterator, "Description", "Target", 1, headers);
-        ResourceList actual = (ResourceList)headers.get("Target");
+        ResourceList actual = transformer.transform(iterator, "Description", 1);
 
         //then
         verify(iterator, times(2)).hasNext();

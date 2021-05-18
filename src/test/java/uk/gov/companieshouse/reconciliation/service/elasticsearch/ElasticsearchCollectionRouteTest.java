@@ -5,6 +5,8 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.ExpressionBuilder;
+import org.apache.camel.component.caffeine.CaffeineConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
@@ -20,6 +22,7 @@ import org.springframework.test.context.TestPropertySource;
 import uk.gov.companieshouse.reconciliation.component.elasticsearch.slicedscroll.client.ElasticsearchSlicedScrollIterator;
 import uk.gov.companieshouse.reconciliation.function.compare_collection.entity.ResourceList;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,29 +47,49 @@ public class ElasticsearchCollectionRouteTest {
     @EndpointInject("mock:elasticsearch-stub")
     private MockEndpoint elasticsearchEndpoint;
 
+    @EndpointInject("mock:cache")
+    private MockEndpoint cache;
+
     @Mock
     private ElasticsearchSlicedScrollIterator iterator;
 
     @AfterEach
     void after() {
         elasticsearchEndpoint.reset();
+        cache.reset();
     }
 
     @Test
-    void testStoreResourceListInRequiredHeader() throws InterruptedException {
+    void testStoreResourceListInRequiredHeaderUncached() throws InterruptedException {
         when(iterator.hasNext()).thenReturn(true, false);
         when(iterator.next()).thenReturn(new SearchHit(123, "12345678", new Text("{}"), new HashMap<>()));
         elasticsearchEndpoint.expectedBodyReceived().constant("QUERY");
         elasticsearchEndpoint.whenAnyExchangeReceived(exchange ->
             exchange.getIn().setBody(iterator)
         );
+        cache.expectedHeaderValuesReceivedInAnyOrder(CaffeineConstants.ACTION, CaffeineConstants.ACTION_GET, CaffeineConstants.ACTION_PUT);
+        cache.expectedHeaderValuesReceivedInAnyOrder(CaffeineConstants.KEY, "elasticsearchCache", "elasticsearchCache");
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeaders(getHeaders());
         Exchange actual = producer.send(exchange);
-        assertEquals("Description", ((ResourceList)actual.getIn().getHeaders().get("Output")).getResultDesc());
-        assertTrue(((ResourceList)actual.getIn().getHeaders().get("Output")).getResultList().contains("12345678"));
+        assertEquals("Description", actual.getIn().getBody(ResourceList.class).getResultDesc());
+        assertTrue(actual.getIn().getBody(ResourceList.class).getResultList().contains("12345678"));
         verify(iterator, times(2)).hasNext();
         verify(iterator, times(1)).next();
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    void testStoreResourceListInRequiredHeaderCached() throws InterruptedException {
+        elasticsearchEndpoint.expectedMessageCount(0);
+        cache.expectedHeaderReceived(CaffeineConstants.ACTION, CaffeineConstants.ACTION_GET);
+        cache.expectedHeaderReceived(CaffeineConstants.KEY, "elasticsearchCache");
+        cache.returnReplyBody(ExpressionBuilder.constantExpression(new ResourceList(Collections.singletonList("12345678"),"resources")));
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeaders(getHeaders());
+        Exchange actual = producer.send(exchange);
+        assertEquals("resources", actual.getIn().getBody(ResourceList.class).getResultDesc());
+        assertTrue(actual.getIn().getBody(ResourceList.class).getResultList().contains("12345678"));
         MockEndpoint.assertIsSatisfied(context);
     }
 

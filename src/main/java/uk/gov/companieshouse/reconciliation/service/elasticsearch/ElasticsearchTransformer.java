@@ -22,9 +22,8 @@ public class ElasticsearchTransformer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ElasticsearchTransformer.class);
 
-    public void transform(@Body Iterator<SearchHit> it, @Header("ElasticsearchDescription") String description,
-                          @Header("ElasticsearchTargetHeader") String targetHeader, @Header("ElasticsearchLogIndices") Integer logIndices,
-                          @Headers Map<String, Object> headers) {
+    public ResourceList transform(@Body Iterator<SearchHit> it, @Header("ElasticsearchDescription") String description,
+                          @Header("ElasticsearchLogIndices") Integer logIndices) {
         ResourceList indices = new ResourceList(new HashSet<>(initialCapacity), description);
         while (it.hasNext()) {
             indices.add(it.next().getId()); //id cannot be null
@@ -33,6 +32,7 @@ public class ElasticsearchTransformer {
             }
         }
         LOGGER.info("Indexed {} entries", indices.size());
-        headers.put(targetHeader, indices);
+
+        return indices;
     }
 }
