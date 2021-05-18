@@ -34,9 +34,6 @@ public class SendEmailRouteTest {
     @EndpointInject("mock:kafka-endpoint")
     private MockEndpoint kafkaEndpoint;
 
-    @EndpointInject("mock:second-kafka-endpoint")
-    private MockEndpoint secondKafkaEndpoint;
-
     @Produce("direct:send-email")
     private ProducerTemplate producerTemplate;
 
