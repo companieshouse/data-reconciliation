@@ -47,6 +47,7 @@ public class KafkaRouteTest {
         exchange.getIn().setHeader("ResourceLinks", new ResourceLinksWrapper(Collections.singletonList(new ResourceLink("link", "description"))));
         Exchange actual = kafkaRouteProducer.send(exchange);
         assertNull(actual.getIn().getHeader("Content-Type"));
+        assertNull(actual.getIn().getHeader("ResourceLinks"));
         MockEndpoint.assertIsSatisfied(context);
     }
 }
