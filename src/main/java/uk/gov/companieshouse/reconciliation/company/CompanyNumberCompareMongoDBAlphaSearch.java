@@ -25,7 +25,7 @@ public class CompanyNumberCompareMongoDBAlphaSearch extends RouteBuilder {
                 .setHeader("ElasticsearchTargetHeader", constant("TargetList"))
                 .setHeader("ElasticsearchLogIndices", simple("{{endpoint.elasticsearch.log_indices}}"))
                 .setHeader("Target", simple("{{endpoint.elasticsearch.collection}}"))
-                .setHeader("Comparison", simple("alphabetical search index"))
+                .setHeader("Comparison", constant("company numbers"))
                 .setHeader("Destination", simple("{{endpoint.log.output}}"))
                 .to("{{function.name.compare_collection}}");
     }
