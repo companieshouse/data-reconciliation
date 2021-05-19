@@ -45,7 +45,7 @@ public class CompareNumberCompareMongoDBPrimarySearchTest {
         compareCollection.expectedHeaderReceived("ElasticsearchDescription", "Primary Index");
         compareCollection.expectedHeaderReceived("ElasticsearchTargetHeader", "TargetList");
         compareCollection.expectedHeaderReceived("ElasticsearchLogIndices", "100000");
-        compareCollection.expectedHeaderReceived("Target", "direct:elasticsearch-collection");
+        compareCollection.expectedHeaderReceived("Target", "direct:elasticsearch-company_number-mapper");
         compareCollection.expectedHeaderReceived("Destination", "mock:result");
         compareCollection.expectedHeaderReceived("RecordType", "Company Number");
         compareCollection.expectedHeaderReceived(MongoDbConstants.DISTINCT_QUERY_FIELD, "_id");

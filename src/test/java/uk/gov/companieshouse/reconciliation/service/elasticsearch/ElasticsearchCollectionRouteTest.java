@@ -10,6 +10,7 @@ import org.apache.camel.component.caffeine.CaffeineConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
+import org.elasticsearch.common.bytes.BytesArray;
 import org.elasticsearch.common.text.Text;
 import org.elasticsearch.search.SearchHit;
 import org.junit.jupiter.api.AfterEach;
@@ -21,6 +22,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import uk.gov.companieshouse.reconciliation.component.elasticsearch.slicedscroll.client.ElasticsearchSlicedScrollIterator;
 import uk.gov.companieshouse.reconciliation.function.compare_collection.entity.ResourceList;
+import uk.gov.companieshouse.reconciliation.model.ResultModel;
+import uk.gov.companieshouse.reconciliation.model.Results;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -62,7 +65,9 @@ public class ElasticsearchCollectionRouteTest {
     @Test
     void testStoreResourceListInRequiredHeaderUncached() throws InterruptedException {
         when(iterator.hasNext()).thenReturn(true, false);
-        when(iterator.next()).thenReturn(new SearchHit(123, "12345678", new Text("{}"), new HashMap<>()));
+        SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), new HashMap<>());
+        hit.sourceRef(new BytesArray("{\"corporate_name_start\":\"ACME\",\"corporate_name_end\":\" LIMITED\"}"));
+        when(iterator.next()).thenReturn(hit);
         elasticsearchEndpoint.expectedBodyReceived().constant("QUERY");
         elasticsearchEndpoint.whenAnyExchangeReceived(exchange ->
             exchange.getIn().setBody(iterator)
@@ -72,8 +77,7 @@ public class ElasticsearchCollectionRouteTest {
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeaders(getHeaders());
         Exchange actual = producer.send(exchange);
-        assertEquals("Description", actual.getIn().getBody(ResourceList.class).getResultDesc());
-        assertTrue(actual.getIn().getBody(ResourceList.class).getResultList().contains("12345678"));
+        assertTrue(actual.getIn().getBody(Results.class).contains(new ResultModel("12345678", "ACME LIMITED")));
         verify(iterator, times(2)).hasNext();
         verify(iterator, times(1)).next();
         MockEndpoint.assertIsSatisfied(context);

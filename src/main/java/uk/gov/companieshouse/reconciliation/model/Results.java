@@ -11,11 +11,19 @@ public class Results {
         this.resultModels = resultModels;
     }
 
-    public void addResult(ResultModel resultModel) {
+    public void add(ResultModel resultModel) {
         resultModels.add(resultModel);
     }
 
     public Collection<ResultModel> getResultModels() {
         return Collections.unmodifiableCollection(resultModels);
+    }
+
+    public boolean contains(ResultModel entry) {
+        return resultModels.contains(entry);
+    }
+
+    public int size() {
+        return resultModels.size();
     }
 }
