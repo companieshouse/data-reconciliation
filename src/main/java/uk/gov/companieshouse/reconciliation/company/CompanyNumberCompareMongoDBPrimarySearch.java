@@ -27,7 +27,7 @@ public class CompanyNumberCompareMongoDBPrimarySearch extends RouteBuilder {
                 .setHeader("ElasticsearchLogIndices", simple("{{endpoint.elasticsearch.log_indices}}"))
                 .setHeader("Target", simple("{{endpoint.elasticsearch.collection}}"))
                 .setHeader("Comparison", constant("company numbers"))
-                .setHeader("Destination", simple("{{endpoint.output}}"))
+                .setHeader("Destination", simple("{{endpoint.company.output}}"))
                 .setHeader("Upload", simple("{{endpoint.s3.upload}}"))
                 .setHeader("Presign", simple("{{endpoint.s3presigner.download}}"))
                 .setHeader(AWS2S3Constants.KEY, simple("company/collection_primary_mongo_${date:now:yyyyMMdd}T${date:now:hhmmss}.csv"))

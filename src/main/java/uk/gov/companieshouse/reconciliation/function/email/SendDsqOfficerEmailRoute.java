@@ -4,18 +4,16 @@ import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.reconciliation.function.email.aggregator.EmailAggregationStrategy;
 
-/**
- * Sends an email with results gathered from comparison jobs.
- */
 @Component
-public class SendEmailRoute extends RouteBuilder {
+public class SendDsqOfficerEmailRoute extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-
-        from("direct:send-email")
+        from("direct:send-dsq_officer-email")
                 .aggregate(constant(true), new EmailAggregationStrategy())
-                .completionSize(3)
+                .completionSize(1)
+                .setHeader("CompletionDate", simple("${date:now:dd MMMM yyyy}"))
+                .setHeader("EmailSubject", simple("Disqualified officer comparisons (${header.CompletionDate})"))
                 .to("{{endpoint.kafka.sender}}");
     }
 }
