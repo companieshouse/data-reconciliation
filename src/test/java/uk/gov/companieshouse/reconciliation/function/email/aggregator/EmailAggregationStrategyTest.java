@@ -16,14 +16,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
-public class CompanyEmailAggregationStrategyTest {
+public class EmailAggregationStrategyTest {
 
-    private CompanyEmailAggregationStrategy emailAggregationStrategy;
+    private EmailAggregationStrategy emailAggregationStrategy;
     private CamelContext context;
 
     @BeforeEach
     void setUp() {
-        emailAggregationStrategy = new CompanyEmailAggregationStrategy();
+        emailAggregationStrategy = new EmailAggregationStrategy();
         context = new DefaultCamelContext();
     }
 

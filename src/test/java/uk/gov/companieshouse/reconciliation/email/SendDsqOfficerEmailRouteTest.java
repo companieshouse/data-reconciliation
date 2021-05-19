@@ -8,6 +8,7 @@ import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
+import org.apache.camel.test.spring.junit5.UseAdviceWith;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 @DirtiesContext
 @TestPropertySource(locations = "classpath:application-stubbed.properties")
+@UseAdviceWith
 public class SendDsqOfficerEmailRouteTest {
 
     @Autowired
@@ -50,8 +52,9 @@ public class SendDsqOfficerEmailRouteTest {
                         });
             }
         });
+        context.start();
         kafkaEndpoint.expectedMessageCount(1);
-        producerTemplate.sendBodyAndHeader(0, "CompareDsqOfficersLink", "link");
+        producerTemplate.sendBodyAndHeader(0, "ResourceLinkReference", "link");
         MockEndpoint.assertIsSatisfied(context);
     }
 }
