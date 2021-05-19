@@ -15,11 +15,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ElasticsearchCompanyNumberTransformerTest {
 
-    private ElasticsearchCompanyNumberTranformer transformer;
+    private ElasticsearchCompanyNumberTransformer transformer;
 
     @BeforeEach
     void setUp() {
-        transformer = new ElasticsearchCompanyNumberTranformer();
+        transformer = new ElasticsearchCompanyNumberTransformer();
     }
 
     @Test

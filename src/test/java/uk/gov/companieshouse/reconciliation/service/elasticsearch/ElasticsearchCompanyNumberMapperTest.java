@@ -28,15 +28,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest
 @DirtiesContext
 @TestPropertySource(locations = "classpath:application-stubbed.properties")
-public class ElasticsearchCompanyNumberDispatcherTest {
+public class ElasticsearchCompanyNumberMapperTest {
 
     @Autowired
     private CamelContext context;
 
-    @EndpointInject("mock:elasticsearch-wrapper")
+    @EndpointInject("mock:elasticsearch-collection")
     private MockEndpoint elasticsearchServiceWrapper;
 
-    @Produce("direct:elasticsearch-dispatcher")
+    @Produce("direct:elasticsearch-company_number-mapper")
     private ProducerTemplate producerTemplate;
 
     @AfterEach

@@ -29,7 +29,7 @@ public class ElasticsearchCollectionRoute extends RouteBuilder {
     public void configure() throws Exception {
         from("direct:elasticsearch-collection")
                 .setHeader(CaffeineConstants.ACTION, constant(CaffeineConstants.ACTION_GET))
-                .setHeader(CaffeineConstants.KEY, constant("elasticsearchCache"))
+                .setHeader(CaffeineConstants.KEY, simple("${header.ElasticsearchCacheKey}"))
                 .to("{{endpoint.cache}}")
                 .choice()
                 .when(body().isNull())
@@ -37,8 +37,8 @@ public class ElasticsearchCollectionRoute extends RouteBuilder {
                     .toD("${header.ElasticsearchEndpoint}")
                     .bean(ElasticsearchTransformer.class)
                     .setHeader(CaffeineConstants.ACTION, constant(CaffeineConstants.ACTION_PUT))
-                    .setHeader(CaffeineConstants.KEY, constant("elasticsearchCache"))
-                .end()
-                .to("{{endpoint.cache}}");
+                    .setHeader(CaffeineConstants.KEY, simple("${header.ElasticsearchCacheKey}"))
+                    .to("{{endpoint.cache}}")
+                .end();
     }
 }

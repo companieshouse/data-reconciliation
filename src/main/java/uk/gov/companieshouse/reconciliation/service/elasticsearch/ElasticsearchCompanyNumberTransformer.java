@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class ElasticsearchCompanyNumberTranformer {
+public class ElasticsearchCompanyNumberTransformer {
 
     public void transform(@Body Results resultModels, @Header("ElasticsearchDescription") String description,
                                   @Header("ElasticsearchTargetHeader") String elasticsearchTargetHeader, @Headers Map<String, Object> headers) {

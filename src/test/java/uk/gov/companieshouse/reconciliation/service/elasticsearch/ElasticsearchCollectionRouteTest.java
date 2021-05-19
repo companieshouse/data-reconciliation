@@ -82,8 +82,8 @@ public class ElasticsearchCollectionRouteTest {
     @Test
     void testStoreResourceListInRequiredHeaderCached() throws InterruptedException {
         elasticsearchEndpoint.expectedMessageCount(0);
-        cache.expectedHeaderReceived(CaffeineConstants.ACTION, CaffeineConstants.ACTION_GET);
-        cache.expectedHeaderReceived(CaffeineConstants.KEY, "elasticsearchCache");
+        cache.expectedHeaderValuesReceivedInAnyOrder(CaffeineConstants.ACTION, CaffeineConstants.ACTION_GET);
+        cache.expectedHeaderValuesReceivedInAnyOrder(CaffeineConstants.KEY, "elasticsearchCache");
         cache.returnReplyBody(ExpressionBuilder.constantExpression(new ResourceList(Collections.singletonList("12345678"),"resources")));
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeaders(getHeaders());
@@ -100,6 +100,7 @@ public class ElasticsearchCollectionRouteTest {
         headers.put("ElasticsearchDescription", "Description");
         headers.put("ElasticsearchLogIndices", 1);
         headers.put("ElasticsearchEndpoint", "mock:elasticsearch-stub");
+        headers.put("ElasticsearchCacheKey", "elasticsearchCache");
         return headers;
     }
 }

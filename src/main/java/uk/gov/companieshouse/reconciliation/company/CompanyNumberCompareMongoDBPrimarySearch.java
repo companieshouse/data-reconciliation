@@ -25,6 +25,7 @@ public class CompanyNumberCompareMongoDBPrimarySearch extends RouteBuilder {
                 .setHeader("ElasticsearchDescription", constant("Primary Index"))
                 .setHeader("ElasticsearchTargetHeader", constant("TargetList"))
                 .setHeader("ElasticsearchLogIndices", simple("{{endpoint.elasticsearch.log_indices}}"))
+                .setHeader("ElasticsearchCacheKey", constant("{{endpoint.elasticsearch.primary.cache.key}}"))
                 .setHeader("Target", simple("{{endpoint.elasticsearch.collection}}"))
                 .setHeader("Comparison", simple("primary search index"))
                 .setHeader("Destination", simple("{{endpoint.output}}"))
