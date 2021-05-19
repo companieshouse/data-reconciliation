@@ -46,7 +46,7 @@ public class CompareCollectionTransformer {
     private List<Map<String, Object>> symmetricDifference(ResourceList srcList, ResourceList targetList, Set<String> allItems, String recordType) {
         List<Map<String, Object>> result = new LinkedList<>();
         addResultHeaders(result, recordType);
-        addRows(srcList, targetList, allItems, result);
+        addRows(srcList, targetList, allItems, result, recordType);
         return result;
     }
 
@@ -57,20 +57,20 @@ public class CompareCollectionTransformer {
         result.add(headers);
     }
 
-    private void addRows(ResourceList srcList, ResourceList targetList, Set<String> allItems, List<Map<String, Object>> result) {
+    private void addRows(ResourceList srcList, ResourceList targetList, Set<String> allItems, List<Map<String, Object>> result, String recordType) {
         for (String item : allItems) {
             if (srcList.contains(item) && !targetList.contains(item)) {
-                addRow(item, srcList.getResultDesc(), result);
+                addRow(item, srcList.getResultDesc(), result, recordType);
             } else if (!srcList.contains(item) && targetList.contains(item)) {
-                addRow(item, targetList.getResultDesc(), result);
+                addRow(item, targetList.getResultDesc(), result, recordType);
             }
         }
     }
 
-    private void addRow(String item, String source, List<Map<String, Object>> results) {
+    private void addRow(String item, String source, List<Map<String, Object>> results, String recordType) {
         Map<String, Object> row = new HashMap<>();
-        row.put("item", item);
-        row.put("source", source);
+        row.put(recordType, item);
+        row.put("Exclusive To", source);
         results.add(row);
     }
 }
