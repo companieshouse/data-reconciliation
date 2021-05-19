@@ -12,9 +12,9 @@ public class DsqOfficerEmailAggregationStrategy implements AggregationStrategy {
     @Override
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         ResourceLinksWrapper downloadLinks = new ResourceLinksWrapper(new ArrayList<>());
-        String downloadLink = Optional.ofNullable(newExchange.getIn().getHeader("CompareDsqOfficersLink", String.class))
-                .orElseThrow(() -> new IllegalArgumentException("Expected link not present: CompareDsqOfficersLink"));
-        downloadLinks.addDownloadLink(downloadLink, newExchange.getIn().getHeader("CompareDsqOfficersDescription", String.class));
+        String downloadLink = Optional.ofNullable(newExchange.getIn().getHeader("ResourceLinkReference", String.class))
+                .orElseThrow(() -> new IllegalArgumentException("Expected link not present: ResourceLinkReference"));
+        downloadLinks.addDownloadLink(downloadLink, newExchange.getIn().getHeader("ResourceLinkDescription", String.class));
         newExchange.getIn().setHeader("ResourceLinks", downloadLinks);
         return newExchange;
     }

@@ -28,8 +28,8 @@ public class DsqOfficerEmailAggregationStrategyTest {
     void testConstructDownloadLinks() {
         //given
         Exchange next = new DefaultExchange(context);
-        next.getIn().setHeader("CompareDsqOfficersLink", "link");
-        next.getIn().setHeader("CompareDsqOfficersDescription", "description");
+        next.getIn().setHeader("ResourceLinkReference", "link");
+        next.getIn().setHeader("ResourceLinkDescription", "description");
 
         //when
         Exchange result = aggregationStrategy.aggregate(null, next);
@@ -51,6 +51,6 @@ public class DsqOfficerEmailAggregationStrategyTest {
 
         //then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, actual);
-        assertEquals("Expected link not present: CompareDsqOfficersLink", exception.getMessage());
+        assertEquals("Expected link not present: ResourceLinkReference", exception.getMessage());
     }
 }
