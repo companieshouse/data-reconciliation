@@ -47,6 +47,7 @@ public class CompareNumberCompareMongoDBAlphaSearchTest {
         compareCollection.expectedHeaderReceived("ElasticsearchLogIndices", "100000");
         compareCollection.expectedHeaderReceived("Target", "direct:elasticsearch-collection");
         compareCollection.expectedHeaderReceived("Destination", "mock:log-result");
+        compareCollection.expectedHeaderReceived("RecordType", "Company Number");
         compareCollection.expectedHeaderReceived(MongoDbConstants.DISTINCT_QUERY_FIELD, "_id");
         producerTemplate.sendBody(0);
         MockEndpoint.assertIsSatisfied(context);

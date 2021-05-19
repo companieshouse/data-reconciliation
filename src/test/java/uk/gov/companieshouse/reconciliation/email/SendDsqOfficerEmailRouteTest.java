@@ -1,12 +1,10 @@
 package uk.gov.companieshouse.reconciliation.email;
 
 import org.apache.camel.EndpointInject;
-import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
-import org.apache.camel.builder.ExchangeBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
@@ -26,53 +24,37 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @DirtiesContext
 @TestPropertySource(locations = "classpath:application-stubbed.properties")
 @UseAdviceWith
-public class SendEmailRouteTest {
+public class SendDsqOfficerEmailRouteTest {
 
     @Autowired
     private ModelCamelContext context;
 
+    @Produce("direct:send-dsq_officer-email")
+    private ProducerTemplate producerTemplate;
+
     @EndpointInject("mock:kafka-endpoint")
     private MockEndpoint kafkaEndpoint;
 
-    @Produce("direct:send-email")
-    private ProducerTemplate producerTemplate;
-
     @AfterEach
-    void after() {
+    void tearDown() {
         kafkaEndpoint.reset();
     }
 
     @Test
-    void testSendEmailAggregatesTwoMessage() throws Exception {
+    void testSendMessageToKafka() throws Exception {
         AdviceWith.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptSendToEndpoint("mock:kafka-endpoint")
-                        .process(exchange -> {
+                interceptSendToEndpoint("mock:kafka-endpoint").process(
+                        exchange -> {
                             ResourceLinksWrapper downloadsList = exchange.getIn().getHeader("ResourceLinks", ResourceLinksWrapper.class);
-                            assertEquals(3, downloadsList.getDownloadLinkList().size());
+                            assertEquals(1, downloadsList.getDownloadLinkList().size());
                         });
             }
         });
         context.start();
-
-        Exchange firstExchange = ExchangeBuilder.anExchange(context)
-                .withHeader("ResourceLinkReference", "Compare Count Link")
-                .build();
-
-        Exchange secondExchange = ExchangeBuilder.anExchange(context)
-                .withHeader("ResourceLinkReference", "Compare Collection Link")
-                .build();
-
-        Exchange thirdExchange = ExchangeBuilder.anExchange(context)
-                .withHeader("ResourceLinkReference", "Compare Elasticsearch Mongo Link")
-                .build();
-
         kafkaEndpoint.expectedMessageCount(1);
-        producerTemplate.send(firstExchange);
-        producerTemplate.send(secondExchange);
-        producerTemplate.send(thirdExchange);
-
+        producerTemplate.sendBodyAndHeader(0, "ResourceLinkReference", "link");
         MockEndpoint.assertIsSatisfied(context);
     }
 }
