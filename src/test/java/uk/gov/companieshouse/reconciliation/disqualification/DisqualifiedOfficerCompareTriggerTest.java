@@ -49,6 +49,7 @@ public class DisqualifiedOfficerCompareTriggerTest {
         compareCollection.expectedHeaderReceived("Target", "direct:mongodb-collection");
         compareCollection.expectedHeaderReceived("Comparison", "disqualified officers");
         compareCollection.expectedHeaderReceived("Destination", "mock:dsq_officer");
+        compareCollection.expectedHeaderReceived("RecordType", "Disqualified Officer");
         compareCollection.expectedHeaderReceived("Upload", "mock:s3_bucket_destination");
         compareCollection.expectedHeaderReceived("Presign", "mock:s3_download_link");
         producerTemplate.sendBody(0);
