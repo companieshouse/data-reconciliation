@@ -29,9 +29,11 @@ public class CompareCollectionTransformer {
      * @return A {@link java.util.List list} of {@link java.util.Map key-value pairings} representing the
      * symmetric difference between both lists and the endpoints their elements are exclusive to.
      */
-    public List<Map<String, Object>> transform(@Header("SrcList") ResourceList srcResourceList, @Header("TargetList") ResourceList targetResourceList) {
+    public List<Map<String, Object>> transform(@Header("SrcList") ResourceList srcResourceList,
+                                               @Header("TargetList") ResourceList targetResourceList,
+                                               @Header("RecordType") String recordType) {
         Set<String> allItems = union(srcResourceList, targetResourceList);
-        return symmetricDifference(srcResourceList, targetResourceList, allItems);
+        return symmetricDifference(srcResourceList, targetResourceList, allItems, recordType);
     }
 
     private Set<String> union(ResourceList srcList, ResourceList targetList) {
@@ -41,16 +43,16 @@ public class CompareCollectionTransformer {
         return allItems;
     }
 
-    private List<Map<String, Object>> symmetricDifference(ResourceList srcList, ResourceList targetList, Set<String> allItems) {
+    private List<Map<String, Object>> symmetricDifference(ResourceList srcList, ResourceList targetList, Set<String> allItems, String recordType) {
         List<Map<String, Object>> result = new LinkedList<>();
-        addResultHeaders(result);
+        addResultHeaders(result, recordType);
         addRows(srcList, targetList, allItems, result);
         return result;
     }
 
-    private void addResultHeaders(List<Map<String, Object>> result) {
+    private void addResultHeaders(List<Map<String, Object>> result, String recordType) {
         Map<String, Object> headers = new LinkedHashMap<>();
-        headers.put("Company Number", "Company Number");
+        headers.put(recordType, recordType);
         headers.put("Exclusive To", "Exclusive To");
         result.add(headers);
     }

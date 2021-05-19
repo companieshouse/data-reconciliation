@@ -32,6 +32,7 @@ public class CompanyNumberCompareOracleMongoDBTrigger extends RouteBuilder {
                 .setHeader(MongoDbConstants.DISTINCT_QUERY_FIELD, constant("_id"))
                 .setHeader("Target", simple("{{endpoint.mongodb.collection}}"))
                 .setHeader("Comparison", constant("company numbers"))
+                .setHeader("RecordType", constant("Company Number"))
                 .setHeader("Destination", simple("{{endpoint.company.output}}"))
                 .setHeader("Upload", simple("{{endpoint.s3.upload}}"))
                 .setHeader("Presign", simple("{{endpoint.s3presigner.download}}"))
