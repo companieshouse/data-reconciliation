@@ -31,12 +31,12 @@ public class CompanyNumberCompareOracleMongoDBTrigger extends RouteBuilder {
                 .setHeader("MongoTargetHeader", constant("TargetList"))
                 .setHeader(MongoDbConstants.DISTINCT_QUERY_FIELD, constant("_id"))
                 .setHeader("Target", simple("{{endpoint.mongodb.collection}}"))
-                .setHeader("Comparison", simple("company profiles"))
+                .setHeader("Comparison", constant("company numbers"))
                 .setHeader("Destination", simple("{{endpoint.company.output}}"))
                 .setHeader("Upload", simple("{{endpoint.s3.upload}}"))
                 .setHeader("Presign", simple("{{endpoint.s3presigner.download}}"))
                 .setHeader(AWS2S3Constants.KEY, simple("company/collection_${date:now:yyyyMMdd}T${date:now:hhmmss}.csv"))
-                .setHeader(AWS2S3Constants.DOWNLOAD_LINK_EXPIRATION_TIME, simple("{{aws.expiry}}"))
+                .setHeader(AWS2S3Constants.DOWNLOAD_LINK_EXPIRATION_TIME, constant("{{aws.expiry}}"))
                 .to("{{function.name.compare_collection}}");
     }
 }

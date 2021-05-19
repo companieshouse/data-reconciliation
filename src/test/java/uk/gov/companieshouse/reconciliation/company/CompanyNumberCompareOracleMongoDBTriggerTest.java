@@ -47,7 +47,7 @@ public class CompanyNumberCompareOracleMongoDBTriggerTest {
         compareCollection.expectedHeaderReceived("MongoTargetHeader", "TargetList");
         compareCollection.expectedHeaderReceived("Target", "direct:mongodb-collection");
         compareCollection.expectedHeaderReceived("Destination", "mock:result");
-        compareCollection.expectedHeaderReceived("Comparison", "company profiles");
+        compareCollection.expectedHeaderReceived("Comparison", "company numbers");
         compareCollection.expectedHeaderReceived("Upload", "mock:s3_bucket_destination");
         compareCollection.expectedHeaderReceived("Presign", "mock:s3_download_link");
         compareCollection.expectedHeaderReceived(AWS2S3Constants.DOWNLOAD_LINK_EXPIRATION_TIME, 2000L);

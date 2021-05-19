@@ -82,9 +82,7 @@ public class KafkaRoute extends RouteBuilder {
                             .build())
                 )
                 .marshal().avro()
-                .process(exchange ->
-                    exchange.getIn().removeHeader("Content-Type")
-                )
+                .process(exchange -> exchange.getIn().removeHeaders("*"))
                 .to("{{endpoint.kafka}}");
     }
 }

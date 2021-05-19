@@ -32,7 +32,7 @@ public class CompareCountTransformer {
     private List<Map<String, Object>> getResults(ResourceList srcResourceList, ResourceList targetResourceList){
         List<Map<String, Object>> results = new ArrayList<>();
         addRow(results, srcResourceList.getResultDesc(), targetResourceList.getResultDesc());
-        addRow(results, srcResourceList.getResultList().iterator().next(), srcResourceList.getResultList().iterator().next());
+        addRow(results, srcResourceList.getResultList().iterator().next(), targetResourceList.getResultList().iterator().next());
         return results;
     }
 

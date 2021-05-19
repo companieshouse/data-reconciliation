@@ -15,7 +15,7 @@ public class SendCompanyEmailRoute extends RouteBuilder {
 
         from("direct:send-company-email")
                 .aggregate(constant(true), new CompanyEmailAggregationStrategy())
-                .completionSize(2)
+                .completionSize(3)
                 .setHeader("CompletionDate", simple("${date:now:dd MMMM yyyy}"))
                 .setHeader("EmailSubject", simple("Company profile comparisons (${header.CompletionDate})"))
                 .to("{{endpoint.kafka.sender}}");
