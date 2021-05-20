@@ -2,17 +2,16 @@ package uk.gov.companieshouse.reconciliation.service.elasticsearch;
 
 import org.apache.camel.Body;
 import org.apache.camel.Header;
-import org.apache.camel.Headers;
 import org.elasticsearch.search.SearchHit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import uk.gov.companieshouse.reconciliation.function.compare_collection.entity.ResourceList;
+import uk.gov.companieshouse.reconciliation.model.ResultModel;
+import uk.gov.companieshouse.reconciliation.model.Results;
 
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
 
 @Component
 public class ElasticsearchTransformer {
@@ -22,17 +21,21 @@ public class ElasticsearchTransformer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ElasticsearchTransformer.class);
 
-    public void transform(@Body Iterator<SearchHit> it, @Header("ElasticsearchDescription") String description,
-                          @Header("ElasticsearchTargetHeader") String targetHeader, @Header("ElasticsearchLogIndices") Integer logIndices,
-                          @Headers Map<String, Object> headers) {
-        ResourceList indices = new ResourceList(new HashSet<>(initialCapacity), description);
+    public Results transform(@Body Iterator<SearchHit> it, @Header("ElasticsearchLogIndices") Integer logIndices) {
+        Results results = new Results(new HashSet<>(initialCapacity));
         while (it.hasNext()) {
-            indices.add(it.next().getId()); //id cannot be null
-            if (logIndices != null && indices.size() % logIndices == 0) {
-                LOGGER.info("Indexed {} entries", indices.size());
+            SearchHit hit = it.next();
+            if (hit.hasSource()) {
+                results.add(new ResultModel(hit.getId(), (String)hit.getSourceAsMap().get("corporate_name_start") + (String)hit.getSourceAsMap().get("corporate_name_ending"))); //id cannot be null
+            } else {
+                results.add(new ResultModel(hit.getId(), null));
+            }
+            if (logIndices != null && results.size() % logIndices == 0) {
+                LOGGER.info("Indexed {} entries", results.size());
             }
         }
-        LOGGER.info("Indexed {} entries", indices.size());
-        headers.put(targetHeader, indices);
+        LOGGER.info("Indexed {} entries", results.size());
+
+        return results;
     }
 }

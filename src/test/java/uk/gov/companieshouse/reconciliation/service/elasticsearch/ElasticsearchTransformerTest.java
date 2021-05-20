@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.reconciliation.service.elasticsearch;
 
+import org.elasticsearch.common.bytes.BytesArray;
 import org.elasticsearch.common.text.Text;
 import org.elasticsearch.search.SearchHit;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,12 +9,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.reconciliation.component.elasticsearch.slicedscroll.client.ElasticsearchSlicedScrollIterator;
-import uk.gov.companieshouse.reconciliation.function.compare_collection.entity.ResourceList;
+import uk.gov.companieshouse.reconciliation.model.ResultModel;
+import uk.gov.companieshouse.reconciliation.model.Results;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Collections;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -35,18 +35,34 @@ public class ElasticsearchTransformerTest {
     @Test
     void testAggregateSearchHitsIntoResourceList() {
         //given
-        Map<String, Object> headers = new HashMap<>();
         when(iterator.hasNext()).thenReturn(true, false);
-        when(iterator.next()).thenReturn(new SearchHit(123, "12345678", new Text("{}"), new HashMap<>()));
+        String source = "{ \"corporate_name_start\": \"ACME\", \"corporate_name_ending\": \" LIMITED\" }";
+        SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), Collections.emptyMap());
+        hit.sourceRef(new BytesArray(source));
+        when(iterator.next()).thenReturn(hit);
 
         //when
-        transformer.transform(iterator, "Description", "Target", 1, headers);
-        ResourceList actual = (ResourceList)headers.get("Target");
+        Results actual = transformer.transform(iterator, 1);
 
         //then
         verify(iterator, times(2)).hasNext();
         verify(iterator, times(1)).next();
-        assertEquals("Description", actual.getResultDesc());
-        assertTrue(actual.contains("12345678"));
+        assertTrue(actual.contains(new ResultModel("12345678", "ACME LIMITED")));
+    }
+
+    @Test
+    void testAggregateSearchHitsWithoutSourceFields() {
+        //given
+        when(iterator.hasNext()).thenReturn(true, false);
+        SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), Collections.emptyMap());
+        when(iterator.next()).thenReturn(hit);
+
+        //when
+        Results actual = transformer.transform(iterator, 1);
+
+        //then
+        verify(iterator, times(2)).hasNext();
+        verify(iterator, times(1)).next();
+        assertTrue(actual.contains(new ResultModel("12345678", null)));
     }
 }
