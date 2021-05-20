@@ -36,9 +36,12 @@ public class ElasticsearchCollectionRoute extends RouteBuilder {
                     .setBody(header("ElasticsearchQuery"))
                     .toD("${header.ElasticsearchEndpoint}")
                     .bean(ElasticsearchTransformer.class)
+                    .log("${body.size()} results have been fetched from elasticsearch.")
                     .setHeader(CaffeineConstants.ACTION, constant(CaffeineConstants.ACTION_PUT))
                     .setHeader(CaffeineConstants.KEY, simple("${header.ElasticsearchCacheKey}"))
                     .to("{{endpoint.cache}}")
+                .otherwise()
+                    .log("${body.size()} results have been fetched from the cache.")
                 .end();
     }
 }

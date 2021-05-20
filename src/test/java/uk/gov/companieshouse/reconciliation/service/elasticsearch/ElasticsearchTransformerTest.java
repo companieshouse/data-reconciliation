@@ -49,4 +49,20 @@ public class ElasticsearchTransformerTest {
         verify(iterator, times(1)).next();
         assertTrue(actual.contains(new ResultModel("12345678", "ACME LIMITED")));
     }
+
+    @Test
+    void testAggregateSearchHitsWithoutSourceFields() {
+        //given
+        when(iterator.hasNext()).thenReturn(true, false);
+        SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), Collections.emptyMap());
+        when(iterator.next()).thenReturn(hit);
+
+        //when
+        Results actual = transformer.transform(iterator, 1);
+
+        //then
+        verify(iterator, times(2)).hasNext();
+        verify(iterator, times(1)).next();
+        assertTrue(actual.contains(new ResultModel("12345678", null)));
+    }
 }

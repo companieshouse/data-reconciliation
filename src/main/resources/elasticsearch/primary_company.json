@@ -4,5 +4,10 @@
       "kind": "searchresults#company"
     }
   },
-  "_source": false
+  "_source": {
+    "includes": [
+      "item.corporate_name_start",
+      "item.corporate_name_end"
+    ]
+  }
 }

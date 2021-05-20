@@ -25,7 +25,11 @@ public class ElasticsearchTransformer {
         Results results = new Results(new HashSet<>(initialCapacity));
         while (it.hasNext()) {
             SearchHit hit = it.next();
-            results.add(new ResultModel(hit.getId(), (String)hit.getSourceAsMap().get("corporate_name_start") + (String)hit.getSourceAsMap().get("corporate_name_end"))); //id cannot be null
+            if (hit.hasSource()) {
+                results.add(new ResultModel(hit.getId(), (String)hit.getSourceAsMap().get("corporate_name_start") + (String)hit.getSourceAsMap().get("corporate_name_end"))); //id cannot be null
+            } else {
+                results.add(new ResultModel(hit.getId(), null));
+            }
             if (logIndices != null && results.size() % logIndices == 0) {
                 LOGGER.info("Indexed {} entries", results.size());
             }
