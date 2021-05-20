@@ -1,11 +1,8 @@
 package uk.gov.companieshouse.reconciliation.service.mongo;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.reconciliation.function.compare_collection.entity.ResourceList;
-
-import java.util.HashSet;
 
 /**
  * Retrieves and aggregates results from a mongo.collection.distinct query.<br>
@@ -23,6 +20,6 @@ public class MongoCollectionRoute extends RouteBuilder {
     public void configure() throws Exception {
         from("direct:mongodb-collection")
                 .toD("${header.MongoEndpoint}")
-                .bean(MongoDistinctSelectionTransformer.class);
+                .bean(MongoAggregationTransformer.class);
     }
 }
