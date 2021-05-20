@@ -32,7 +32,7 @@ public class ElasticsearchCollectionRoute extends RouteBuilder {
                 .setHeader(CaffeineConstants.KEY, simple("${header.ElasticsearchCacheKey}"))
                 .to("{{endpoint.cache}}")
                 .choice()
-                .when(body().isNull())
+                .when(header(CaffeineConstants.ACTION_HAS_RESULT).isEqualTo(false))
                     .setBody(header("ElasticsearchQuery"))
                     .toD("${header.ElasticsearchEndpoint}")
                     .bean(ElasticsearchTransformer.class)

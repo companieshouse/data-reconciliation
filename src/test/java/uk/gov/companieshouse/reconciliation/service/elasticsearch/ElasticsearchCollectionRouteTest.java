@@ -74,8 +74,10 @@ public class ElasticsearchCollectionRouteTest {
         );
         cache.expectedHeaderValuesReceivedInAnyOrder(CaffeineConstants.ACTION, CaffeineConstants.ACTION_GET, CaffeineConstants.ACTION_PUT);
         cache.expectedHeaderValuesReceivedInAnyOrder(CaffeineConstants.KEY, "elasticsearchCache", "elasticsearchCache");
+        cache.returnReplyHeader(CaffeineConstants.ACTION_HAS_RESULT, ExpressionBuilder.constantExpression(false));
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeaders(getHeaders());
+        exchange.getIn().setBody(new Object());
         Exchange actual = producer.send(exchange);
         assertTrue(actual.getIn().getBody(Results.class).contains(new ResultModel("12345678", "ACME LIMITED")));
         verify(iterator, times(2)).hasNext();
@@ -88,12 +90,15 @@ public class ElasticsearchCollectionRouteTest {
         elasticsearchEndpoint.expectedMessageCount(0);
         cache.expectedHeaderValuesReceivedInAnyOrder(CaffeineConstants.ACTION, CaffeineConstants.ACTION_GET);
         cache.expectedHeaderValuesReceivedInAnyOrder(CaffeineConstants.KEY, "elasticsearchCache");
-        cache.returnReplyBody(ExpressionBuilder.constantExpression(new ResourceList(Collections.singletonList("12345678"),"resources")));
+        cache.whenAnyExchangeReceived(exchange -> {
+            exchange.getIn().setBody(new Results(Collections.singletonList(new ResultModel("12345678", "ACME LIMITED"))));
+            exchange.getIn().setHeader(CaffeineConstants.ACTION_HAS_RESULT, true);
+        });
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeaders(getHeaders());
+        exchange.getIn().setBody(new Object());
         Exchange actual = producer.send(exchange);
-        assertEquals("resources", actual.getIn().getBody(ResourceList.class).getResultDesc());
-        assertTrue(actual.getIn().getBody(ResourceList.class).getResultList().contains("12345678"));
+        assertTrue(actual.getIn().getBody(Results.class).contains(new ResultModel("12345678", "ACME LIMITED")));
         MockEndpoint.assertIsSatisfied(context);
     }
 
