@@ -26,7 +26,7 @@ public class ElasticsearchTransformer {
         while (it.hasNext()) {
             SearchHit hit = it.next();
             if (hit.hasSource()) {
-                results.add(new ResultModel(hit.getId(), (String)hit.getSourceAsMap().get("corporate_name_start") + (String)hit.getSourceAsMap().get("corporate_name_end"))); //id cannot be null
+                results.add(new ResultModel(hit.getId(), (String)hit.getSourceAsMap().get("corporate_name_start") + (String)hit.getSourceAsMap().get("corporate_name_ending"))); //id cannot be null
             } else {
                 results.add(new ResultModel(hit.getId(), null));
             }

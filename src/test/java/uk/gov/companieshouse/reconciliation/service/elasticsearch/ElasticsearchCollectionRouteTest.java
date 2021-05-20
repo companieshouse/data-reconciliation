@@ -66,7 +66,7 @@ public class ElasticsearchCollectionRouteTest {
     void testStoreResourceListInRequiredHeaderUncached() throws InterruptedException {
         when(iterator.hasNext()).thenReturn(true, false);
         SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), new HashMap<>());
-        hit.sourceRef(new BytesArray("{\"corporate_name_start\":\"ACME\",\"corporate_name_end\":\" LIMITED\"}"));
+        hit.sourceRef(new BytesArray("{\"corporate_name_start\":\"ACME\",\"corporate_name_ending\":\" LIMITED\"}"));
         when(iterator.next()).thenReturn(hit);
         elasticsearchEndpoint.expectedBodyReceived().constant("QUERY");
         elasticsearchEndpoint.whenAnyExchangeReceived(exchange ->

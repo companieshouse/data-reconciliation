@@ -36,7 +36,7 @@ public class ElasticsearchTransformerTest {
     void testAggregateSearchHitsIntoResourceList() {
         //given
         when(iterator.hasNext()).thenReturn(true, false);
-        String source = "{ \"corporate_name_start\": \"ACME\", \"corporate_name_end\": \" LIMITED\" }";
+        String source = "{ \"corporate_name_start\": \"ACME\", \"corporate_name_ending\": \" LIMITED\" }";
         SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), Collections.emptyMap());
         hit.sourceRef(new BytesArray(source));
         when(iterator.next()).thenReturn(hit);
