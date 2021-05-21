@@ -45,7 +45,7 @@ public class CompanyNumberCompareOracleMongoDBTriggerTest {
         compareCollection.expectedHeaderReceived("MongoEndpoint", "mock:fruitBasket");
         compareCollection.expectedHeaderReceived("MongoDescription", "MongoDB");
         compareCollection.expectedHeaderReceived("MongoTargetHeader", "TargetList");
-        compareCollection.expectedHeaderReceived("Target", "direct:mongodb-collection");
+        compareCollection.expectedHeaderReceived("Target", "direct:mongo-company_number-mapper");
         compareCollection.expectedHeaderReceived("Destination", "mock:result");
         compareCollection.expectedHeaderReceived("Comparison", "company numbers");
         compareCollection.expectedHeaderReceived("RecordType", "Company Number");

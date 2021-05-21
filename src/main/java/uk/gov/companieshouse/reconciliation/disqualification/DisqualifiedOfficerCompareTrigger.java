@@ -23,7 +23,7 @@ public class DisqualifiedOfficerCompareTrigger extends RouteBuilder {
                 .setHeader("MongoDescription", constant("MongoDB"))
                 .setHeader("MongoTargetHeader", constant("TargetList"))
                 .setHeader(MongoDbConstants.DISTINCT_QUERY_FIELD, constant("officer_id_raw"))
-                .setHeader("Target", simple("{{endpoint.mongodb.collection}}"))
+                .setHeader("Target", simple("{{endpoint.mongodb.wrapper.disqualifications.collection}}"))
                 .setHeader("Comparison", simple("disqualified officers"))
                 .setHeader("RecordType", constant("Disqualified Officer"))
                 .setHeader("Destination", simple("{{endpoint.dsq_officer.output}}"))

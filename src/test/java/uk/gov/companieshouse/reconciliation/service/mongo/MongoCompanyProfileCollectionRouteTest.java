@@ -30,19 +30,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest
 @DirtiesContext
 @TestPropertySource(locations = "classpath:application-stubbed.properties")
-public class MongoCollectionRouteTest {
-
-    //TODO:
-    //
-    //Separate mongo collection routes for company profiles and disqualified officers.
+public class MongoCompanyProfileCollectionRouteTest {
 
     @Autowired
     private CamelContext camelContext;
 
-    @Produce("direct:mongodb-collection")
+    @Produce("direct:mongodb-company_profile-collection")
     private ProducerTemplate template;
 
-    @EndpointInject("mock:mongoEndpoint")
+    @EndpointInject("mock:mongoCompanyProfileCollection")
     private MockEndpoint mongoEndpoint;
 
     @EndpointInject("mock:cache")
@@ -68,7 +64,7 @@ public class MongoCollectionRouteTest {
         );
         mongoEndpoint.expectedBodyReceived().constant(Collections.singletonList(Aggregates.project(Projections.include("_id", "data.company_name"))));
         Exchange exchange = new DefaultExchange(camelContext);
-        exchange.getIn().setHeader("MongoEndpoint", "mock:mongoEndpoint");
+        exchange.getIn().setHeader("MongoEndpoint", "mock:mongoCompanyProfileCollection");
 
         //when
         Exchange result = template.send(exchange);

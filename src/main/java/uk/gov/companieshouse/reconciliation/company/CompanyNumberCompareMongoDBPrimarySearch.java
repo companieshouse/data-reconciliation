@@ -19,7 +19,7 @@ public class CompanyNumberCompareMongoDBPrimarySearch extends RouteBuilder {
                 .setHeader("MongoDescription", constant("MongoDB"))
                 .setHeader("MongoTargetHeader", constant("SrcList"))
                 .setHeader(MongoDbConstants.DISTINCT_QUERY_FIELD, constant("_id"))
-                .setHeader("Src", simple("{{endpoint.mongodb.collection}}"))
+                .setHeader("Src", simple("{{endpoint.mongodb.mapper.collection.company_number}}"))
                 .setHeader("ElasticsearchEndpoint", simple("{{endpoint.elasticsearch.primary}}"))
                 .setHeader("ElasticsearchQuery", simple("{{query.elasticsearch.primary.company}}"))
                 .setHeader("ElasticsearchDescription", constant("Primary Index"))

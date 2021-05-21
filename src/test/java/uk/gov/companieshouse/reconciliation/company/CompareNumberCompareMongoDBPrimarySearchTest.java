@@ -39,7 +39,7 @@ public class CompareNumberCompareMongoDBPrimarySearchTest {
         compareCollection.expectedHeaderReceived("MongoEndpoint", "mock:fruitBasket");
         compareCollection.expectedHeaderReceived("MongoDescription", "MongoDB");
         compareCollection.expectedHeaderReceived("MongoTargetHeader", "SrcList");
-        compareCollection.expectedHeaderReceived("Src", "direct:mongodb-collection");
+        compareCollection.expectedHeaderReceived("Src", "direct:mongo-company_number-mapper");
         compareCollection.expectedHeaderReceived("ElasticsearchEndpoint", "mock:elasticsearch-stub");
         compareCollection.expectedHeaderReceived("ElasticsearchQuery", "test");
         compareCollection.expectedHeaderReceived("ElasticsearchDescription", "Primary Index");
