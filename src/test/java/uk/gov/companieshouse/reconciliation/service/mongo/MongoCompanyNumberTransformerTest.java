@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.reconciliation.service.elasticsearch;
+package uk.gov.companieshouse.reconciliation.service.mongo;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,10 +13,10 @@ import java.util.Collections;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-public class ElasticsearchCompanyNumberTransformerTest {
+public class MongoCompanyNumberTransformerTest {
 
     @InjectMocks
-    private ElasticsearchCompanyNumberTransformer elasticsearchCompanyNumberTransformer;
+    private MongoCompanyNumberTransformer mongoCompanyNumberTransformer;
 
     @Mock
     private ResultsToCompanyNumberTransformer resultsToCompanyNumberTransformer;
@@ -27,7 +27,7 @@ public class ElasticsearchCompanyNumberTransformerTest {
     @Test
     void testResultsIsTransformedIntoResourceListUsingResultsTransformer() {
         // when
-        elasticsearchCompanyNumberTransformer.transform(results, "description", "header", Collections.emptyMap());
+        mongoCompanyNumberTransformer.transform(results, "description", "header", Collections.emptyMap());
 
         // then
         verify(resultsToCompanyNumberTransformer).transform(results, "description", "header", Collections.emptyMap());
