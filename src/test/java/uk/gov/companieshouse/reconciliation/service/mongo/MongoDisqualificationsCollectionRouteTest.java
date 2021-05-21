@@ -59,10 +59,12 @@ public class MongoDisqualificationsCollectionRouteTest {
         //given
         cache.expectedHeaderValuesReceivedInAnyOrder(CaffeineConstants.ACTION, CaffeineConstants.ACTION_GET, CaffeineConstants.ACTION_PUT);
         cache.expectedHeaderValuesReceivedInAnyOrder(CaffeineConstants.KEY, "mongoDisqualifications", "mongoDisqualifications");
+        cache.expectedBodiesReceivedInAnyOrder("undefined", Arrays.asList("12345678", "ABCD1234"));
         cache.returnReplyHeader(CaffeineConstants.ACTION_HAS_RESULT, ExpressionBuilder.constantExpression(false));
         mongoEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(Arrays.asList("12345678", "ABCD1234")));
         mongoEndpoint.expectedHeaderReceived(MongoDbConstants.DISTINCT_QUERY_FIELD, "officer_id_raw");
         Exchange exchange = new DefaultExchange(camelContext);
+        exchange.getIn().setBody("undefined");
         exchange.getIn().setHeader("MongoEndpoint", "mock:mongoEndpoint");
         exchange.getIn().setHeader("MongoTargetHeader", "target");
 
@@ -83,14 +85,16 @@ public class MongoDisqualificationsCollectionRouteTest {
         cache.expectedHeaderValuesReceivedInAnyOrder(CaffeineConstants.KEY, "mongoDisqualifications");
         cache.whenAnyExchangeReceived(exchange -> {
             exchange.getIn().setHeader(CaffeineConstants.ACTION_HAS_RESULT, true);
-            exchange.getIn().setBody(new ResourceList(Arrays.asList("12345678", "ABCD1234"), "description"));
+            exchange.getIn().setBody(Arrays.asList("12345678", "ABCD1234"));
         });
         mongoEndpoint.expectedMessageCount(0);
         Exchange exchange = new DefaultExchange(camelContext);
+        exchange.getIn().setHeader("MongoEndpoint", "mock:mongoEndpoint");
+        exchange.getIn().setHeader("MongoTargetHeader", "target");
 
         //when
         Exchange result = template.send(exchange);
-        ResourceList actual = result.getIn().getBody(ResourceList.class);
+        ResourceList actual = result.getIn().getHeader("target", ResourceList.class);
 
         //then
         assertTrue(actual.contains("12345678"));

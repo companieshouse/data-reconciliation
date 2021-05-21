@@ -32,12 +32,12 @@ public class MongoDisqualificationsCollectionRoute extends RouteBuilder {
                 .when(header(CaffeineConstants.ACTION_HAS_RESULT).isEqualTo(false))
                     .setHeader(MongoDbConstants.DISTINCT_QUERY_FIELD).constant("officer_id_raw")
                     .toD("${header.MongoEndpoint}")
-                    .bean(MongoDistinctToResourceListTransformer.class)
                     .log("${body.size()} disqualifications have been fetched from mongodb.")
                     .setHeader(CaffeineConstants.ACTION).constant(CaffeineConstants.ACTION_PUT)
                     .to("{{endpoint.cache}}")
                 .otherwise()
                     .log("${body.size()} disqualifications have been fetched from the cache.")
-                .end();
+                .end()
+                .bean(MongoDistinctToResourceListTransformer.class);
     }
 }
