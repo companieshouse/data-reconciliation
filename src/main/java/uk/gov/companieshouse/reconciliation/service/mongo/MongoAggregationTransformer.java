@@ -7,6 +7,7 @@ import uk.gov.companieshouse.reconciliation.model.ResultModel;
 import uk.gov.companieshouse.reconciliation.model.Results;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -24,7 +25,14 @@ public class MongoAggregationTransformer {
      */
     public Results transform(@Body List<Document> items) {
         List<ResultModel> results = items.stream()
-                .map(item -> new ResultModel(item.getString("_id"), item.get("data", Document.class).getString("company_name")))
+                .map(item -> {
+                    String id = Optional.ofNullable(item.get("_id"))
+                            .map(Object::toString).orElse("");
+                    String companyName = Optional.ofNullable((Document)item.get("data"))
+                            .map(data -> data.get("company_name"))
+                            .map(Object::toString).orElse("");
+                    return new ResultModel(id, companyName);
+                })
                 .collect(Collectors.toList());
 
         return new Results(results);

@@ -12,16 +12,31 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Compare two {@link Results results objects} and record any differences for each result with a matching ID.
+ */
 @Component
 public class CompareResultsTransformer {
 
+    /**
+     * Compare two {@link Results results objects} and record any differences for each result with a matching ID.
+     *
+     * @param srcResults A {@link Results results object} containing data retrieved from one endpoint.
+     * @param srcDescription A description of the first endpoint from which {@link Results results} have been retrieved.
+     * @param targetResults A {@link Results results object} containing data retrieved from another endpoint.
+     * @param targetDescription A description of the second endpoint from which {@link Results results} have been retrieved.
+     * @param recordType A description of the type of data being compared.
+     * @return A {@link List list} containing {@link Map company number and data name-value pairings}.
+     */
     public List<Map<String, Object>> transform(@Header("SrcList") Results srcResults,
                                                @Header("SrcDescription") String srcDescription,
                                                @Header("TargetList") Results targetResults,
                                                @Header("TargetDescription") String targetDescription,
                                                @Header("RecordType") String recordType) {
 
-        // Remap Results objects to maps of company number and company name pairings. If value in one map is different add it to the results.
+        // Calculate intersection of both Results objects.
+        // Remap Results objects to maps of company number and company name pairings.
+        // If value in one map is different add it to the results.
         List<Map<String, Object>> results = new ArrayList<>();
 
         addRow(results, recordType, recordType, srcDescription, srcDescription,

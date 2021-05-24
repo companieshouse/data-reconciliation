@@ -12,6 +12,7 @@ import uk.gov.companieshouse.reconciliation.model.Results;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Optional;
 
 /**
  * Transform {@link SearchHit search hits} retrieved from an Elasticsearch index into a collection
@@ -38,9 +39,11 @@ public class ElasticsearchTransformer {
         while (it.hasNext()) {
             SearchHit hit = it.next();
             if (hit.hasSource()) {
-                results.add(new ResultModel(hit.getId(), (String)hit.getSourceAsMap().get("corporate_name_start") + (String)hit.getSourceAsMap().get("corporate_name_ending"))); //id cannot be null
+                String corporateNameStart = Optional.ofNullable(hit.getSourceAsMap().get("corporate_name_start")).map(Object::toString).orElse("");
+                String corporateNameEnding = Optional.ofNullable(hit.getSourceAsMap().get("corporate_name_ending")).map(Object::toString).orElse("");
+                results.add(new ResultModel(hit.getId(), corporateNameStart + corporateNameEnding)); //id cannot be null
             } else {
-                results.add(new ResultModel(hit.getId(), null));
+                results.add(new ResultModel(hit.getId(), ""));
             }
             if (logIndices != null && results.size() % logIndices == 0) {
                 LOGGER.info("Indexed {} entries", results.size());

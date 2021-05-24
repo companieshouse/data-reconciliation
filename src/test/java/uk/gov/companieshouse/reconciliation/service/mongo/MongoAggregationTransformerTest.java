@@ -31,4 +31,28 @@ public class MongoAggregationTransformerTest {
         //then
         assertTrue(actual.contains(new ResultModel("12345678", "ACME LTD")));
     }
+
+    @Test
+    void testDefaultEmptyStringIfIdOrCompanyNameNull(){
+        //given
+        List<Document> results = Collections.singletonList(Document.parse("{\"_id\": null, \"data\": {\"company_name\": null}}"));
+
+        //when
+        Results actual = transformer.transform(results);
+
+        //then
+        assertTrue(actual.contains(new ResultModel("", "")));
+    }
+
+    @Test
+    void testDefaultEmptyStringIfDataNull(){
+        //given
+        List<Document> results = Collections.singletonList(Document.parse("{\"_id\": null, \"data\": null}}"));
+
+        //when
+        Results actual = transformer.transform(results);
+
+        //then
+        assertTrue(actual.contains(new ResultModel("", "")));
+    }
 }
