@@ -5,7 +5,11 @@ import org.junit.jupiter.api.Test;
 import uk.gov.companieshouse.reconciliation.model.ResultModel;
 import uk.gov.companieshouse.reconciliation.model.Results;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -25,7 +29,7 @@ public class CompareResultsTransformerTest {
         Results targetResults = new Results(Arrays.asList(new ResultModel("12345678", "ACME LIMITED"), new ResultModel("23456780", "PRIVATE PLC"), new ResultModel("ABCD1234", "UNLIMITED LTD")));
 
         // when
-        List<Map<String, Object>> actual = transformer.transform(srcResults, targetResults, "things");
+        List<Map<String, Object>> actual = transformer.transform(srcResults, "MongoDB - Company Profile",  targetResults, "Primary Search Index", "Company Number");
 
         // then
         assertEquals(expectedValues(), actual);
