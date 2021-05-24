@@ -14,11 +14,10 @@ public class CompanyNumberCompareMongoDBAlphaSearch extends RouteBuilder {
     @Override
     public void configure() throws Exception {
         from("{{endpoint.company_collection_mongo_alpha.cron.tab}}")
-                .setHeader("MongoEndpoint", simple("{{endpoint.mongodb.company_profile_collection}}"))
                 .setHeader("MongoDescription", constant("MongoDB"))
                 .setHeader("MongoTargetHeader", constant("SrcList"))
                 .setHeader(MongoDbConstants.DISTINCT_QUERY_FIELD, constant("_id"))
-                .setHeader("Src", simple("{{endpoint.mongodb.collection}}"))
+                .setHeader("Src", simple("{{endpoint.mongodb.mapper.collection.company_number}}"))
                 .setHeader("ElasticsearchEndpoint", simple("{{endpoint.elasticsearch.alpha}}"))
                 .setHeader("ElasticsearchQuery", simple("{{query.elasticsearch.alpha.company}}"))
                 .setHeader("ElasticsearchDescription", constant("Alpha Index"))
