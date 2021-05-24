@@ -19,7 +19,6 @@ public class DisqualifiedOfficerCompareTrigger extends RouteBuilder {
                 .setHeader("OracleDescription", constant("Oracle"))
                 .setHeader("OracleTargetHeader", constant("SrcList"))
                 .setHeader("Src", simple("{{endpoint.oracle.collection}}"))
-                .setHeader("MongoEndpoint", simple("{{endpoint.mongodb.disqualifications_collection}}"))
                 .setHeader("MongoDescription", constant("MongoDB"))
                 .setHeader("MongoTargetHeader", constant("TargetList"))
                 .setHeader(MongoDbConstants.DISTINCT_QUERY_FIELD, constant("officer_id_raw"))

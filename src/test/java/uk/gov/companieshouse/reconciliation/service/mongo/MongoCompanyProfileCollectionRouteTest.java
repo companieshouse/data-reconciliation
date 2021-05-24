@@ -38,7 +38,7 @@ public class MongoCompanyProfileCollectionRouteTest {
     @Produce("direct:mongodb-company_profile-collection")
     private ProducerTemplate template;
 
-    @EndpointInject("mock:mongoCompanyProfileCollection")
+    @EndpointInject("mock:fruitBasket")
     private MockEndpoint mongoEndpoint;
 
     @EndpointInject("mock:cache")
@@ -64,7 +64,6 @@ public class MongoCompanyProfileCollectionRouteTest {
         );
         mongoEndpoint.expectedBodyReceived().constant(Collections.singletonList(Aggregates.project(Projections.include("_id", "data.company_name"))));
         Exchange exchange = new DefaultExchange(camelContext);
-        exchange.getIn().setHeader("MongoEndpoint", "mock:mongoCompanyProfileCollection");
 
         //when
         Exchange result = template.send(exchange);

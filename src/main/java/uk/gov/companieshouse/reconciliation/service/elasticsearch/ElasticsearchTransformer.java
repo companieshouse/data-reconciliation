@@ -13,6 +13,10 @@ import uk.gov.companieshouse.reconciliation.model.Results;
 import java.util.HashSet;
 import java.util.Iterator;
 
+/**
+ * Transform {@link SearchHit search hits} retrieved from an Elasticsearch index into a collection
+ * of {@link Results results}.
+ */
 @Component
 public class ElasticsearchTransformer {
 
@@ -21,6 +25,14 @@ public class ElasticsearchTransformer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ElasticsearchTransformer.class);
 
+    /**
+     * Iterate over {@link SearchHit search hits} retrieved from an Elasticsearch index and map ID and corporate body
+     * name for each corporate body to a {@link Results results object} containing {@link ResultModel results models}.
+     *
+     * @param it A {@link java.util.Iterator iterator} from which incoming {@link SearchHit search hits} can be obtained.
+     * @param logIndices The number of search indices after which a message will be printed to the logs.
+     * @return A {@link Results results object} containing all results fetched from the target Elasticsearch index.
+     */
     public Results transform(@Body Iterator<SearchHit> it, @Header("ElasticsearchLogIndices") Integer logIndices) {
         Results results = new Results(new HashSet<>(initialCapacity));
         while (it.hasNext()) {

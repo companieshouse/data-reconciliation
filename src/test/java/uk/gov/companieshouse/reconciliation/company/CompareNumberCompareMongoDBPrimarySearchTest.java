@@ -36,7 +36,6 @@ public class CompareNumberCompareMongoDBPrimarySearchTest {
 
     @Test
     void testCorrectHeadersHasBeenSet() throws InterruptedException {
-        compareCollection.expectedHeaderReceived("MongoEndpoint", "mock:fruitBasket");
         compareCollection.expectedHeaderReceived("MongoDescription", "MongoDB");
         compareCollection.expectedHeaderReceived("MongoTargetHeader", "SrcList");
         compareCollection.expectedHeaderReceived("Src", "direct:mongo-company_number-mapper");

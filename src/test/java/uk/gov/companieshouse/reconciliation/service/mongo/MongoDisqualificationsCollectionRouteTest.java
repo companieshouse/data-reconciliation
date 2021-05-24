@@ -1,7 +1,5 @@
 package uk.gov.companieshouse.reconciliation.service.mongo;
 
-import com.mongodb.client.model.Aggregates;
-import com.mongodb.client.model.Projections;
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -13,20 +11,15 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.mongodb.MongoDbConstants;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
-import org.bson.Document;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import uk.gov.companieshouse.reconciliation.function.compare_collection.entity.ResourceList;
-import uk.gov.companieshouse.reconciliation.model.ResultModel;
-import uk.gov.companieshouse.reconciliation.model.Results;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -42,7 +35,7 @@ public class MongoDisqualificationsCollectionRouteTest {
     @Produce("direct:mongodb-disqualifications-collection")
     private ProducerTemplate template;
 
-    @EndpointInject("mock:mongoEndpoint")
+    @EndpointInject("mock:dsq_compare_target")
     private MockEndpoint mongoEndpoint;
 
     @EndpointInject("mock:cache")
@@ -65,7 +58,6 @@ public class MongoDisqualificationsCollectionRouteTest {
         mongoEndpoint.expectedHeaderReceived(MongoDbConstants.DISTINCT_QUERY_FIELD, "officer_id_raw");
         Exchange exchange = new DefaultExchange(camelContext);
         exchange.getIn().setBody("undefined");
-        exchange.getIn().setHeader("MongoEndpoint", "mock:mongoEndpoint");
         exchange.getIn().setHeader("MongoTargetHeader", "target");
 
         //when
@@ -89,7 +81,6 @@ public class MongoDisqualificationsCollectionRouteTest {
         });
         mongoEndpoint.expectedMessageCount(0);
         Exchange exchange = new DefaultExchange(camelContext);
-        exchange.getIn().setHeader("MongoEndpoint", "mock:mongoEndpoint");
         exchange.getIn().setHeader("MongoTargetHeader", "target");
 
         //when
