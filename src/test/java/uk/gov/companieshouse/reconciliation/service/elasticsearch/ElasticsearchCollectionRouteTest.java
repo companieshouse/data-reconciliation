@@ -21,7 +21,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import uk.gov.companieshouse.reconciliation.component.elasticsearch.slicedscroll.client.ElasticsearchSlicedScrollIterator;
-import uk.gov.companieshouse.reconciliation.function.compare_collection.entity.ResourceList;
 import uk.gov.companieshouse.reconciliation.model.ResultModel;
 import uk.gov.companieshouse.reconciliation.model.Results;
 
@@ -29,7 +28,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -66,7 +64,7 @@ public class ElasticsearchCollectionRouteTest {
     void testStoreResourceListInRequiredHeaderUncached() throws InterruptedException {
         when(iterator.hasNext()).thenReturn(true, false);
         SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), new HashMap<>());
-        hit.sourceRef(new BytesArray("{\"corporate_name_start\":\"ACME\",\"corporate_name_ending\":\" LIMITED\"}"));
+        hit.sourceRef(new BytesArray("{\"items\":[{\"corporate_name_start\":\"ACME\",\"corporate_name_ending\":\" LIMITED\"}]}"));
         when(iterator.next()).thenReturn(hit);
         elasticsearchEndpoint.expectedBodyReceived().constant("QUERY");
         elasticsearchEndpoint.whenAnyExchangeReceived(exchange ->

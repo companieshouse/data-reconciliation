@@ -6,8 +6,8 @@
   },
   "_source": {
     "includes": [
-      "item.corporate_name_start",
-      "item.corporate_name_ending"
+      "items.corporate_name_start",
+      "items.corporate_name_ending"
     ]
   }
 }
