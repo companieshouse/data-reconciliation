@@ -40,6 +40,8 @@ public class CompanyNameCompareMongoDBPrimarySearchTest {
         target.expectedHeaderReceived("Target", "mock:elasticsearch-collection");
         target.expectedHeaderReceived("TargetDescription", "Primary Search Index");
         target.expectedHeaderReceived("ElasticsearchCacheKey", "elasticsearchPrimary");
+        target.expectedHeaderReceived("ElasticsearchEndpoint", "mock:elasticsearch-stub");
+        target.expectedHeaderReceived("ElasticsearchQuery", "test");
         target.expectedHeaderReceived("RecordType", "Company Number");
         target.expectedHeaderReceived("Destination", "mock:log-result");
         producerTemplate.sendBody(0);
