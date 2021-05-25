@@ -10,8 +10,11 @@ import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.reconciliation.model.ResultModel;
 import uk.gov.companieshouse.reconciliation.model.Results;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -39,9 +42,10 @@ public class ElasticsearchTransformer {
         while (it.hasNext()) {
             SearchHit hit = it.next();
             if (hit.hasSource()) {
-                String corporateNameStart = Optional.ofNullable(hit.getSourceAsMap().get("corporate_name_start")).map(Object::toString).orElse("");
-                String corporateNameEnding = Optional.ofNullable(hit.getSourceAsMap().get("corporate_name_ending")).map(Object::toString).orElse("");
-                results.add(new ResultModel(hit.getId(), corporateNameStart + corporateNameEnding)); //id cannot be null
+                List<String> name = new ArrayList<>();
+                addSourceFieldToNameList(name, hit, "corporate_name_start");
+                addSourceFieldToNameList(name, hit, "corporate_name_ending");
+                results.add(new ResultModel(hit.getId(), String.join(" ", name))); //id cannot be null
             } else {
                 results.add(new ResultModel(hit.getId(), ""));
             }
@@ -52,5 +56,15 @@ public class ElasticsearchTransformer {
         LOGGER.info("Indexed {} entries", results.size());
 
         return results;
+    }
+
+    private void addSourceFieldToNameList(List<String> names, SearchHit hit, String sourceField) {
+        Optional.ofNullable(hit.getSourceAsMap().get("items"))
+                .flatMap(items -> ((List<?>)items).stream().findFirst())
+                .map(item -> ((Map<?,?>)item).get(sourceField))
+                .map(Object::toString)
+                .map(String::trim)
+                .filter(nameEnding -> !nameEnding.isEmpty())
+                .ifPresent(names::add);
     }
 }
