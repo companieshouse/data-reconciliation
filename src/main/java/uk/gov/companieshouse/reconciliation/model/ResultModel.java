@@ -6,10 +6,16 @@ public class ResultModel {
 
     private final String companyNumber;
     private final String companyName;
+    private final String companyStatus;
 
     public ResultModel(String companyNumber, String companyName) {
+        this(companyNumber, companyName, "");
+    }
+
+    public ResultModel(String companyNumber, String companyName, String companyStatus) {
         this.companyNumber = companyNumber;
         this.companyName = companyName;
+        this.companyStatus = companyStatus;
     }
 
     public String getCompanyNumber() {
@@ -22,15 +28,25 @@ public class ResultModel {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ResultModel)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         ResultModel that = (ResultModel) o;
-        return Objects.equals(getCompanyNumber(), that.getCompanyNumber()) &&
-                Objects.equals(getCompanyName(), that.getCompanyName());
+        return Objects.equals(companyNumber, that.companyNumber) && Objects
+                .equals(companyName, that.companyName) && Objects
+                .equals(companyStatus, that.companyStatus);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getCompanyNumber(), getCompanyName());
+        return Objects.hash(companyNumber, companyName, companyStatus);
     }
+
+    public String getCompanyStatus() {
+        return companyStatus;
+    }
+
 }
