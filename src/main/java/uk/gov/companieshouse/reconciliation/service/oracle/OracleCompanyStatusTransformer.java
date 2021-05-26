@@ -26,4 +26,4 @@ public class OracleCompanyStatusTransformer {
                         Optional.ofNullable((String) map.get("company_status")).orElse("")))
                 .collect(Collectors.toList()));
     }
-}b
+}
