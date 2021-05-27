@@ -26,7 +26,7 @@ public class MongoCompanyProfileCollectionRoute extends RouteBuilder {
                 .to("{{endpoint.cache}}")
                 .choice()
                 .when(header(CaffeineConstants.ACTION_HAS_RESULT).isEqualTo(false))
-                    .setBody().constant(Collections.singletonList(Aggregates.project(Projections.include("_id", "data.company_name"))))
+                    .setBody().constant(Collections.singletonList(Aggregates.project(Projections.include("_id", "data.company_name")))) //TODO: add data.company_status to projected fields
                     .to("{{endpoint.mongodb.company_profile_collection}}")
                     .log("${body.size()} results have been fetched from mongodb.")
                     .bean(MongoAggregationTransformer.class)

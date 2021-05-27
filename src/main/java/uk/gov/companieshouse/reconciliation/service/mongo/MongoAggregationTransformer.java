@@ -31,7 +31,7 @@ public class MongoAggregationTransformer {
                     String companyName = Optional.ofNullable((Document)item.get("data"))
                             .map(data -> data.get("company_name"))
                             .map(Object::toString).orElse("");
-                    return new ResultModel(id, companyName);
+                    return new ResultModel(id, companyName); //TODO: add company status to ResultModel
                 })
                 .collect(Collectors.toList());
 
