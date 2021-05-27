@@ -3,6 +3,10 @@ package uk.gov.companieshouse.reconciliation.company;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
 
+/**
+ * Triggers a comparison between company status in MongoDB and Oracle; any differences will be
+ * recorded in the results.
+ */
 @Component
 public class CompanyStatusCompareMongoDBOracle extends RouteBuilder {
 
@@ -15,6 +19,7 @@ public class CompanyStatusCompareMongoDBOracle extends RouteBuilder {
                 .setHeader("TargetDescription").constant("Oracle")
                 .setHeader("OracleQuery").constant("{{queries.oracle.company_status}}")
                 .setHeader("OracleEndpoint").constant("{{endpoint.oracle.corporate_body_collection}}")
+                .setHeader("Transformer").constant("{{function.mapper.company_statuses}}")
                 .to("{{function.name.compare_results}}");
     }
 }

@@ -69,7 +69,7 @@ public class OracleMultiCollectionRouteTest {
 
     private Map<String, Object> headers() {
         Map<String, Object> result = new HashMap<>();
-        result.put("OracleQuery", "<sqlQueries><query>SELECT '12345678' as incorporation_number, 'active' as company_status FROM DUAL</query><query>SELECT '87654321' as incorporation_number, 'dissolved' as company_status FROM DUAL</query></sqlQueries>");
+        result.put("OracleQuery", "<sql-statements><sql-statement>SELECT '12345678' as incorporation_number, 'active' as company_status FROM DUAL</sql-statement><sql-statement>SELECT '87654321' as incorporation_number, 'dissolved' as company_status FROM DUAL</sql-statement></sql-statements>");
         result.put("OracleEndpoint", "mock:oracleEndpoint");
         return result;
     }

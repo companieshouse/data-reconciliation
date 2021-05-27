@@ -18,7 +18,9 @@ public class OracleMultiCollectionRoute extends RouteBuilder {
     public void configure() throws Exception {
         from("direct:oracle-multi-collection")
                 .setBody(header("OracleQuery"))
-                .split(body(), AggregationStrategies.groupedBody())
+                .split(xpath("/sql-statements/sql-statement/text()"), AggregationStrategies.groupedBody())
+                .streaming()
+                .parallelProcessing()
                 .toD("${header.OracleEndpoint}")
                 .end()
                 .bean(OracleCompanyStatusTransformer.class);

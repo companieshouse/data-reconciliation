@@ -41,22 +41,52 @@ public class CompareResultsRouteTest {
     @EndpointInject("mock:log-result")
     private MockEndpoint output;
 
+    @EndpointInject("mock:transformer")
+    private MockEndpoint transformer;
+
     @AfterEach
     void after() {
         srcEndpoint.reset();
         targetEndpoint.reset();
         output.reset();
+        transformer.reset();
     }
 
     @Test
     void testIdentifyDifferentCompanyNames() throws InterruptedException {
         // given
-        Results srcResults = new Results(Arrays.asList(new ResultModel("12345678", "ACME LTD"), new ResultModel("23456789", "KICK CIC"), new ResultModel("ABCD1234", "UNLIMITED LTD")));
-        Results targetResults = new Results(Arrays.asList(new ResultModel("12345678", "ACME LIMITED"), new ResultModel("23456780", "PRIVATE PLC"), new ResultModel("ABCD1234", "UNLIMITED LTD")));
+        Results srcResults = new Results(Arrays.asList(new ResultModel("12345678", "ACME LTD"),
+                new ResultModel("23456789", "KICK CIC"),
+                new ResultModel("ABCD1234", "UNLIMITED LTD")));
+        Results targetResults = new Results(
+                Arrays.asList(new ResultModel("12345678", "ACME LIMITED"),
+                        new ResultModel("23456780", "PRIVATE PLC"),
+                        new ResultModel("ABCD1234", "UNLIMITED LTD")));
         srcEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(srcResults));
         targetEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(targetResults));
-        output.allMessages().body().isEqualTo("Company Number,MongoDB - Company Profile,Primary Search Index\r\n12345678,ACME LTD,ACME LIMITED\r\n");
-        output.expectedHeaderReceived("ResourceLinkDescription", "Comparisons completed for Company Number in MongoDB - Company Profile and Primary Search Index.");
+        output.allMessages().body().isEqualTo(
+                "Company Number,MongoDB - Company Profile,Primary Search Index\r\n12345678,ACME LTD,ACME LIMITED\r\n");
+        output.expectedHeaderReceived("ResourceLinkDescription",
+                "Comparisons completed for Company Number in MongoDB - Company Profile and Primary Search Index.");
+
+        transformer.expectedHeaderReceived("SrcList", srcResults);
+        transformer.expectedHeaderReceived("SrcDescription", "MongoDB - Company Profile");
+        transformer.expectedHeaderReceived("TargetList", targetResults);
+        transformer.expectedHeaderReceived("TargetDescription", "Primary Search Index");
+        transformer.expectedHeaderReceived("RecordType", "Company Number");
+        transformer.returnReplyBody(
+                ExpressionBuilder.constantExpression(Arrays.asList(
+                        new HashMap<String, Object>() {{
+                            put("Company Number", "Company Number");
+                            put("MongoDB - Company Profile", "MongoDB - Company Profile");
+                            put("Primary Search Index", "Primary Search Index");
+                        }},
+                        new HashMap<String, Object>() {{
+                            put("Company Number", "12345678");
+                            put("MongoDB - Company Profile", "ACME LTD");
+                            put("Primary Search Index", "ACME LIMITED");
+                        }}
+                )));
 
         // when
         producerTemplate.sendBodyAndHeaders(0, createHeaders());
@@ -71,6 +101,7 @@ public class CompareResultsRouteTest {
         headers.put("TargetDescription", "Primary Search Index");
         headers.put("RecordType", "Company Number");
         headers.put("Destination", "mock:log-result");
+        headers.put("Transformer", "mock:transformer");
         return headers;
     }
 

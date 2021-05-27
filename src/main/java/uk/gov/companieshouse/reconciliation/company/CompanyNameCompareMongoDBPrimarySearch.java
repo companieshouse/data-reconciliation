@@ -22,6 +22,7 @@ public class CompanyNameCompareMongoDBPrimarySearch extends RouteBuilder {
                 .setHeader("ElasticsearchCacheKey").constant("{{endpoint.elasticsearch.primary.cache.key}}")
                 .setHeader("RecordType").constant("Company Number")
                 .setHeader("Destination").constant("{{endpoint.log.output}}")
+                .setHeader("Transformer").constant("{{function.mapper.company_names}}")
                 .to("{{function.name.compare_results}}");
 
     }

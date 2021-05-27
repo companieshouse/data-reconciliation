@@ -33,7 +33,7 @@ public class CompanyStatusCompareMongoDBOracleTest {
         mockEndpoint.expectedHeaderReceived("SrcDescription", "MongoDB - Company Profile");
         mockEndpoint.expectedHeaderReceived("Target", "mock:oracle-multi");
         mockEndpoint.expectedHeaderReceived("TargetDescription", "Oracle");
-        mockEndpoint.expectedHeaderReceived("OracleQuery", "file:sql/company_status/");
+        mockEndpoint.expectedHeaderReceived("OracleQuery", "SELECT 1 FROM DUAL");
         mockEndpoint.expectedHeaderReceived("OracleEndpoint", "mock:fruitTree");
         producerTemplate.sendBody(0);
         MockEndpoint.assertIsSatisfied(context);
