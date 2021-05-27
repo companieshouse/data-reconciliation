@@ -1,7 +1,6 @@
 package uk.gov.companieshouse.reconciliation.function.compare_results.transformer;
 
 import java.util.function.Function;
-import org.apache.camel.Header;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.reconciliation.model.ResultModel;
 import uk.gov.companieshouse.reconciliation.model.Results;
@@ -11,7 +10,6 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Compare two {@link Results results objects} and record any differences for each result with a

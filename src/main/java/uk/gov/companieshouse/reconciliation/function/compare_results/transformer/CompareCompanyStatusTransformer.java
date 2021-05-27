@@ -6,9 +6,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.camel.Header;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.reconciliation.model.ResultModel;
 import uk.gov.companieshouse.reconciliation.model.Results;
 
+@Component
 public class CompareCompanyStatusTransformer {
     @Autowired
     private CompareFieldsResultsTransformer transformer;

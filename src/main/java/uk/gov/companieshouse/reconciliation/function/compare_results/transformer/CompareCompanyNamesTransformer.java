@@ -3,13 +3,14 @@ package uk.gov.companieshouse.reconciliation.function.compare_results.transforme
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.apache.camel.Header;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.reconciliation.model.ResultModel;
 import uk.gov.companieshouse.reconciliation.model.Results;
 
+@Component
 public class CompareCompanyNamesTransformer {
 
     private CompareFieldsResultsTransformer transformer;

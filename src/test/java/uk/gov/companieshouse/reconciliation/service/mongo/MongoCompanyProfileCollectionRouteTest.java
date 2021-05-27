@@ -58,11 +58,11 @@ public class MongoCompanyProfileCollectionRouteTest {
         cache.returnReplyHeader(CaffeineConstants.ACTION_HAS_RESULT, ExpressionBuilder.constantExpression(false));
         mongoEndpoint.whenAnyExchangeReceived(exchange ->
             exchange.getIn().setBody(Arrays.asList(
-                    Document.parse("{\"_id\": \"12345678\", \"data\": {\"company_name\": \"ACME LTD\"}}"),
-                    Document.parse("{\"_id\": \"ABCD1234\", \"data\": {\"company_name\": \"DENTIST LTD\"}}")
+                    Document.parse("{\"_id\": \"12345678\", \"data\": {\"company_name\": \"ACME LTD\", \"company_status\": \"active\"}}"),
+                    Document.parse("{\"_id\": \"ABCD1234\", \"data\": {\"company_name\": \"DENTIST LTD\", \"company_status\": \"dissolved\"}}")
             ))
         );
-        mongoEndpoint.expectedBodyReceived().constant(Collections.singletonList(Aggregates.project(Projections.include("_id", "data.company_name"))));
+        mongoEndpoint.expectedBodyReceived().constant(Collections.singletonList(Aggregates.project(Projections.include("_id", "data.company_name", "data.company_status"))));
         Exchange exchange = new DefaultExchange(camelContext);
 
         //when
@@ -70,8 +70,8 @@ public class MongoCompanyProfileCollectionRouteTest {
         Results actual = result.getIn().getBody(Results.class);
 
         //then
-        assertTrue(actual.contains(new ResultModel("12345678", "ACME LTD")));
-        assertTrue(actual.contains(new ResultModel("ABCD1234", "DENTIST LTD")));
+        assertTrue(actual.contains(new ResultModel("12345678", "ACME LTD", "active")));
+        assertTrue(actual.contains(new ResultModel("ABCD1234", "DENTIST LTD", "dissolved")));
         MockEndpoint.assertIsSatisfied(camelContext);
     }
 
@@ -82,7 +82,7 @@ public class MongoCompanyProfileCollectionRouteTest {
         cache.expectedHeaderValuesReceivedInAnyOrder(CaffeineConstants.KEY, "mongoCompanyProfile");
         cache.whenAnyExchangeReceived(exchange -> {
             exchange.getIn().setHeader(CaffeineConstants.ACTION_HAS_RESULT, true);
-            exchange.getIn().setBody(new Results(Arrays.asList(new ResultModel("12345678", "ACME LTD"), new ResultModel("ABCD1234", "DENTIST LTD"))));
+            exchange.getIn().setBody(new Results(Arrays.asList(new ResultModel("12345678", "ACME LTD", "active"), new ResultModel("ABCD1234", "DENTIST LTD", "dissolved"))));
         });
         mongoEndpoint.expectedMessageCount(0);
         Exchange exchange = new DefaultExchange(camelContext);
@@ -92,8 +92,8 @@ public class MongoCompanyProfileCollectionRouteTest {
         Results actual = result.getIn().getBody(Results.class);
 
         //then
-        assertTrue(actual.contains(new ResultModel("12345678", "ACME LTD")));
-        assertTrue(actual.contains(new ResultModel("ABCD1234", "DENTIST LTD")));
+        assertTrue(actual.contains(new ResultModel("12345678", "ACME LTD", "active")));
+        assertTrue(actual.contains(new ResultModel("ABCD1234", "DENTIST LTD", "dissolved")));
         MockEndpoint.assertIsSatisfied(camelContext);
     }
 }

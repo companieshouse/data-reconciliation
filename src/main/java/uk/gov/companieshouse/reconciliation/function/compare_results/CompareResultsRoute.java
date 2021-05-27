@@ -2,8 +2,6 @@ package uk.gov.companieshouse.reconciliation.function.compare_results;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
-import uk.gov.companieshouse.reconciliation.function.compare_results.transformer.CompareCompanyNamesTransformer;
-import uk.gov.companieshouse.reconciliation.function.compare_results.transformer.CompareFieldsResultsTransformer;
 
 /**
  * Compare resource data from two endpoints with each other.<br>

@@ -31,9 +31,9 @@ public class OracleCompanyStatusTransformer {
         return new Results(resultSet.stream()
                 .flatMap(Collection::stream)
                 .map(map -> new ResultModel(
-                        Optional.ofNullable((String) map.get("incorporation_number")).orElse(""),
+                        Optional.ofNullable((String) map.get("INCORPORATION_NUMBER")).orElse(""),
                         "",
-                        Optional.ofNullable((String) map.get("company_status")).orElse("")))
+                        Optional.ofNullable((String) map.get("COMPANY_STATUS")).orElse("")))
                 .collect(Collectors.toList()));
     }
 }

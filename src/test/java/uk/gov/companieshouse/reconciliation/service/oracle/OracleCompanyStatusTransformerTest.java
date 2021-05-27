@@ -27,12 +27,12 @@ public class OracleCompanyStatusTransformerTest {
         // Given
         List<List<Map<String, Object>>> source = Arrays.asList(
                 Collections.singletonList(new HashMap<String, Object>() {{
-                    put("incorporation_number", "12345678");
-                    put("company_status", "active");
+                    put("INCORPORATION_NUMBER", "12345678");
+                    put("COMPANY_STATUS", "active");
                 }}),
                 Collections.singletonList(new HashMap<String, Object>() {{
-                    put("incorporation_number", "87654321");
-                    put("company_status", "dissolved");
+                    put("INCORPORATION_NUMBER", "87654321");
+                    put("COMPANY_STATUS", "dissolved");
                 }}));
         Results expected = new Results(Arrays.asList(
                 new ResultModel("12345678", "", "active"),
@@ -51,12 +51,12 @@ public class OracleCompanyStatusTransformerTest {
         // Given
         List<List<Map<String, Object>>> source = Arrays.asList(
                 Collections.singletonList(new HashMap<String, Object>() {{
-                    put("incorporation_number", null);
-                    put("company_status", null);
+                    put("INCORPORATION_NUMBER", null);
+                    put("COMPANY_STATUS", null);
                 }}),
                 Collections.singletonList(new HashMap<String, Object>() {{
-                    put("incorporation_number", null);
-                    put("company_status", null);
+                    put("INCORPORATION_NUMBER", null);
+                    put("COMPANY_STATUS", null);
                 }}),
                 Collections.singletonList(new HashMap<>()));
         Results expected = new Results(Arrays.asList(

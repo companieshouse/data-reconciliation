@@ -1,13 +1,13 @@
 <sql-statements>
   <sql-statement>
-    SELECT INCORPORATION_NUMBER, 'dissolved' AS STATUS
+    SELECT INCORPORATION_NUMBER as incorporation_number, 'dissolved' AS company_status
     FROM CORPORATE_BODY
     WHERE ACTION_CODE_TYPE_ID = 9000
     AND TRADING_STATUS_TYPE_ID = 3
     AND ACTION_CODE_DATE >= TO_DATE ('30-DEC-2009','DD-MON-YYYY')
   </sql-statement>
   <sql-statement>
-    SELECT DISTINCT INCORPORATION_NUMBER
+    SELECT DISTINCT INCORPORATION_NUMBER as incorporation_number, 'liquidation' AS company_status
     FROM CORPORATE_BODY CB
     WHERE CB.ACTION_CODE_TYPE_ID IN (7001, 7002, 7101, 7401, 7402, 7403)
     OR (ACTION_CODE_TYPE_ID = 7701

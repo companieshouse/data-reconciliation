@@ -23,25 +23,25 @@ public class MongoAggregationTransformerTest {
     @Test
     void testReturnStringRepresentationOfValues() {
         //given
-        List<Document> results = Collections.singletonList(Document.parse("{\"_id\": \"12345678\", \"data\": {\"company_name\": \"ACME LTD\"}}"));
+        List<Document> results = Collections.singletonList(Document.parse("{\"_id\": \"12345678\", \"data\": {\"company_name\": \"ACME LTD\", \"company_status\": \"active\"}}"));
 
         //when
         Results actual = transformer.transform(results);
 
         //then
-        assertTrue(actual.contains(new ResultModel("12345678", "ACME LTD")));
+        assertTrue(actual.contains(new ResultModel("12345678", "ACME LTD", "active")));
     }
 
     @Test
     void testDefaultEmptyStringIfIdOrCompanyNameNull(){
         //given
-        List<Document> results = Collections.singletonList(Document.parse("{\"_id\": null, \"data\": {\"company_name\": null}}"));
+        List<Document> results = Collections.singletonList(Document.parse("{\"_id\": null, \"data\": {\"company_name\": null, \"company_status\": null}}"));
 
         //when
         Results actual = transformer.transform(results);
 
         //then
-        assertTrue(actual.contains(new ResultModel("", "")));
+        assertTrue(actual.contains(new ResultModel("", "", "")));
     }
 
     @Test
