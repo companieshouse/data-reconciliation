@@ -1,6 +1,5 @@
 package uk.gov.companieshouse.reconciliation.service.oracle;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -8,7 +7,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.camel.Body;
 import org.apache.camel.Exchange;
-import org.apache.camel.Header;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.reconciliation.model.ResultModel;
 import uk.gov.companieshouse.reconciliation.model.Results;
@@ -23,25 +21,25 @@ public class OracleCompanyStatusTransformer {
     /**
      * Transform aggregated company status data fetched from Oracle ResultSets into a {@link Results
      * results} model.
-     * <p>
+     *
      * The incoming ResultSets will be transformed by Camel into a {@link List list} of {@link Map
      * maps} containing an incorporation number and a company status and aggregated.
-     * <p>
+     *
      * Each exchange contains a list of companies with the same company status.
      * <pre>
      * List
-     * Exchange
-     * Header
-     * String: company-status
+     *   Exchange
+     *     Header
+     *       String: company-status
      *
-     * Body
-     * List
-     * Map
-     * key: INCORPORATION_NUMBER
-     * value: 12345678
-     * Map
-     * key: INCORPORATION_NUMBER
-     * value: 12345678
+     *     Body
+     *       List
+     *       Map
+     *         key: INCORPORATION_NUMBER
+     *         value: 12345678
+     *       Map
+     *         key: INCORPORATION_NUMBER
+     *         value: 12345678
      * </pre>
      *
      * @param exchanges list of exchanges
