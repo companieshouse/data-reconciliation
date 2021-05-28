@@ -40,6 +40,9 @@ public class CompareResultsRoute extends RouteBuilder {
                 })
                 .bean(CompareResultsTransformer.class)
                 .marshal().csv()
+                .toD("${header.Upload}")
+                .toD("${header.Presign}")
+                .setHeader("ResourceLinkReference", body())
                 .setHeader("ResourceLinkDescription").simple("Comparisons completed for ${header.RecordType} in ${header.SrcDescription} and ${header.TargetDescription}.")
                 .log("Compare Results: ${header.ResourceLinkDescription}")
                 .toD("${header.Destination}");
