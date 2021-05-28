@@ -6,8 +6,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.gov.companieshouse.reconciliation.model.ResultModel;
@@ -24,16 +27,23 @@ public class OracleCompanyStatusTransformerTest {
 
     @Test
     void testTransformResultSetIntoResultsObject() {
+        final String companyStatus = "active";
+
         // Given
-        List<List<Map<String, Object>>> source = Arrays.asList(
-                Collections.singletonList(new HashMap<String, Object>() {{
+        CamelContext camelContext = new DefaultCamelContext();
+        Exchange exchangeActive = new DefaultExchange(camelContext);
+        exchangeActive.getIn().setHeader("CompanyStatus", "active");
+        exchangeActive.getIn().setBody(Collections.singletonList(new HashMap<String, Object>() {{
                     put("INCORPORATION_NUMBER", "12345678");
-                    put("COMPANY_STATUS", "active");
-                }}),
-                Collections.singletonList(new HashMap<String, Object>() {{
-                    put("INCORPORATION_NUMBER", "87654321");
-                    put("COMPANY_STATUS", "dissolved");
                 }}));
+        Exchange exchangeDissolved = new DefaultExchange(camelContext);
+        exchangeDissolved.getIn().setHeader("CompanyStatus", "dissolved");
+        exchangeDissolved.getIn().setBody(Collections.singletonList(new HashMap<String, Object>() {{
+                    put("INCORPORATION_NUMBER", "87654321");
+                }}));
+
+        List<Exchange> source = Arrays.asList(exchangeActive, exchangeDissolved);
+
         Results expected = new Results(Arrays.asList(
                 new ResultModel("12345678", "", "active"),
                 new ResultModel("87654321", "", "dissolved"))
@@ -49,18 +59,19 @@ public class OracleCompanyStatusTransformerTest {
     @Test
     void testTransformResultSetWithNullValuesIntoResultsObject() {
         // Given
-        List<List<Map<String, Object>>> source = Arrays.asList(
-                Collections.singletonList(new HashMap<String, Object>() {{
-                    put("INCORPORATION_NUMBER", null);
-                    put("COMPANY_STATUS", null);
-                }}),
-                Collections.singletonList(new HashMap<String, Object>() {{
-                    put("INCORPORATION_NUMBER", null);
-                    put("COMPANY_STATUS", null);
-                }}),
-                Collections.singletonList(new HashMap<>()));
+        CamelContext camelContext = new DefaultCamelContext();
+        Exchange exchangeActive = new DefaultExchange(camelContext);
+        exchangeActive.getIn().setHeader("CompanyStatus", "");
+        exchangeActive.getIn().setBody(Collections.singletonList(new HashMap<String, Object>() {{
+            put("INCORPORATION_NUMBER", null);
+        }}));
+        Exchange exchangeDissolved = new DefaultExchange(camelContext);
+        exchangeDissolved.getIn().setHeader("CompanyStatus", null);
+        exchangeDissolved.getIn().setBody(Collections.singletonList(new HashMap<String, Object>()));
+
+        List<Exchange> source = Arrays.asList(exchangeActive, exchangeDissolved);
+
         Results expected = new Results(Arrays.asList(
-                new ResultModel("", "", ""),
                 new ResultModel("", "", ""),
                 new ResultModel("", "", ""))
         );

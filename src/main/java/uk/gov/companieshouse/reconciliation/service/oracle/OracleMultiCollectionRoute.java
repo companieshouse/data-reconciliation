@@ -1,7 +1,9 @@
 package uk.gov.companieshouse.reconciliation.service.oracle;
 
 import org.apache.camel.builder.AggregationStrategies;
+import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.language.xpath.XPathBuilder;
 import org.springframework.stereotype.Component;
 
 /**
@@ -18,9 +20,9 @@ public class OracleMultiCollectionRoute extends RouteBuilder {
     public void configure() throws Exception {
         from("direct:oracle-multi-collection")
                 .setBody(header("OracleQuery"))
-                .split(xpath("/sql-statements/sql-statement/text()"), AggregationStrategies.groupedBody())
-                .streaming()
-                .parallelProcessing()
+                .split(xpath("/sql-statements/sql-statement"), AggregationStrategies.groupedExchange())
+                .setHeader("CompanyStatus", xpath("/sql-statement/@status"))
+                .setBody(xpath("/sql-statement/text()"))
                 .toD("${header.OracleEndpoint}")
                 .end()
                 .bean(OracleCompanyStatusTransformer.class);

@@ -46,17 +46,15 @@ public class OracleMultiCollectionRouteTest {
 
     @Test
     void testOneOracleRequestPerSqlQuery() throws InterruptedException {
-        oracleEndpoint.expectedBodiesReceivedInAnyOrder("SELECT '12345678' as incorporation_number, 'active' as company_status FROM DUAL", "SELECT '87654321' as incorporation_number, 'dissolved' as company_status FROM DUAL");
+        oracleEndpoint.expectedBodiesReceivedInAnyOrder("SELECT '12345678' as incorporation_number FROM DUAL", "SELECT '87654321' as incorporation_number FROM DUAL");
         oracleEndpoint.whenExchangeReceived(1, exchange -> {
             exchange.getIn().setBody(Collections.singletonList(new HashMap<String, Object>(){{
-                put("incorporation_number", "12345678");
-                put("company_status", "active");
+                put("INCORPORATION_NUMBER", "12345678");
             }}));
         });
         oracleEndpoint.whenExchangeReceived(2, exchange -> {
             exchange.getIn().setBody(Collections.singletonList(new HashMap<String, Object>(){{
-                put("incorporation_number", "87654321");
-                put("company_status", "dissolved");
+                put("INCORPORATION_NUMBER", "87654321");
             }}));
         });
         Exchange exchange = new DefaultExchange(context);
@@ -69,7 +67,7 @@ public class OracleMultiCollectionRouteTest {
 
     private Map<String, Object> headers() {
         Map<String, Object> result = new HashMap<>();
-        result.put("OracleQuery", "<sql-statements><sql-statement>SELECT '12345678' as incorporation_number, 'active' as company_status FROM DUAL</sql-statement><sql-statement>SELECT '87654321' as incorporation_number, 'dissolved' as company_status FROM DUAL</sql-statement></sql-statements>");
+        result.put("OracleQuery", "<sql-statements><sql-statement status=\"active\">SELECT '12345678' as incorporation_number FROM DUAL</sql-statement><sql-statement status=\"dissolved\">SELECT '87654321' as incorporation_number FROM DUAL</sql-statement></sql-statements>");
         result.put("OracleEndpoint", "mock:oracleEndpoint");
         return result;
     }
