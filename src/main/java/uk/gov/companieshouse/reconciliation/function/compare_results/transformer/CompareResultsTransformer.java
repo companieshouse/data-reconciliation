@@ -25,21 +25,21 @@ public class CompareResultsTransformer {
      * @param srcDescription A description of the first endpoint from which {@link Results results} have been retrieved.
      * @param targetResults A {@link Results results object} containing data retrieved from another endpoint.
      * @param targetDescription A description of the second endpoint from which {@link Results results} have been retrieved.
-     * @param recordType A description of the type of data being compared.
+     * @param recordKey A description of the type of data being compared.
      * @return A {@link List list} containing {@link Map company number and data name-value pairings}.
      */
     public List<Map<String, Object>> transform(@Header("SrcList") Results srcResults,
                                                @Header("SrcDescription") String srcDescription,
                                                @Header("TargetList") Results targetResults,
                                                @Header("TargetDescription") String targetDescription,
-                                               @Header("RecordType") String recordType) {
+                                               @Header("RecordKey") String recordKey) {
 
         // Calculate intersection of both Results objects.
         // Remap Results objects to maps of company number and company name pairings.
         // If value in one map is different add it to the results.
         List<Map<String, Object>> results = new ArrayList<>();
 
-        addRow(results, recordType, recordType, srcDescription, srcDescription,
+        addRow(results, recordKey, recordKey, srcDescription, srcDescription,
                 targetDescription, targetDescription);
 
         Map<String, String> srcModels = generateMappings(srcResults.getResultModels());
@@ -50,7 +50,7 @@ public class CompareResultsTransformer {
                         targetModels.containsKey(entry.getKey()) && !targetModels.get(entry.getKey()).equals(entry.getValue())
                 )
                 .forEach(entry ->
-                        addRow(results, recordType, entry.getKey(), srcDescription, entry.getValue(),
+                        addRow(results, recordKey, entry.getKey(), srcDescription, entry.getValue(),
                                 targetDescription, targetModels.get(entry.getKey()))
                 );
 

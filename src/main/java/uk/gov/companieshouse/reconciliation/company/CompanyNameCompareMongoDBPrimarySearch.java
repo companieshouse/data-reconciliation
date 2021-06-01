@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * Trigger a comparison between company profiles in MongoDB and company profiles that have been indexed in the
- * Elasticsearch alphabetical search index. Any differences between company names will be recorded in the results.
+ * Elasticsearch primary search index. Any differences between company names will be recorded in the results.
  */
 @Component
 public class CompanyNameCompareMongoDBPrimarySearch extends RouteBuilder {
@@ -22,7 +22,8 @@ public class CompanyNameCompareMongoDBPrimarySearch extends RouteBuilder {
                 .setHeader("ElasticsearchQuery").constant("{{query.elasticsearch.primary.company}}")
                 .setHeader("ElasticsearchCacheKey").constant("{{endpoint.elasticsearch.primary.cache.key}}")
                 .setHeader("ElasticsearchTransformer").constant("{{transformer.elasticsearch.primary}}")
-                .setHeader("RecordType").constant("Company Number")
+                .setHeader("RecordKey").constant("Company Number")
+                .setHeader("Comparison").constant("company names")
                 .setHeader("Destination").constant("{{endpoint.elasticsearch.output}}")
                 .setHeader("Upload", constant("{{endpoint.s3.upload}}"))
                 .setHeader("Presign", constant("{{endpoint.s3presigner.download}}"))

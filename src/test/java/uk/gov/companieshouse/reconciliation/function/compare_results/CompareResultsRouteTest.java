@@ -56,7 +56,7 @@ public class CompareResultsRouteTest {
         srcEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(srcResults));
         targetEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(targetResults));
         output.allMessages().body().isEqualTo("Company Number,MongoDB - Company Profile,Primary Search Index\r\n12345678,ACME LTD,ACME LIMITED\r\n");
-        output.expectedHeaderReceived("ResourceLinkDescription", "Comparisons completed for Company Number in MongoDB - Company Profile and Primary Search Index.");
+        output.expectedHeaderReceived("ResourceLinkDescription", "Comparisons completed for companies in MongoDB - Company Profile and Primary Search Index.");
 
         // when
         producerTemplate.sendBodyAndHeaders(0, createHeaders());
@@ -69,7 +69,8 @@ public class CompareResultsRouteTest {
         headers.put("Target", "mock:target-endpoint");
         headers.put("SrcDescription", "MongoDB - Company Profile");
         headers.put("TargetDescription", "Primary Search Index");
-        headers.put("RecordType", "Company Number");
+        headers.put("RecordKey", "Company Number");
+        headers.put("Comparison", "companies");
         headers.put("Destination", "mock:log-result");
         return headers;
     }

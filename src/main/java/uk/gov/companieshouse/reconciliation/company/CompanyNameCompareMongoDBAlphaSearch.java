@@ -4,6 +4,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.s3.AWS2S3Constants;
 import org.springframework.stereotype.Component;
 
+/**
+ * Trigger a comparison between company profiles in MongoDB and company profiles that have been indexed in the
+ * Elasticsearch alphabetical search index. Any differences between company names will be recorded in the results.
+ */
 @Component
 public class CompanyNameCompareMongoDBAlphaSearch extends RouteBuilder {
 
@@ -18,7 +22,8 @@ public class CompanyNameCompareMongoDBAlphaSearch extends RouteBuilder {
                 .setHeader("ElasticsearchQuery").constant("{{query.elasticsearch.alpha.company}}")
                 .setHeader("ElasticsearchCacheKey").constant("{{endpoint.elasticsearch.alpha.cache.key}}")
                 .setHeader("ElasticsearchTransformer").constant("{{transformer.elasticsearch.alpha}}")
-                .setHeader("RecordType").constant("Company Number")
+                .setHeader("RecordKey").constant("Company Number")
+                .setHeader("Comparison").constant("company names")
                 .setHeader("Destination").constant("{{endpoint.elasticsearch.output}}")
                 .setHeader("Upload", constant("{{endpoint.s3.upload}}"))
                 .setHeader("Presign", constant("{{endpoint.s3presigner.download}}"))

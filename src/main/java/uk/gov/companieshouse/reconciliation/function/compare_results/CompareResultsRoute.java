@@ -43,7 +43,7 @@ public class CompareResultsRoute extends RouteBuilder {
                 .toD("${header.Upload}")
                 .toD("${header.Presign}")
                 .setHeader("ResourceLinkReference", body())
-                .setHeader("ResourceLinkDescription").simple("Comparisons completed for ${header.RecordType} in ${header.SrcDescription} and ${header.TargetDescription}.")
+                .setHeader("ResourceLinkDescription").simple("Comparisons completed for ${header.Comparison} in ${header.SrcDescription} and ${header.TargetDescription}.")
                 .log("Compare Results: ${header.ResourceLinkDescription}")
                 .toD("${header.Destination}");
     }
