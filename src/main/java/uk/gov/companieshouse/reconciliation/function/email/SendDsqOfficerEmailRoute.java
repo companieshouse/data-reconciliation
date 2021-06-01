@@ -4,6 +4,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.reconciliation.function.email.aggregator.EmailAggregationStrategy;
 
+/**
+ * Sends an email comprising of disqualified officers results gathered from comparison jobs.
+ */
 @Component
 public class SendDsqOfficerEmailRoute extends RouteBuilder {
 
