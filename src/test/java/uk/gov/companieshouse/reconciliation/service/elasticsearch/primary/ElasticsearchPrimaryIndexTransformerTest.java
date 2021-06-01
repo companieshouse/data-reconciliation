@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.reconciliation.service.elasticsearch;
+package uk.gov.companieshouse.reconciliation.service.elasticsearch.primary;
 
 import org.elasticsearch.common.bytes.BytesArray;
 import org.elasticsearch.common.text.Text;
@@ -11,6 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.reconciliation.component.elasticsearch.slicedscroll.client.ElasticsearchSlicedScrollIterator;
 import uk.gov.companieshouse.reconciliation.model.ResultModel;
 import uk.gov.companieshouse.reconciliation.model.Results;
+import uk.gov.companieshouse.reconciliation.service.elasticsearch.primary.ElasticsearchPrimaryIndexTransformer;
 
 import java.util.Collections;
 
@@ -20,16 +21,16 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class ElasticsearchTransformerTest {
+public class ElasticsearchPrimaryIndexTransformerTest {
 
     @Mock
     private ElasticsearchSlicedScrollIterator iterator;
 
-    private ElasticsearchTransformer transformer;
+    private ElasticsearchPrimaryIndexTransformer transformer;
 
     @BeforeEach
     void setUp() {
-        transformer = new ElasticsearchTransformer();
+        transformer = new ElasticsearchPrimaryIndexTransformer(10);
     }
 
     @Test

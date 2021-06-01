@@ -26,7 +26,7 @@ public class ElasticsearchCollectionRoute extends RouteBuilder {
                 .when(header(CaffeineConstants.ACTION_HAS_RESULT).isEqualTo(false))
                     .setBody(header("ElasticsearchQuery"))
                     .toD("${header.ElasticsearchEndpoint}")
-                    .bean(ElasticsearchTransformer.class)
+                    .toD("${header.ElasticsearchTransformer}")
                     .log("${body.size()} results have been fetched from elasticsearch.")
                     .setHeader(CaffeineConstants.ACTION, constant(CaffeineConstants.ACTION_PUT))
                     .setHeader(CaffeineConstants.KEY, simple("${header.ElasticsearchCacheKey}"))

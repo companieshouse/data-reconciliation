@@ -5,29 +5,27 @@ import org.apache.camel.Header;
 import org.elasticsearch.search.SearchHit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.reconciliation.model.ResultModel;
 import uk.gov.companieshouse.reconciliation.model.Results;
+import uk.gov.companieshouse.reconciliation.service.elasticsearch.primary.ElasticsearchPrimaryIndexTransformer;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * Transform {@link SearchHit search hits} retrieved from an Elasticsearch index into a collection
  * of {@link Results results}.
  */
-@Component
-public class ElasticsearchTransformer {
+public abstract class ElasticsearchTransformer {
 
-    @Value("${results.initial.capacity}")
+    private static final Logger LOGGER = LoggerFactory.getLogger(ElasticsearchPrimaryIndexTransformer.class);
     private int initialCapacity;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ElasticsearchTransformer.class);
+    public ElasticsearchTransformer(int initialCapacity) {
+        this.initialCapacity = initialCapacity;
+    }
 
     /**
      * Iterate over {@link SearchHit search hits} retrieved from an Elasticsearch index and map ID and corporate body
@@ -58,13 +56,5 @@ public class ElasticsearchTransformer {
         return results;
     }
 
-    private void addSourceFieldToNameList(List<String> names, SearchHit hit, String sourceField) {
-        Optional.ofNullable(hit.getSourceAsMap().get("items"))
-                .flatMap(items -> ((List<?>)items).stream().findFirst())
-                .map(item -> ((Map<?,?>)item).get(sourceField))
-                .map(Object::toString)
-                .map(String::trim)
-                .filter(nameEnding -> !nameEnding.isEmpty())
-                .ifPresent(names::add);
-    }
+    protected abstract void addSourceFieldToNameList(List<String> names, SearchHit hit, String sourceField);
 }

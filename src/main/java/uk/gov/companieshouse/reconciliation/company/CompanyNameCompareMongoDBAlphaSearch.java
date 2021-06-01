@@ -17,6 +17,7 @@ public class CompanyNameCompareMongoDBAlphaSearch extends RouteBuilder {
                 .setHeader("ElasticsearchEndpoint").constant("{{endpoint.elasticsearch.alpha}}")
                 .setHeader("ElasticsearchQuery").constant("{{query.elasticsearch.alpha.company}}")
                 .setHeader("ElasticsearchCacheKey").constant("{{endpoint.elasticsearch.alpha.cache.key}}")
+                .setHeader("ElasticsearchTransformer").constant("{{transformer.elasticsearch.alpha}}")
                 .setHeader("RecordType").constant("Company Number")
                 .setHeader("Destination").constant("{{endpoint.elasticsearch.output}}")
                 .setHeader("Upload", constant("{{endpoint.s3.upload}}"))
