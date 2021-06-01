@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.reconciliation.function.email.aggregator.EmailAggregationStrategy;
 
 /**
- * Sends an email with results gathered from comparison jobs.
+ * Sends an email comprising of company profile results gathered from comparison jobs.
  */
 @Component
 public class SendCompanyEmailRoute extends RouteBuilder {
