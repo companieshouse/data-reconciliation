@@ -2,5 +2,9 @@
   "query": {
     "match_all": {}
   },
-  "_source": false
+  "_source": {
+    "includes": [
+      "items.corporate_name"
+    ]
+  }
 }

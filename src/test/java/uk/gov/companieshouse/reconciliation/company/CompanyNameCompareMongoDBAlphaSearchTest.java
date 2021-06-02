@@ -6,7 +6,6 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.aws2.s3.AWS2S3Constants;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.mongodb.MongoDbConstants;
 import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,7 +18,7 @@ import org.springframework.test.context.TestPropertySource;
 @SpringBootTest
 @DirtiesContext
 @TestPropertySource(locations = "classpath:application-stubbed.properties")
-public class CompanyNameCompareMongoDBPrimarySearchTest {
+public class CompanyNameCompareMongoDBAlphaSearchTest {
 
     @Autowired
     private CamelContext context;
@@ -27,7 +26,7 @@ public class CompanyNameCompareMongoDBPrimarySearchTest {
     @EndpointInject("mock:compare_results")
     private MockEndpoint target;
 
-    @Produce("direct:company_name_mongo_primary_trigger")
+    @Produce("direct:company_name_mongo_alpha_trigger")
     private ProducerTemplate producerTemplate;
 
     @BeforeEach
@@ -40,10 +39,10 @@ public class CompanyNameCompareMongoDBPrimarySearchTest {
         target.expectedHeaderReceived("Src", "mock:mongoCompanyProfileCollection");
         target.expectedHeaderReceived("SrcDescription", "MongoDB - Company Profile");
         target.expectedHeaderReceived("Target", "mock:elasticsearch-collection");
-        target.expectedHeaderReceived("TargetDescription", "Primary Search Index");
-        target.expectedHeaderReceived("ElasticsearchCacheKey", "elasticsearchPrimary");
-        target.expectedHeaderReceived("ElasticsearchEndpoint", "mock:elasticsearch-stub");
-        target.expectedHeaderReceived("ElasticsearchQuery", "test");
+        target.expectedHeaderReceived("TargetDescription", "Alpha Index");
+        target.expectedHeaderReceived("ElasticsearchCacheKey", "elasticsearchAlpha");
+        target.expectedHeaderReceived("ElasticsearchEndpoint", "mock:elasticsearch-alpha-stub");
+        target.expectedHeaderReceived("ElasticsearchQuery", "alpha-test");
         target.expectedHeaderReceived("RecordKey", "Company Number");
         target.expectedHeaderReceived("Comparison", "company names");
         target.expectedHeaderReceived("Destination", "mock:elasticsearch");
@@ -53,4 +52,5 @@ public class CompanyNameCompareMongoDBPrimarySearchTest {
         producerTemplate.sendBody(0);
         MockEndpoint.assertIsSatisfied(context);
     }
+
 }

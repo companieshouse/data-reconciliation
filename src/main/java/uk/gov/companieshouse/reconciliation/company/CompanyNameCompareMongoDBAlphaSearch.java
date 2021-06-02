@@ -6,30 +6,29 @@ import org.springframework.stereotype.Component;
 
 /**
  * Trigger a comparison between company profiles in MongoDB and company profiles that have been indexed in the
- * Elasticsearch primary search index. Any differences between company names will be recorded in the results.
+ * Elasticsearch alphabetical search index. Any differences between company names will be recorded in the results.
  */
 @Component
-public class CompanyNameCompareMongoDBPrimarySearch extends RouteBuilder {
+public class CompanyNameCompareMongoDBAlphaSearch extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("{{endpoint.company_name_mongo_primary.cron.tab}}")
+        from("{{endpoint.company_name_mongo_alpha.cron.tab}}")
                 .setHeader("Src").constant("{{endpoint.mongodb.wrapper.company_profile.collection}}")
                 .setHeader("SrcDescription").constant("MongoDB - Company Profile")
                 .setHeader("Target").constant("{{endpoint.elasticsearch.collection}}")
-                .setHeader("TargetDescription").constant("Primary Search Index")
-                .setHeader("ElasticsearchEndpoint").constant("{{endpoint.elasticsearch.primary}}")
-                .setHeader("ElasticsearchQuery").constant("{{query.elasticsearch.primary.company}}")
-                .setHeader("ElasticsearchCacheKey").constant("{{endpoint.elasticsearch.primary.cache.key}}")
-                .setHeader("ElasticsearchTransformer").constant("{{transformer.elasticsearch.primary}}")
+                .setHeader("TargetDescription").constant("Alpha Index")
+                .setHeader("ElasticsearchEndpoint").constant("{{endpoint.elasticsearch.alpha}}")
+                .setHeader("ElasticsearchQuery").constant("{{query.elasticsearch.alpha.company}}")
+                .setHeader("ElasticsearchCacheKey").constant("{{endpoint.elasticsearch.alpha.cache.key}}")
+                .setHeader("ElasticsearchTransformer").constant("{{transformer.elasticsearch.alpha}}")
                 .setHeader("RecordKey").constant("Company Number")
                 .setHeader("Comparison").constant("company names")
                 .setHeader("Destination").constant("{{endpoint.elasticsearch.output}}")
                 .setHeader("Upload", constant("{{endpoint.s3.upload}}"))
                 .setHeader("Presign", constant("{{endpoint.s3presigner.download}}"))
-                .setHeader(AWS2S3Constants.KEY, simple("company/results_primary_mongo_${date:now:yyyyMMdd}T${date:now:hhmmss}.csv"))
+                .setHeader(AWS2S3Constants.KEY, simple("company/results_alpha_mongo_${date:now:yyyyMMdd}T${date:now:hhmmss}.csv"))
                 .setHeader(AWS2S3Constants.DOWNLOAD_LINK_EXPIRATION_TIME, constant("{{aws.expiry}}"))
                 .to("{{function.name.compare_results}}");
-
     }
 }

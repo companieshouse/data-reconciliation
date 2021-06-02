@@ -12,6 +12,10 @@ import org.springframework.stereotype.Component;
  * header(ElasticsearchQuery): The query that will be run against Elasticsearch.<br>
  * header(ElasticsearchLogIndices): An {@link java.lang.Integer integer} used to determine the interval at which the
  * number of search hits will be logged.<br>
+ * header(ElasticsearchCacheKey): The key under which results will be cached.<br>
+ * header(ElasticsearchEndpoint): The Elasticsearch service that indices will be fetched from.<br>
+ * header(ElasticsearchTransformer): The name of the route responsible for transforming indices returned by
+ * Elasticsearch.
  */
 @Component
 public class ElasticsearchCollectionRoute extends RouteBuilder {
@@ -26,7 +30,7 @@ public class ElasticsearchCollectionRoute extends RouteBuilder {
                 .when(header(CaffeineConstants.ACTION_HAS_RESULT).isEqualTo(false))
                     .setBody(header("ElasticsearchQuery"))
                     .toD("${header.ElasticsearchEndpoint}")
-                    .bean(ElasticsearchTransformer.class)
+                    .toD("${header.ElasticsearchTransformer}")
                     .log("${body.size()} results have been fetched from elasticsearch.")
                     .setHeader(CaffeineConstants.ACTION, constant(CaffeineConstants.ACTION_PUT))
                     .setHeader(CaffeineConstants.KEY, simple("${header.ElasticsearchCacheKey}"))

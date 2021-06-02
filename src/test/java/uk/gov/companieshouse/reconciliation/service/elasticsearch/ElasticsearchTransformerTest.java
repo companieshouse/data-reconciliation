@@ -1,7 +1,5 @@
 package uk.gov.companieshouse.reconciliation.service.elasticsearch;
 
-import org.elasticsearch.common.bytes.BytesArray;
-import org.elasticsearch.common.text.Text;
 import org.elasticsearch.search.SearchHit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,166 +10,77 @@ import uk.gov.companieshouse.reconciliation.component.elasticsearch.slicedscroll
 import uk.gov.companieshouse.reconciliation.model.ResultModel;
 import uk.gov.companieshouse.reconciliation.model.Results;
 
-import java.util.Collections;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.times;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class ElasticsearchTransformerTest {
 
     @Mock
+    private SearchHit searchHit;
+
+    @Mock
     private ElasticsearchSlicedScrollIterator iterator;
+
+    @Mock
+    private ResultModel resultModel;
+
+    @Mock
+    private ElasticsearchResultMappable mappingFunction;
 
     private ElasticsearchTransformer transformer;
 
     @BeforeEach
     void setUp() {
-        transformer = new ElasticsearchTransformer();
+        transformer = new ElasticsearchTransformer(1);
     }
 
     @Test
-    void testAggregateSearchHitsIntoResourceList() {
+    void testReturnEmptyResultsObjectIfNoHitsReturned() {
         //given
-        when(iterator.hasNext()).thenReturn(true, false);
-        String source = "{ \"items\": [{\"corporate_name_start\": \"ACME\", \"corporate_name_ending\": \" LIMITED\"}] }";
-        SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), Collections.emptyMap());
-        hit.sourceRef(new BytesArray(source));
-        when(iterator.next()).thenReturn(hit);
+        when(iterator.hasNext()).thenReturn(false);
 
         //when
-        Results actual = transformer.transform(iterator, 1);
+        Results actual = transformer.transform(iterator, 1, mappingFunction);
 
         //then
-        verify(iterator, times(2)).hasNext();
-        verify(iterator, times(1)).next();
-        assertTrue(actual.contains(new ResultModel("12345678", "ACME LIMITED")));
+        assertEquals(0, actual.size());
+        verifyNoInteractions(mappingFunction);
     }
 
     @Test
-    void testAggregateSearchHitsWithoutSourceFields() {
+    void testReturnResultsSourceFieldsIncluded() {
         //given
         when(iterator.hasNext()).thenReturn(true, false);
-        SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), Collections.emptyMap());
-        when(iterator.next()).thenReturn(hit);
+        when(iterator.next()).thenReturn(searchHit);
+        when(searchHit.hasSource()).thenReturn(true);
+        when(mappingFunction.mapWithSourceFields(any())).thenReturn(resultModel);
 
         //when
-        Results actual = transformer.transform(iterator, 1);
+        Results actual = transformer.transform(iterator, 1, mappingFunction);
 
         //then
-        verify(iterator, times(2)).hasNext();
-        verify(iterator, times(1)).next();
-        assertTrue(actual.contains(new ResultModel("12345678", "")));
+        assertSame(resultModel, actual.getResultModels().iterator().next());
+        verify(mappingFunction).mapWithSourceFields(searchHit);
     }
 
     @Test
-    void testAggregateSearchHitsReplaceNullValuesWithEmptyStrings() {
+    void testReturnResultsSourceFieldsExcluded() {
         //given
         when(iterator.hasNext()).thenReturn(true, false);
-        String source = "{ \"items\": [{\"corporate_name_start\": null, \"corporate_name_ending\": null}] }";
-        SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), Collections.emptyMap());
-        hit.sourceRef(new BytesArray(source));
-        when(iterator.next()).thenReturn(hit);
+        when(iterator.next()).thenReturn(searchHit);
+        when(searchHit.hasSource()).thenReturn(false);
+        when(mappingFunction.mapExcludingSourceFields(any())).thenReturn(resultModel);
 
         //when
-        Results actual = transformer.transform(iterator, 1);
+        Results actual = transformer.transform(iterator, 1, mappingFunction);
 
         //then
-        verify(iterator, times(2)).hasNext();
-        verify(iterator, times(1)).next();
-        assertTrue(actual.contains(new ResultModel("12345678", "")));
-
-    }
-
-    @Test
-    void testAggregateSearchHitsHandleEmptyItemsArray() {
-        //given
-        when(iterator.hasNext()).thenReturn(true, false);
-        String source = "{ \"items\": [] }";
-        SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), Collections.emptyMap());
-        hit.sourceRef(new BytesArray(source));
-        when(iterator.next()).thenReturn(hit);
-
-        //when
-        Results actual = transformer.transform(iterator, 1);
-
-        //then
-        verify(iterator, times(2)).hasNext();
-        verify(iterator, times(1)).next();
-        assertTrue(actual.contains(new ResultModel("12345678", "")));
-    }
-
-    @Test
-    void testAggregateSearchHitsHandleNullItems() {
-        //given
-        when(iterator.hasNext()).thenReturn(true, false);
-        String source = "{ \"items\": null }";
-        SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), Collections.emptyMap());
-        hit.sourceRef(new BytesArray(source));
-        when(iterator.next()).thenReturn(hit);
-
-        //when
-        Results actual = transformer.transform(iterator, 1);
-
-        //then
-        verify(iterator, times(2)).hasNext();
-        verify(iterator, times(1)).next();
-        assertTrue(actual.contains(new ResultModel("12345678", "")));
-    }
-
-    @Test
-    void testAggregateSearchHitsNoSpaceBetweenNameStartAndNameEnding() {
-        //given
-        when(iterator.hasNext()).thenReturn(true, false);
-        String source = "{ \"items\": [{\"corporate_name_start\": \"ACME\", \"corporate_name_ending\": \"LIMITED\"}] }";
-        SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), Collections.emptyMap());
-        hit.sourceRef(new BytesArray(source));
-        when(iterator.next()).thenReturn(hit);
-
-        //when
-        Results actual = transformer.transform(iterator, 1);
-
-        //then
-        verify(iterator, times(2)).hasNext();
-        verify(iterator, times(1)).next();
-        assertTrue(actual.contains(new ResultModel("12345678", "ACME LIMITED")));
-    }
-
-    @Test
-    void testAggregateSearchHitsNameEndingAbsent() {
-        //given
-        when(iterator.hasNext()).thenReturn(true, false);
-        String source = "{ \"items\": [{\"corporate_name_start\": \"ACME\", \"corporate_name_ending\": \"\"}] }";
-        SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), Collections.emptyMap());
-        hit.sourceRef(new BytesArray(source));
-        when(iterator.next()).thenReturn(hit);
-
-        //when
-        Results actual = transformer.transform(iterator, 1);
-
-        //then
-        verify(iterator, times(2)).hasNext();
-        verify(iterator, times(1)).next();
-        assertTrue(actual.contains(new ResultModel("12345678", "ACME")));
-    }
-
-    @Test
-    void testAggregateSearchHitsNameStartAbsent() {
-        //given
-        when(iterator.hasNext()).thenReturn(true, false);
-        String source = "{ \"items\": [{\"corporate_name_start\": \"\", \"corporate_name_ending\": \" LIMITED\"}] }";
-        SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), Collections.emptyMap());
-        hit.sourceRef(new BytesArray(source));
-        when(iterator.next()).thenReturn(hit);
-
-        //when
-        Results actual = transformer.transform(iterator, 1);
-
-        //then
-        verify(iterator, times(2)).hasNext();
-        verify(iterator, times(1)).next();
-        assertTrue(actual.contains(new ResultModel("12345678", "LIMITED")));
+        assertSame(resultModel, actual.getResultModels().iterator().next());
+        verify(mappingFunction).mapExcludingSourceFields(searchHit);
     }
 }

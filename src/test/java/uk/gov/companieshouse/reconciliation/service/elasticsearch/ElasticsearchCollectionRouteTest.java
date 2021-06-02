@@ -51,6 +51,9 @@ public class ElasticsearchCollectionRouteTest {
     @EndpointInject("mock:cache")
     private MockEndpoint cache;
 
+    @EndpointInject("mock:es-transformer")
+    private MockEndpoint transformer;
+
     @Mock
     private ElasticsearchSlicedScrollIterator iterator;
 
@@ -58,14 +61,11 @@ public class ElasticsearchCollectionRouteTest {
     void after() {
         elasticsearchEndpoint.reset();
         cache.reset();
+        transformer.reset();
     }
 
     @Test
     void testStoreResourceListInRequiredHeaderUncached() throws InterruptedException {
-        when(iterator.hasNext()).thenReturn(true, false);
-        SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), new HashMap<>());
-        hit.sourceRef(new BytesArray("{\"items\":[{\"corporate_name_start\":\"ACME\",\"corporate_name_ending\":\" LIMITED\"}]}"));
-        when(iterator.next()).thenReturn(hit);
         elasticsearchEndpoint.expectedBodyReceived().constant("QUERY");
         elasticsearchEndpoint.whenAnyExchangeReceived(exchange ->
             exchange.getIn().setBody(iterator)
@@ -73,13 +73,13 @@ public class ElasticsearchCollectionRouteTest {
         cache.expectedHeaderValuesReceivedInAnyOrder(CaffeineConstants.ACTION, CaffeineConstants.ACTION_GET, CaffeineConstants.ACTION_PUT);
         cache.expectedHeaderValuesReceivedInAnyOrder(CaffeineConstants.KEY, "elasticsearchCache", "elasticsearchCache");
         cache.returnReplyHeader(CaffeineConstants.ACTION_HAS_RESULT, ExpressionBuilder.constantExpression(false));
+        transformer.expectedBodyReceived().constant(iterator);
+        transformer.returnReplyBody(ExpressionBuilder.constantExpression(new Results(Collections.singletonList(new ResultModel("12345678", "ACME LIMITED")))));
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeaders(getHeaders());
         exchange.getIn().setBody(new Object());
         Exchange actual = producer.send(exchange);
         assertTrue(actual.getIn().getBody(Results.class).contains(new ResultModel("12345678", "ACME LIMITED")));
-        verify(iterator, times(2)).hasNext();
-        verify(iterator, times(1)).next();
         MockEndpoint.assertIsSatisfied(context);
     }
 
@@ -108,6 +108,7 @@ public class ElasticsearchCollectionRouteTest {
         headers.put("ElasticsearchLogIndices", 1);
         headers.put("ElasticsearchEndpoint", "mock:elasticsearch-stub");
         headers.put("ElasticsearchCacheKey", "elasticsearchCache");
+        headers.put("ElasticsearchTransformer", "mock:es-transformer");
         return headers;
     }
 }
