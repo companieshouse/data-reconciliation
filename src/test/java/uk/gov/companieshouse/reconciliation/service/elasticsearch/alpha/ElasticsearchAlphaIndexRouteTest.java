@@ -47,7 +47,7 @@ public class ElasticsearchAlphaIndexRouteTest {
         // given
         when(iterator.hasNext()).thenReturn(true, false);
         SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), new HashMap<>());
-        hit.sourceRef(new BytesArray("{\"items\":{\"corporate_name_start\":\"ACME\",\"corporate_name_ending\":\" LIMITED\"}}"));
+        hit.sourceRef(new BytesArray("{\"items\":{\"corporate_name\":\"ACME LIMITED\"}}"));
         when(iterator.next()).thenReturn(hit);
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(iterator);

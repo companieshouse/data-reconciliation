@@ -1,29 +1,27 @@
 package uk.gov.companieshouse.reconciliation.service.elasticsearch;
 
-import org.apache.camel.Body;
-import org.apache.camel.Header;
 import org.elasticsearch.search.SearchHit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.reconciliation.model.ResultModel;
 import uk.gov.companieshouse.reconciliation.model.Results;
-import uk.gov.companieshouse.reconciliation.service.elasticsearch.primary.ElasticsearchPrimaryIndexTransformer;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * Transform {@link SearchHit search hits} retrieved from an Elasticsearch index into a collection
  * of {@link Results results}.
  */
-public abstract class ElasticsearchTransformer {
+@Component
+public class ElasticsearchTransformer {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ElasticsearchPrimaryIndexTransformer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ElasticsearchTransformer.class);
     private int initialCapacity;
 
-    public ElasticsearchTransformer(int initialCapacity) {
+    public ElasticsearchTransformer(@Value("${results.initial.capacity}") int initialCapacity) {
         this.initialCapacity = initialCapacity;
     }
 
@@ -35,17 +33,14 @@ public abstract class ElasticsearchTransformer {
      * @param logIndices The number of search indices after which a message will be printed to the logs.
      * @return A {@link Results results object} containing all results fetched from the target Elasticsearch index.
      */
-    public Results transform(@Body Iterator<SearchHit> it, @Header("ElasticsearchLogIndices") Integer logIndices) {
+    public Results transform(Iterator<SearchHit> it, Integer logIndices, ElasticsearchResultMappable resultMapper) {
         Results results = new Results(new HashSet<>(initialCapacity));
         while (it.hasNext()) {
             SearchHit hit = it.next();
             if (hit.hasSource()) {
-                List<String> name = new ArrayList<>();
-                addSourceFieldToNameList(name, hit, "corporate_name_start");
-                addSourceFieldToNameList(name, hit, "corporate_name_ending");
-                results.add(new ResultModel(hit.getId(), String.join(" ", name))); //id cannot be null
+                results.add(resultMapper.mapWithSourceFields(hit));
             } else {
-                results.add(new ResultModel(hit.getId(), ""));
+                results.add(resultMapper.mapExcludingSourceFields(hit));
             }
             if (logIndices != null && results.size() % logIndices == 0) {
                 LOGGER.info("Indexed {} entries", results.size());
@@ -55,6 +50,4 @@ public abstract class ElasticsearchTransformer {
 
         return results;
     }
-
-    protected abstract void addSourceFieldToNameList(List<String> names, SearchHit hit, String sourceField);
 }

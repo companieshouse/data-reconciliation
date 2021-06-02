@@ -1,31 +1,34 @@
 package uk.gov.companieshouse.reconciliation.service.elasticsearch.alpha;
 
+import org.apache.camel.Body;
+import org.apache.camel.Header;
 import org.elasticsearch.search.SearchHit;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.reconciliation.model.Results;
 import uk.gov.companieshouse.reconciliation.service.elasticsearch.ElasticsearchTransformer;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.Iterator;
 
 /**
  * Transform {@link SearchHit search hits} retrieved from the Elasticsearch alphabetical index into a collection
  * of {@link Results results}.
  */
-public class ElasticsearchAlphaIndexTransformer extends ElasticsearchTransformer {
+@Component
+public class ElasticsearchAlphaIndexTransformer {
 
-    public ElasticsearchAlphaIndexTransformer(@Value("${results.initial.capacity}") int initialCapacity) {
-        super(initialCapacity);
+    private final ElasticsearchTransformer resultTransformer;
+
+    private final ElasticsearchAlphaIndexResultMapper searchHitMapper;
+
+    @Autowired
+    public ElasticsearchAlphaIndexTransformer(ElasticsearchTransformer resultTransformer,
+                                              ElasticsearchAlphaIndexResultMapper searchHitMapper) {
+        this.resultTransformer = resultTransformer;
+        this.searchHitMapper = searchHitMapper;
     }
 
-    @Override
-    protected void addSourceFieldToNameList(List<String> names, SearchHit hit, String sourceField) {
-        Optional.ofNullable(hit.getSourceAsMap().get("items"))
-                .map(item -> ((Map<?,?>)item).get(sourceField))
-                .map(Object::toString)
-                .map(String::trim)
-                .filter(nameEnding -> !nameEnding.isEmpty())
-                .ifPresent(names::add);
+    public Results transform(@Body Iterator<SearchHit> it, @Header("ElasticsearchLogIndices") Integer logIndices) {
+        return resultTransformer.transform(it, logIndices, searchHitMapper);
     }
 }
