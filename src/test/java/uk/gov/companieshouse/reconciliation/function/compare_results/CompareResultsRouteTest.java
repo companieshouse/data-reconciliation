@@ -67,13 +67,14 @@ public class CompareResultsRouteTest {
         output.allMessages().body().isEqualTo(
                 "Company Number,MongoDB - Company Profile,Primary Search Index\r\n12345678,ACME LTD,ACME LIMITED\r\n");
         output.expectedHeaderReceived("ResourceLinkDescription",
-                "Comparisons completed for Company Number in MongoDB - Company Profile and Primary Search Index.");
+                "Comparisons completed for companies in MongoDB - Company Profile and Primary Search Index.");
 
         transformer.expectedHeaderReceived("SrcList", srcResults);
         transformer.expectedHeaderReceived("SrcDescription", "MongoDB - Company Profile");
         transformer.expectedHeaderReceived("TargetList", targetResults);
         transformer.expectedHeaderReceived("TargetDescription", "Primary Search Index");
-        transformer.expectedHeaderReceived("RecordType", "Company Number");
+        transformer.expectedHeaderReceived("RecordKey", "Company Number");
+        transformer.expectedHeaderReceived("Comparison", "companies");
         transformer.returnReplyBody(
                 ExpressionBuilder.constantExpression(Arrays.asList(
                         new HashMap<String, Object>() {{
@@ -99,7 +100,8 @@ public class CompareResultsRouteTest {
         headers.put("Target", "mock:target-endpoint");
         headers.put("SrcDescription", "MongoDB - Company Profile");
         headers.put("TargetDescription", "Primary Search Index");
-        headers.put("RecordType", "Company Number");
+        headers.put("RecordKey", "Company Number");
+        headers.put("Comparison", "companies");
         headers.put("Destination", "mock:log-result");
         headers.put("ResultsTransformer", "mock:transformer");
         return headers;
