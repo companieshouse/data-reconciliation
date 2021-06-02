@@ -11,12 +11,12 @@ import uk.gov.companieshouse.reconciliation.model.ResultModel;
 import uk.gov.companieshouse.reconciliation.model.Results;
 
 @Component
-public class    CompareCompanyNamesTransformer {
+public class CompareCompanyNameTransformer {
 
     private CompareFieldsResultsTransformer transformer;
 
     @Autowired
-    public CompareCompanyNamesTransformer(
+    public CompareCompanyNameTransformer(
             CompareFieldsResultsTransformer transformer) {
         this.transformer = transformer;
     }
@@ -25,9 +25,9 @@ public class    CompareCompanyNamesTransformer {
             @Header("SrcDescription") String srcDescription,
             @Header("TargetList") Results targetResults,
             @Header("TargetDescription") String targetDescription,
-            @Header("RecordType") String recordType) {
+            @Header("RecordKey") String recordKey) {
         return transformer
-                .transform(srcResults, srcDescription, targetResults, targetDescription, recordType,
+                .transform(srcResults, srcDescription, targetResults, targetDescription, recordKey,
                         this::generateMappings);
     }
 

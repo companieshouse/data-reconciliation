@@ -18,7 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.reconciliation.model.Results;
 
 @ExtendWith(MockitoExtension.class)
-public class CompareCompaniesStatusTransformerTest {
+public class CompareCompanyStatusTransformerTest {
 
     @Mock
     private CompareFieldsResultsTransformer fieldsResultsTransformer;

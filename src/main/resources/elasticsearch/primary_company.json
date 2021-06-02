@@ -7,7 +7,8 @@
   "_source": {
     "includes": [
       "items.corporate_name_start",
-      "items.corporate_name_ending"
+      "items.corporate_name_ending",
+      "items.company_status"
     ]
   }
 }

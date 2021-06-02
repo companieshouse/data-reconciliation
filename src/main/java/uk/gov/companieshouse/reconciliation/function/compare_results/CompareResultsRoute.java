@@ -37,9 +37,12 @@ public class CompareResultsRoute extends RouteBuilder {
                     oldExchange.getIn().setHeader("TargetList", newExchange.getIn().getBody());
                     return oldExchange;
                 })
-                .toD("${header.Transformer}")
+                .toD("${header.ResultsTransformer}")
                 .marshal().csv()
-                .setHeader("ResourceLinkDescription").simple("Comparisons completed for ${header.RecordType} in ${header.SrcDescription} and ${header.TargetDescription}.")
+                .toD("${header.Upload}")
+                .toD("${header.Presign}")
+                .setHeader("ResourceLinkReference", body())
+                .setHeader("ResourceLinkDescription").simple("Comparisons completed for ${header.Comparison} in ${header.SrcDescription} and ${header.TargetDescription}.")
                 .log("Compare Results: ${header.ResourceLinkDescription}")
                 .toD("${header.Destination}");
     }

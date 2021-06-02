@@ -19,8 +19,8 @@ public class CompareCompanyStatusTransformer {
             @Header("SrcDescription") String srcDescription,
             @Header("TargetList") Results targetResults,
             @Header("TargetDescription") String targetDescription,
-            @Header("RecordType") String recordType) {
-        return transformer.transform(srcResults, srcDescription, targetResults, targetDescription, recordType, this::generateMappings);
+            @Header("RecordKey") String recordKey) {
+        return transformer.transform(srcResults, srcDescription, targetResults, targetDescription, recordKey, this::generateMappings);
     }
     private Map<String, String> generateMappings(Collection<ResultModel> resultModels) {
         return resultModels.stream().collect(

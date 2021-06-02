@@ -18,22 +18,26 @@ public class ElasticsearchPrimaryIndexResultMapper implements ElasticsearchResul
         List<String> names = new ArrayList<>();
         addSourceFieldToNameList(names, hit, "corporate_name_start");
         addSourceFieldToNameList(names, hit, "corporate_name_ending");
-        return new ResultModel(hit.getId(), String.join(" ", names));
+        String companyStatus = getFieldValue(hit, "company_status").orElse("");
+        return new ResultModel(hit.getId(), String.join(" ", names), companyStatus);
     }
 
     @Override
     public ResultModel mapExcludingSourceFields(SearchHit hit) {
-        return new ResultModel(hit.getId(), "");
+        return new ResultModel(hit.getId(), "", "");
     }
 
     private void addSourceFieldToNameList(List<String> names, SearchHit hit, String sourceField) {
-        Optional.ofNullable(hit.getSourceAsMap().get("items"))
-                .flatMap(items -> ((List<?>)items).stream().findFirst())
-                .map(item -> ((Map<?,?>)item).get(sourceField))
-                .map(Object::toString)
-                .map(String::trim)
+        getFieldValue(hit, sourceField)
                 .filter(nameEnding -> !nameEnding.isEmpty())
                 .ifPresent(names::add);
     }
 
+    private Optional<String> getFieldValue(SearchHit hit, String sourceField) {
+        return Optional.ofNullable(hit.getSourceAsMap().get("items"))
+                .flatMap(items -> ((List<?>)items).stream().findFirst())
+                .map(item -> ((Map<?,?>)item).get(sourceField))
+                .map(Object::toString)
+                .map(String::trim);
+    }
 }

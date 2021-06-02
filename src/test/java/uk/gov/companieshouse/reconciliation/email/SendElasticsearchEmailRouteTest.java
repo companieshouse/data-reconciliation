@@ -43,14 +43,14 @@ public class SendElasticsearchEmailRouteTest {
     }
 
     @Test
-    void testSendEmailAggregatesThreeMessages() throws Exception {
+    void testSendEmailAggregatesFiveMessages() throws Exception {
         AdviceWith.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("mock:kafka-endpoint")
                         .process(exchange -> {
                             ResourceLinksWrapper downloadsList = exchange.getIn().getHeader("ResourceLinks", ResourceLinksWrapper.class);
-                            assertEquals(4, downloadsList.getDownloadLinkList().size());
+                            assertEquals(5, downloadsList.getDownloadLinkList().size());
                         });
             }
         });
@@ -72,11 +72,16 @@ public class SendElasticsearchEmailRouteTest {
                 .withHeader("ResourceLinkReference", "Compare Name Alpha Mongo Link")
                 .build();
 
+        Exchange fifthExchange = ExchangeBuilder.anExchange(context)
+                .withHeader("ResourceLinkReference", "Compare Status Primary Mongo Link")
+                .build();
+
         kafkaEndpoint.expectedMessageCount(1);
         producerTemplate.send(firstExchange);
         producerTemplate.send(secondExchange);
         producerTemplate.send(thirdExchange);
         producerTemplate.send(fourthExchange);
+        producerTemplate.send(fifthExchange);
 
         MockEndpoint.assertIsSatisfied(context);
     }

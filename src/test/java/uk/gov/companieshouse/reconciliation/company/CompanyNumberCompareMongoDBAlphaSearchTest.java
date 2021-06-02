@@ -18,7 +18,7 @@ import org.springframework.test.context.TestPropertySource;
 @SpringBootTest
 @DirtiesContext
 @TestPropertySource(locations = "classpath:application-stubbed.properties")
-public class CompareNumberCompareMongoDBAlphaSearchTest {
+public class CompanyNumberCompareMongoDBAlphaSearchTest {
 
     @Autowired
     private CamelContext context;

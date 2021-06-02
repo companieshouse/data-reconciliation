@@ -9,7 +9,7 @@ import static org.mockito.Mockito.when;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import org.elasticsearch.common.inject.Inject;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,7 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.reconciliation.model.Results;
 
 @ExtendWith(MockitoExtension.class)
-public class CompareCompaniesNamesTransformerTest {
+public class CompareCompanyNameTransformerTest {
 
     @Mock
     private CompareFieldsResultsTransformer fieldsResultsTransformer;
@@ -28,7 +28,7 @@ public class CompareCompaniesNamesTransformerTest {
     private Results sourceResults, targetResults;
 
     @InjectMocks
-    private CompareCompanyNamesTransformer namesTransformer;
+    private CompareCompanyNameTransformer namesTransformer;
 
     @Test
     void testThatResultOfTransformerIsReturnedCorrectly() {

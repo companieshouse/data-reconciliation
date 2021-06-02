@@ -23,7 +23,7 @@ public class ElasticsearchPrimaryIndexResultMapperTest {
     @Test
     void testMapSearchHitIntoResultModel() {
         //given
-        String source = "{ \"items\": [{\"corporate_name_start\": \"ACME\", \"corporate_name_ending\": \" LIMITED\"}] }";
+        String source = "{ \"items\": [{\"corporate_name_start\": \"ACME\", \"corporate_name_ending\": \" LIMITED\", \"company_status\": \"active\"}] }";
         SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), Collections.emptyMap());
         hit.sourceRef(new BytesArray(source));
 
@@ -31,7 +31,7 @@ public class ElasticsearchPrimaryIndexResultMapperTest {
         ResultModel actual = mapper.mapWithSourceFields(hit);
 
         //then
-        assertEquals(new ResultModel("12345678", "ACME LIMITED"), actual);
+        assertEquals(new ResultModel("12345678", "ACME LIMITED", "active"), actual);
     }
 
     @Test
@@ -43,13 +43,13 @@ public class ElasticsearchPrimaryIndexResultMapperTest {
         ResultModel actual = mapper.mapExcludingSourceFields(hit);
 
         //then
-        assertEquals(new ResultModel("12345678", ""), actual);
+        assertEquals(new ResultModel("12345678", "", ""), actual);
     }
 
     @Test
     void testMapSearchHitReplaceNullValuesWithEmptyStrings() {
         //given
-        String source = "{ \"items\": [{\"corporate_name_start\": null, \"corporate_name_ending\": null}] }";
+        String source = "{ \"items\": [{\"corporate_name_start\": null, \"corporate_name_ending\": null, \"company_status\": null}] }";
         SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), Collections.emptyMap());
         hit.sourceRef(new BytesArray(source));
 
@@ -57,7 +57,7 @@ public class ElasticsearchPrimaryIndexResultMapperTest {
         ResultModel actual = mapper.mapWithSourceFields(hit);
 
         //then
-        assertEquals(new ResultModel("12345678", ""), actual);
+        assertEquals(new ResultModel("12345678", "", ""), actual);
     }
 
     @Test
@@ -71,7 +71,7 @@ public class ElasticsearchPrimaryIndexResultMapperTest {
         ResultModel actual = mapper.mapWithSourceFields(hit);
 
         //then
-        assertEquals(new ResultModel("12345678", ""), actual);
+        assertEquals(new ResultModel("12345678", "", ""), actual);
     }
 
     @Test
@@ -85,13 +85,13 @@ public class ElasticsearchPrimaryIndexResultMapperTest {
         ResultModel actual = mapper.mapWithSourceFields(hit);
 
         //then
-        assertEquals(new ResultModel("12345678", ""), actual);
+        assertEquals(new ResultModel("12345678", "", ""), actual);
     }
 
     @Test
     void testMapSearchHitNoSpaceBetweenNameStartAndNameEnding() {
         //given
-        String source = "{ \"items\": [{\"corporate_name_start\": \"ACME\", \"corporate_name_ending\": \"LIMITED\"}] }";
+        String source = "{ \"items\": [{\"corporate_name_start\": \"ACME\", \"corporate_name_ending\": \"LIMITED\", \"company_status\": \"active\"}] }";
         SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), Collections.emptyMap());
         hit.sourceRef(new BytesArray(source));
 
@@ -99,13 +99,13 @@ public class ElasticsearchPrimaryIndexResultMapperTest {
         ResultModel actual = mapper.mapWithSourceFields(hit);
 
         //then
-        assertEquals(new ResultModel("12345678", "ACME LIMITED"), actual);
+        assertEquals(new ResultModel("12345678", "ACME LIMITED", "active"), actual);
     }
 
     @Test
     void testMapSearchHitNameEndingAbsent() {
         //given
-        String source = "{ \"items\": [{\"corporate_name_start\": \"ACME\", \"corporate_name_ending\": \"\"}] }";
+        String source = "{ \"items\": [{\"corporate_name_start\": \"ACME\", \"corporate_name_ending\": \"\", \"company_status\": \"active\"}] }";
         SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), Collections.emptyMap());
         hit.sourceRef(new BytesArray(source));
 
@@ -113,13 +113,13 @@ public class ElasticsearchPrimaryIndexResultMapperTest {
         ResultModel actual = mapper.mapWithSourceFields(hit);
 
         //then
-        assertEquals(new ResultModel("12345678", "ACME"), actual);
+        assertEquals(new ResultModel("12345678", "ACME", "active"), actual);
     }
 
     @Test
     void testMapSearchHitNameStartAbsent() {
         //given
-        String source = "{ \"items\": [{\"corporate_name_start\": \"\", \"corporate_name_ending\": \" LIMITED\"}] }";
+        String source = "{ \"items\": [{\"corporate_name_start\": \"\", \"corporate_name_ending\": \" LIMITED\", \"company_status\": \"active\"}] }";
         SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), Collections.emptyMap());
         hit.sourceRef(new BytesArray(source));
 
@@ -127,6 +127,20 @@ public class ElasticsearchPrimaryIndexResultMapperTest {
         ResultModel actual = mapper.mapWithSourceFields(hit);
 
         //then
-        assertEquals(new ResultModel("12345678", "LIMITED"), actual);
+        assertEquals(new ResultModel("12345678", "LIMITED", "active"), actual);
+    }
+
+    @Test
+    void testMapSearchHitWithWhitespaceOnCompanyStatus() {
+        //given
+        String source = "{ \"items\": [{\"corporate_name_start\": \"\", \"corporate_name_ending\": \" LIMITED\", \"company_status\": \" active \"}] }";
+        SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), Collections.emptyMap());
+        hit.sourceRef(new BytesArray(source));
+
+        //when
+        ResultModel actual = mapper.mapWithSourceFields(hit);
+
+        //then
+        assertEquals(new ResultModel("12345678", "LIMITED", "active"), actual);
     }
 }

@@ -101,7 +101,7 @@ public class CompareResultsRouteTest {
         headers.put("TargetDescription", "Primary Search Index");
         headers.put("RecordType", "Company Number");
         headers.put("Destination", "mock:log-result");
-        headers.put("Transformer", "mock:transformer");
+        headers.put("ResultsTransformer", "mock:transformer");
         return headers;
     }
 
