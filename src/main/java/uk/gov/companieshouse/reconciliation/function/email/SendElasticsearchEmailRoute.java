@@ -14,7 +14,7 @@ public class SendElasticsearchEmailRoute extends RouteBuilder {
     public void configure() throws Exception {
         from("direct:send-elasticsearch-email")
                 .aggregate(constant(true), new EmailAggregationStrategy())
-                .completionSize(5)
+                .completionSize(6)
                 .setHeader("CompletionDate", simple("${date:now:dd MMMM yyyy}"))
                 .setHeader("EmailSubject", simple("Elasticsearch comparisons (${header.CompletionDate})"))
                 .to("{{endpoint.kafka.sender}}");

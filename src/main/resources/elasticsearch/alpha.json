@@ -4,7 +4,8 @@
   },
   "_source": {
     "includes": [
-      "items.corporate_name"
+      "items.corporate_name",
+      "items.company_status"
     ]
   }
 }
