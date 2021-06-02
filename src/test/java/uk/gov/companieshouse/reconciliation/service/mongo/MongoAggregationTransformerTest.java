@@ -23,13 +23,13 @@ public class MongoAggregationTransformerTest {
     @Test
     void testReturnStringRepresentationOfValues() {
         //given
-        List<Document> results = Collections.singletonList(Document.parse("{\"_id\": \"12345678\", \"data\": {\"company_name\": \"ACME LTD\"}}"));
+        List<Document> results = Collections.singletonList(Document.parse("{\"_id\": \"12345678\", \"data\": {\"company_name\": \"ACME LTD\", \"company_status\": \"active\"}}"));
 
         //when
         Results actual = transformer.transform(results);
 
         //then
-        assertTrue(actual.contains(new ResultModel("12345678", "ACME LTD")));
+        assertTrue(actual.contains(new ResultModel("12345678", "ACME LTD", "active")));
     }
 
     @Test
