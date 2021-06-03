@@ -76,7 +76,7 @@ public class SendElasticsearchEmailRouteTest {
                 .withHeader("ResourceLinkReference", "Compare Status Primary Mongo Link")
                 .build();
 
-        Exchange sixthExchange = ExchangeBuilder.anExchange(context)
+        Exchange compareStatusAlphaMongoExchange = ExchangeBuilder.anExchange(context)
                 .withHeader("ResourceLinkReference", "Compare Status Alpha Mongo Link")
                 .build();
 
@@ -86,7 +86,7 @@ public class SendElasticsearchEmailRouteTest {
         producerTemplate.send(thirdExchange);
         producerTemplate.send(fourthExchange);
         producerTemplate.send(fifthExchange);
-        producerTemplate.send(sixthExchange);
+        producerTemplate.send(compareStatusAlphaMongoExchange);
 
         MockEndpoint.assertIsSatisfied(context);
     }
