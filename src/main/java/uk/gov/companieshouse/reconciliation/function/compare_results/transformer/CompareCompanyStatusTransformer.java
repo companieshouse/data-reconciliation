@@ -1,26 +1,24 @@
 package uk.gov.companieshouse.reconciliation.function.compare_results.transformer;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import org.apache.camel.Header;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.gov.companieshouse.reconciliation.function.compare_results.mapper.CompareCompanyNameResultMapper;
-import uk.gov.companieshouse.reconciliation.model.ResultModel;
+import uk.gov.companieshouse.reconciliation.function.compare_results.mapper.CompanyResultsMappable;
+import uk.gov.companieshouse.reconciliation.function.compare_results.mapper.CompareCompanyStatusResultMapper;
 import uk.gov.companieshouse.reconciliation.model.Results;
 
 @Component
 public class CompareCompanyStatusTransformer {
 
     private final CompareFieldsResultsTransformer transformer;
-    private final CompareCompanyNameResultMapper mapper;
+    private final CompanyResultsMappable mapper;
 
     @Autowired
-    public CompareCompanyStatusTransformer(CompareFieldsResultsTransformer transformer, CompareCompanyNameResultMapper mapper) {
+    public CompareCompanyStatusTransformer(CompareFieldsResultsTransformer transformer) {
         this.transformer = transformer;
-        this.mapper = mapper;
+        this.mapper = new CompareCompanyStatusResultMapper();
     }
 
     public List<Map<String, Object>> transform(@Header("SrcList") Results srcResults,
@@ -30,11 +28,4 @@ public class CompareCompanyStatusTransformer {
             @Header("RecordKey") String recordKey) {
         return transformer.transform(srcResults, srcDescription, targetResults, targetDescription, recordKey, mapper::generateMappings);
     }
-    /*
-     @Override
-    public Map<String, String> generateMappings(Collection<ResultModel> resultModels) {
-        return resultModels.stream().collect(
-                Collectors.toMap(ResultModel::getCompanyNumber, ResultModel::getCompanyStatus));
-    }
-     */
 }

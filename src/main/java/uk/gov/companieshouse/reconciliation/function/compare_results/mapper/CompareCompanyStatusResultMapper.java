@@ -9,13 +9,13 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
-public class CompareCompanyNameResultMapper implements CompanyResultsMappable {
+public class CompareCompanyStatusResultMapper implements CompanyResultsMappable {
 
     @Override
     public Map<String, String> generateMappings(Collection<ResultModel> resultModels) {
         return resultModels.stream().collect(
                 Collectors.toMap(ResultModel::getCompanyNumber,
-                        resultModel -> Optional.ofNullable(resultModel.getCompanyName()).orElse("")
+                        resultModel -> Optional.ofNullable(resultModel.getCompanyStatus()).orElse("")
                         ));
     }
 }

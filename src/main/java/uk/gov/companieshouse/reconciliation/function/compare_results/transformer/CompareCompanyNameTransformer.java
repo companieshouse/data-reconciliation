@@ -7,18 +7,22 @@ import java.util.stream.Collectors;
 import org.apache.camel.Header;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.companieshouse.reconciliation.function.compare_results.mapper.CompanyResultsMappable;
+import uk.gov.companieshouse.reconciliation.function.compare_results.mapper.CompareCompanyNameResultMapper;
 import uk.gov.companieshouse.reconciliation.model.ResultModel;
 import uk.gov.companieshouse.reconciliation.model.Results;
 
 @Component
 public class CompareCompanyNameTransformer {
 
-    private CompareFieldsResultsTransformer transformer;
+    private final CompareFieldsResultsTransformer transformer;
+    private final CompanyResultsMappable mapper;
 
     @Autowired
     public CompareCompanyNameTransformer(
             CompareFieldsResultsTransformer transformer) {
         this.transformer = transformer;
+        this.mapper = new CompareCompanyNameResultMapper();
     }
 
     public List<Map<String, Object>> transform(@Header("SrcList") Results srcResults,
@@ -28,7 +32,7 @@ public class CompareCompanyNameTransformer {
             @Header("RecordKey") String recordKey) {
         return transformer
                 .transform(srcResults, srcDescription, targetResults, targetDescription, recordKey,
-                        this::generateMappings);
+                        mapper::generateMappings);
     }
 
     private Map<String, String> generateMappings(Collection<ResultModel> resultModels) {

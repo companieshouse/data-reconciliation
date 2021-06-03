@@ -1,6 +1,5 @@
 package uk.gov.companieshouse.reconciliation.function.compare_results.mapper;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.gov.companieshouse.reconciliation.model.ResultModel;
@@ -12,31 +11,31 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CompareCompanyNameResultMapperTest {
+public class CompareCompanyStatusResultMapperTest {
 
     private CompanyResultsMappable mapper;
 
     @BeforeEach
     void setUp() {
-        mapper = new CompareCompanyNameResultMapper();
+        mapper = new CompareCompanyStatusResultMapper();
     }
 
     @Test
-    void testGenerateMappingsCorrectlyMapsResultsModelsToCompanyName() {
+    void testGenerateMappingsCorrectlyMapsResultsModelsToCompanyStatus() {
         // given
-        Collection<ResultModel> resultModels = Collections.singletonList(new ResultModel("1234578", "ACME LIMITED"));
+        Collection<ResultModel> resultModels = Collections.singletonList(new ResultModel("1234578", "", "active"));
 
         // when
         Map<String, String> actual = mapper.generateMappings(resultModels);
 
         // then
-        assertEquals(Collections.singletonMap("1234578", "ACME LIMITED"), actual);
+        assertEquals(Collections.singletonMap("1234578", "active"), actual);
     }
 
     @Test
-    void testGenerateMappingsWhenCompanyNameIsNull() {
+    void testGenerateMappingsWhenCompanyStatusIsNull() {
         // given
-        Collection<ResultModel> resultModels = Collections.singletonList(new ResultModel("1234578", null));
+        Collection<ResultModel> resultModels = Collections.singletonList(new ResultModel("1234578", "", null));
 
         // when
         Map<String, String> actual = mapper.generateMappings(resultModels);
@@ -46,9 +45,9 @@ public class CompareCompanyNameResultMapperTest {
     }
 
     @Test
-    void testGenerateMappingsWhenCompanyNameIsEmpty() {
+    void testGenerateMappingsWhenCompanyStatusIsEmpty() {
         // given
-        Collection<ResultModel> resultModels = Collections.singletonList(new ResultModel("1234578", ""));
+        Collection<ResultModel> resultModels = Collections.singletonList(new ResultModel("1234578", "", ""));
 
         // when
         Map<String, String> actual = mapper.generateMappings(resultModels);
