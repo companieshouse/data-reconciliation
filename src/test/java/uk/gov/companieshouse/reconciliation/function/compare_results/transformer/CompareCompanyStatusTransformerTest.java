@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.reconciliation.function.compare_results.transformer;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
@@ -9,7 +10,6 @@ import static org.mockito.Mockito.when;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -43,7 +43,7 @@ public class CompareCompanyStatusTransformerTest {
                 .transform(sourceResults, "apples", targetResults, "oranges", "fruit");
 
         // Then
-        Assertions.assertEquals(expected, actual);
+        assertEquals(expected, actual);
 
         verify(fieldsResultsTransformer, times(1))
                 .transform(eq(sourceResults), eq("apples"), eq(targetResults), eq("oranges"),
