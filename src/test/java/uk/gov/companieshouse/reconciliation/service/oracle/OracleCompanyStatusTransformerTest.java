@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -26,44 +27,101 @@ public class OracleCompanyStatusTransformerTest {
     }
 
     @Test
-    void testTransformResultSetIntoResultsObject() {
-        final String companyStatus = "active";
-
+    void testTransformResultSetIntoResultsObjectWhenNoValidCompanies() {
         // Given
+
+        // No valid companies
+        List<Map<String, Object>> validCompanies = Collections.emptyList();
+
         CamelContext camelContext = new DefaultCamelContext();
-        Exchange exchangeActive = new DefaultExchange(camelContext);
-        exchangeActive.getIn().setHeader("CompanyStatus", "active");
-        exchangeActive.getIn().setBody(Collections.singletonList(new HashMap<String, Object>() {{
-                    put("INCORPORATION_NUMBER", "12345678");
-                }}));
-        Exchange exchangeDissolved = new DefaultExchange(camelContext);
-        exchangeDissolved.getIn().setHeader("CompanyStatus", "dissolved");
-        exchangeDissolved.getIn().setBody(Collections.singletonList(new HashMap<String, Object>() {{
-                    put("INCORPORATION_NUMBER", "87654321");
-                }}));
 
-        List<Exchange> source = Arrays.asList(exchangeActive, exchangeDissolved);
+        // Status decorator - will be ignored
+        Exchange exchangeLiquidation = new DefaultExchange(camelContext);
+        exchangeLiquidation.getIn().setHeader("CompanyStatus", "liquidation");
+        exchangeLiquidation.getIn().setBody(Collections.singletonList(new HashMap<String, Object>() {{
+            put("INCORPORATION_NUMBER", "12345678");
+        }}));
+        List<Exchange> source = Collections.emptyList();
 
-        Results expected = new Results(Arrays.asList(
-                new ResultModel("12345678", "", "active"),
-                new ResultModel("87654321", "", "dissolved"))
-        );
+        Results expected = new Results(Collections.emptyList());
 
         // When
-        Results actual = transformer.transform(source);
+        Results actual = transformer.transform(validCompanies, source);
 
         // Then
         assertEquals(expected, actual);
     }
 
     @Test
-    void testTransformResultSetWithNullValuesIntoResultsObject() {
+    void testTransformResultSetIntoResultsObjectWhenCompanyStatusIsActive() {
+        // Given
+        List<Map<String, Object>> validCompanies = Collections.singletonList(
+                new HashMap<String, Object>() {{
+                    put("INCORPORATION_NUMBER", "12345678");
+                }}
+        );
+
+        // No status decorators
+        List<Exchange> source = Collections.emptyList();
+
+        Results expected = new Results(Collections.singletonList(
+                new ResultModel("12345678", "", "active")
+        ));
+
+        // When
+        Results actual = transformer.transform(validCompanies, source);
+
+        // Then
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void testTransformResultSetIntoResultsObjectWhenDecoratingCompanyStatus() {
+        // Given
+        List<Map<String, Object>> validCompanies = Arrays.asList(
+                new HashMap<String, Object>() {{
+                    put("INCORPORATION_NUMBER", "12345678");
+                }},
+                new HashMap<String, Object>() {{
+                    put("INCORPORATION_NUMBER", "87654321");
+                }}
+        );
+
+        CamelContext camelContext = new DefaultCamelContext();
+        // Company status decorators
+        Exchange exchangeLiquidation = new DefaultExchange(camelContext);
+        exchangeLiquidation.getIn().setHeader("CompanyStatus", "liquidation");
+        exchangeLiquidation.getIn().setBody(Collections.singletonList(new HashMap<String, Object>() {{
+            put("INCORPORATION_NUMBER", "12345678");
+        }}));
+        Exchange exchangeDissolved = new DefaultExchange(camelContext);
+        exchangeDissolved.getIn().setHeader("CompanyStatus", "dissolved");
+        exchangeDissolved.getIn().setBody(Collections.singletonList(new HashMap<String, Object>() {{
+            put("INCORPORATION_NUMBER", "87654321");
+        }}));
+
+        List<Exchange> source = Arrays.asList(exchangeLiquidation, exchangeDissolved);
+
+        Results expected = new Results(Arrays.asList(
+                new ResultModel("12345678", "", "liquidation"),
+                new ResultModel("87654321", "", "dissolved"))
+        );
+
+        // When
+        Results actual = transformer.transform(validCompanies, source);
+
+        // Then
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void testTransformResultSetWithNullCompanyStatusIntoResultsObject() {
         // Given
         CamelContext camelContext = new DefaultCamelContext();
         Exchange exchangeActive = new DefaultExchange(camelContext);
         exchangeActive.getIn().setHeader("CompanyStatus", "");
         exchangeActive.getIn().setBody(Collections.singletonList(new HashMap<String, Object>() {{
-            put("INCORPORATION_NUMBER", null);
+            put("INCORPORATION_NUMBER", "12345678");
         }}));
         Exchange exchangeDissolved = new DefaultExchange(camelContext);
         exchangeDissolved.getIn().setHeader("CompanyStatus", null);
@@ -71,13 +129,18 @@ public class OracleCompanyStatusTransformerTest {
 
         List<Exchange> source = Arrays.asList(exchangeActive, exchangeDissolved);
 
-        Results expected = new Results(Arrays.asList(
-                new ResultModel("", "", ""),
-                new ResultModel("", "", ""))
+        Results expected = new Results(Collections.singletonList(
+                new ResultModel("12345678", "", "")
+        ));
+
+        List<Map<String, Object>> validCompanies = Collections.singletonList(
+                new HashMap<String, Object>() {{
+                    put("INCORPORATION_NUMBER", "12345678");
+                }}
         );
 
         // When
-        Results actual = transformer.transform(source);
+        Results actual = transformer.transform(validCompanies, source);
 
         // Then
         assertEquals(expected, actual);

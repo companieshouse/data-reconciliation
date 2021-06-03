@@ -44,7 +44,6 @@ public class OracleMultiCollectionRouteTest {
         oracleEndpoint.reset();
     }
 
-    @Test
     void testOneOracleRequestPerSqlQuery() throws InterruptedException {
         oracleEndpoint.expectedBodiesReceivedInAnyOrder("SELECT '12345678' as incorporation_number FROM DUAL", "SELECT '87654321' as incorporation_number FROM DUAL");
         oracleEndpoint.whenExchangeReceived(1, exchange -> {
@@ -65,9 +64,48 @@ public class OracleMultiCollectionRouteTest {
         MockEndpoint.assertIsSatisfied(context);
     }
 
+    @Test
+    void testOneOracleRequestPerValidCompaniesQuery() throws InterruptedException {
+        oracleEndpoint.expectedBodiesReceivedInAnyOrder("SELECT '12345678' as incorporation_number FROM DUAL",
+                "SELECT '12345678' as incorporation_number FROM DUAL",
+                "SELECT '87654321' as incorporation_number FROM DUAL");
+        oracleEndpoint.whenExchangeReceived(1, exchange -> {
+            exchange.getIn().setBody(Collections.singletonList(new HashMap<String, Object>(){{
+                put("INCORPORATION_NUMBER", "12345678");
+            }}));
+        });
+        oracleEndpoint.whenExchangeReceived(2, exchange -> {
+            exchange.getIn().setBody(Collections.singletonList(new HashMap<String, Object>(){{
+                put("INCORPORATION_NUMBER", "12345678");
+            }}));
+        });
+        oracleEndpoint.whenExchangeReceived(3, exchange -> {
+            exchange.getIn().setBody(Collections.singletonList(new HashMap<String, Object>(){{
+                put("INCORPORATION_NUMBER", "87654321");
+            }}));
+        });
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeaders(headers());
+        producerTemplate.send(exchange);
+        Results actual = exchange.getIn().getBody(Results.class);
+        assertEquals(new Results(Arrays.asList(new ResultModel("12345678", "", "dissolved"))), actual);
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
     private Map<String, Object> headers() {
         Map<String, Object> result = new HashMap<>();
-        result.put("OracleQuery", "<sql-statements><sql-statement status=\"active\">SELECT '12345678' as incorporation_number FROM DUAL</sql-statement><sql-statement status=\"dissolved\">SELECT '87654321' as incorporation_number FROM DUAL</sql-statement></sql-statements>");
+        String xml = String.join(
+                "",
+                "<sql-statements>",
+                "<valid-companies-query>",
+                "<sql-statement>SELECT '12345678' as incorporation_number FROM DUAL</sql-statement>",
+                "</valid-companies-query>",
+                "<status-classification-queries>",
+                "<sql-statement status=\"dissolved\">SELECT '12345678' as incorporation_number FROM DUAL</sql-statement>",
+                "<sql-statement status=\"liquidation\">SELECT '87654321' as incorporation_number FROM DUAL</sql-statement>",
+                "</status-classification-queries>",
+                "</sql-statements>");
+        result.put("OracleQuery", xml);
         result.put("OracleEndpoint", "mock:oracleEndpoint");
         return result;
     }
