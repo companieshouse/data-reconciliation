@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.reconciliation.company;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.aws2.s3.AWS2S3Constants;
 import org.springframework.stereotype.Component;
 
 /**
@@ -19,9 +20,13 @@ public class CompanyStatusCompareMongoDBOracle extends RouteBuilder {
                 .setHeader("TargetDescription").constant("Oracle")
                 .setHeader("OracleQuery").constant("{{queries.oracle.company_status}}")
                 .setHeader("OracleEndpoint").constant("{{endpoint.oracle.corporate_body_collection}}")
-                .setHeader("RecordType").constant("Company Status")
-                .setHeader("Destination").constant("{{endpoint.log.output}}")
+                .setHeader("RecordKey").constant("Company Status")
+                .setHeader("Destination").constant("{{endpoint.company.output}}")
                 .setHeader("Transformer").constant("{{function.mapper.company_status}}")
+                .setHeader("Upload", constant("{{endpoint.s3.upload}}"))
+                .setHeader("Presign", constant("{{endpoint.s3presigner.download}}"))
+                .setHeader(AWS2S3Constants.KEY, simple("company/results_status_oracle_mongo_${date:now:yyyyMMdd}T${date:now:hhmmss}.csv"))
+                .setHeader(AWS2S3Constants.DOWNLOAD_LINK_EXPIRATION_TIME, constant("{{aws.expiry}}"))
                 .to("{{function.name.compare_results}}");
     }
 }
