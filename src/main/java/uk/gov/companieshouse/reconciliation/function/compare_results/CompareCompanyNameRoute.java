@@ -9,7 +9,7 @@ public class CompareCompanyNameRoute extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("direct:compare-company-names")
+        from("direct:compare-company-name")
                 .bean(CompareCompanyNameTransformer.class);
     }
 }

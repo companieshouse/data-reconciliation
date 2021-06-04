@@ -56,23 +56,23 @@ public class SendElasticsearchEmailRouteTest {
         });
         context.start();
 
-        Exchange firstExchange = ExchangeBuilder.anExchange(context)
+        Exchange compareNamePrimaryMongoExchange = ExchangeBuilder.anExchange(context)
                 .withHeader("ResourceLinkReference", "Compare Name Primary Mongo Link")
                 .build();
 
-        Exchange secondExchange = ExchangeBuilder.anExchange(context)
+        Exchange compareNumberAlphaMongoExchange = ExchangeBuilder.anExchange(context)
                 .withHeader("ResourceLinkReference", "Compare Number Alpha Mongo Link")
                 .build();
 
-        Exchange thirdExchange = ExchangeBuilder.anExchange(context)
+        Exchange compareNumberPrimaryMongoExchange = ExchangeBuilder.anExchange(context)
                 .withHeader("ResourceLinkReference", "Compare Number Primary Mongo Link")
                 .build();
 
-        Exchange fourthExchange = ExchangeBuilder.anExchange(context)
+        Exchange compareNameAlphaMongoExchange = ExchangeBuilder.anExchange(context)
                 .withHeader("ResourceLinkReference", "Compare Name Alpha Mongo Link")
                 .build();
 
-        Exchange fifthExchange = ExchangeBuilder.anExchange(context)
+        Exchange compareStatusPrimaryMongoExchange = ExchangeBuilder.anExchange(context)
                 .withHeader("ResourceLinkReference", "Compare Status Primary Mongo Link")
                 .build();
 
@@ -81,13 +81,12 @@ public class SendElasticsearchEmailRouteTest {
                 .build();
 
         kafkaEndpoint.expectedMessageCount(1);
-        producerTemplate.send(firstExchange);
-        producerTemplate.send(secondExchange);
-        producerTemplate.send(thirdExchange);
-        producerTemplate.send(fourthExchange);
-        producerTemplate.send(fifthExchange);
+        producerTemplate.send(compareNamePrimaryMongoExchange);
+        producerTemplate.send(compareNumberAlphaMongoExchange);
+        producerTemplate.send(compareNumberPrimaryMongoExchange);
+        producerTemplate.send(compareNameAlphaMongoExchange);
+        producerTemplate.send(compareStatusPrimaryMongoExchange);
         producerTemplate.send(compareStatusAlphaMongoExchange);
-
         MockEndpoint.assertIsSatisfied(context);
     }
 

@@ -74,7 +74,6 @@ public class CompareResultsRouteTest {
         transformer.expectedHeaderReceived("TargetList", targetResults);
         transformer.expectedHeaderReceived("TargetDescription", "Primary Search Index");
         transformer.expectedHeaderReceived("RecordKey", "Company Number");
-        transformer.expectedHeaderReceived("Comparison", "companies");
         transformer.returnReplyBody(
                 ExpressionBuilder.constantExpression(Arrays.asList(
                         new HashMap<String, Object>() {{
