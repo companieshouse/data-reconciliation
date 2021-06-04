@@ -28,7 +28,7 @@ public class CompareFieldsResultsTransformer {
      *                          another endpoint.
      * @param targetDescription A description of the second endpoint from which {@link Results
      *                          results} have been retrieved.
-     * @param recordType        A description of the type of data being compared.
+     * @param recordKey        A description of the type of data being compared.
      * @return A {@link List list} containing {@link Map company number and data name-value
      * pairings}.
      */
@@ -36,7 +36,7 @@ public class CompareFieldsResultsTransformer {
             String srcDescription,
             Results targetResults,
             String targetDescription,
-            String recordType,
+            String recordKey,
             CompanyResultsMappable mapper) {
 
         // Calculate intersection of both Results objects.
@@ -44,7 +44,7 @@ public class CompareFieldsResultsTransformer {
         // If value in one map is different add it to the results.
         List<Map<String, Object>> results = new ArrayList<>();
 
-        addRow(results, recordType, recordType, srcDescription, srcDescription,
+        addRow(results, recordKey, recordKey, srcDescription, srcDescription,
                 targetDescription, targetDescription);
 
         Map<String, String> srcModels = mapper.generateMappings(srcResults.getResultModels());
@@ -56,7 +56,7 @@ public class CompareFieldsResultsTransformer {
                                 .get(entry.getKey()).equals(entry.getValue())
                 )
                 .forEach(entry ->
-                        addRow(results, recordType, entry.getKey(), srcDescription,
+                        addRow(results, recordKey, entry.getKey(), srcDescription,
                                 entry.getValue(),
                                 targetDescription, targetModels.get(entry.getKey()))
                 );
