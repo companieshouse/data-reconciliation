@@ -15,6 +15,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.companieshouse.reconciliation.function.compare_results.mapper.CompareCompanyStatusResultMapper;
 import uk.gov.companieshouse.reconciliation.model.Results;
 
 @ExtendWith(MockitoExtension.class)
@@ -22,6 +23,9 @@ public class CompareCompanyStatusTransformerTest {
 
     @Mock
     private CompareFieldsResultsTransformer fieldsResultsTransformer;
+
+    @Mock
+    private CompareCompanyStatusResultMapper mapper;
 
     @Mock
     private Results sourceResults, targetResults;
@@ -47,6 +51,6 @@ public class CompareCompanyStatusTransformerTest {
 
         verify(fieldsResultsTransformer, times(1))
                 .transform(eq(sourceResults), eq("apples"), eq(targetResults), eq("oranges"),
-                        eq("fruit"), any());
+                        eq("fruit"), eq(mapper));
     }
 }

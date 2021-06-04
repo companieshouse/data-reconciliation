@@ -16,6 +16,6 @@ public class CompareCompanyNameResultMapper implements CompanyResultsMappable {
         return resultModels.stream().collect(
                 Collectors.toMap(ResultModel::getCompanyNumber,
                         resultModel -> Optional.ofNullable(resultModel.getCompanyName()).orElse("")
-                        ));
+                ));
     }
 }
