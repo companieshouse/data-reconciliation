@@ -43,40 +43,45 @@ public class SendElasticsearchEmailRouteTest {
     }
 
     @Test
-    void testSendEmailAggregatesThreeMessages() throws Exception {
+    void testSendEmailAggregatesFiveMessages() throws Exception {
         AdviceWith.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("mock:kafka-endpoint")
                         .process(exchange -> {
                             ResourceLinksWrapper downloadsList = exchange.getIn().getHeader("ResourceLinks", ResourceLinksWrapper.class);
-                            assertEquals(4, downloadsList.getDownloadLinkList().size());
+                            assertEquals(5, downloadsList.getDownloadLinkList().size());
                         });
             }
         });
         context.start();
 
-        Exchange firstExchange = ExchangeBuilder.anExchange(context)
+        Exchange compareNamePrimaryMongoExchange = ExchangeBuilder.anExchange(context)
                 .withHeader("ResourceLinkReference", "Compare Name Primary Mongo Link")
                 .build();
 
-        Exchange secondExchange = ExchangeBuilder.anExchange(context)
+        Exchange compareNumberAlphaMongoExchange = ExchangeBuilder.anExchange(context)
                 .withHeader("ResourceLinkReference", "Compare Number Alpha Mongo Link")
                 .build();
 
-        Exchange thirdExchange = ExchangeBuilder.anExchange(context)
+        Exchange compareNumberPrimaryMongoExchange = ExchangeBuilder.anExchange(context)
                 .withHeader("ResourceLinkReference", "Compare Number Primary Mongo Link")
                 .build();
 
-        Exchange fourthExchange = ExchangeBuilder.anExchange(context)
+        Exchange compareNameAlphaMongoExchange = ExchangeBuilder.anExchange(context)
                 .withHeader("ResourceLinkReference", "Compare Name Alpha Mongo Link")
                 .build();
 
+        Exchange compareStatusPrimaryMongoExchange = ExchangeBuilder.anExchange(context)
+                .withHeader("ResourceLinkReference", "Compare Status Primary Mongo Link")
+                .build();
+
         kafkaEndpoint.expectedMessageCount(1);
-        producerTemplate.send(firstExchange);
-        producerTemplate.send(secondExchange);
-        producerTemplate.send(thirdExchange);
-        producerTemplate.send(fourthExchange);
+        producerTemplate.send(compareNamePrimaryMongoExchange);
+        producerTemplate.send(compareNumberAlphaMongoExchange);
+        producerTemplate.send(compareNumberPrimaryMongoExchange);
+        producerTemplate.send(compareNameAlphaMongoExchange);
+        producerTemplate.send(compareStatusPrimaryMongoExchange);
 
         MockEndpoint.assertIsSatisfied(context);
     }

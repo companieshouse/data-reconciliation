@@ -2,7 +2,6 @@ package uk.gov.companieshouse.reconciliation.function.compare_results;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
-import uk.gov.companieshouse.reconciliation.function.compare_results.transformer.CompareResultsTransformer;
 
 /**
  * Compare resource data from two endpoints with each other.<br>
@@ -38,7 +37,7 @@ public class CompareResultsRoute extends RouteBuilder {
                     oldExchange.getIn().setHeader("TargetList", newExchange.getIn().getBody());
                     return oldExchange;
                 })
-                .bean(CompareResultsTransformer.class)
+                .toD("${header.ResultsTransformer}")
                 .marshal().csv()
                 .toD("${header.Upload}")
                 .toD("${header.Presign}")

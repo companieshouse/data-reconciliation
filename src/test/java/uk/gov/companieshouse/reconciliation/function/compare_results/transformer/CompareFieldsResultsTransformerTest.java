@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.reconciliation.function.compare_results.transformer;
 
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.gov.companieshouse.reconciliation.model.ResultModel;
@@ -13,23 +14,32 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CompareResultsTransformerTest {
+public class CompareFieldsResultsTransformerTest {
 
-    private CompareResultsTransformer transformer;
+    private CompareFieldsResultsTransformer transformer;
 
     @BeforeEach
     void setup() {
-        transformer = new CompareResultsTransformer();
+        transformer = new CompareFieldsResultsTransformer();
     }
 
     @Test
     void testCaptureDifferentCompanyNames() {
         // given
-        Results srcResults = new Results(Arrays.asList(new ResultModel("12345678", "ACME LTD"), new ResultModel("23456789", "KICK CIC"), new ResultModel("ABCD1234", "UNLIMITED LTD")));
-        Results targetResults = new Results(Arrays.asList(new ResultModel("12345678", "ACME LIMITED"), new ResultModel("23456780", "PRIVATE PLC"), new ResultModel("ABCD1234", "UNLIMITED LTD")));
+        Results srcResults = new Results(Arrays.asList(new ResultModel("12345678", "ACME LTD"),
+                new ResultModel("23456789", "KICK CIC"),
+                new ResultModel("ABCD1234", "UNLIMITED LTD")));
+        Results targetResults = new Results(
+                Arrays.asList(new ResultModel("12345678", "ACME LIMITED"),
+                        new ResultModel("23456780", "PRIVATE PLC"),
+                        new ResultModel("ABCD1234", "UNLIMITED LTD")));
 
         // when
-        List<Map<String, Object>> actual = transformer.transform(srcResults, "MongoDB - Company Profile",  targetResults, "Primary Search Index", "Company Number");
+        List<Map<String, Object>> actual = transformer
+                .transform(srcResults, "MongoDB - Company Profile", targetResults,
+                        "Primary Search Index", "Company Number", (a) -> a.stream().collect(
+                                Collectors.toMap(ResultModel::getCompanyNumber,
+                                        ResultModel::getCompanyName)));
 
         // then
         assertEquals(expectedValues(), actual);

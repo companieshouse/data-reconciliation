@@ -19,7 +19,7 @@ import org.springframework.test.context.TestPropertySource;
 @SpringBootTest
 @DirtiesContext
 @TestPropertySource(locations = "classpath:application-stubbed.properties")
-public class CompareNumberCompareMongoDBPrimarySearchTest {
+public class CompanyNumberCompareMongoDBPrimarySearchTest {
 
     @Autowired
     private CamelContext context;

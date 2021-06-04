@@ -4,16 +4,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.s3.AWS2S3Constants;
 import org.springframework.stereotype.Component;
 
-/**
- * Trigger a comparison between company profiles in MongoDB and company profiles that have been indexed in the
- * Elasticsearch primary search index. Any differences between company names will be recorded in the results.
- */
 @Component
-public class CompanyNameCompareMongoDBPrimarySearch extends RouteBuilder {
+public class CompanyStatusCompareMongoDBPrimarySearch extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("{{endpoint.company_name_mongo_primary.cron.tab}}")
+        from("{{endpoint.company_status_mongo_primary.cron.tab}}")
                 .setHeader("Src").constant("{{endpoint.mongodb.wrapper.company_profile.collection}}")
                 .setHeader("SrcDescription").constant("MongoDB - Company Profile")
                 .setHeader("Target").constant("{{endpoint.elasticsearch.collection}}")
@@ -23,14 +19,14 @@ public class CompanyNameCompareMongoDBPrimarySearch extends RouteBuilder {
                 .setHeader("ElasticsearchCacheKey").constant("{{endpoint.elasticsearch.primary.cache.key}}")
                 .setHeader("ElasticsearchTransformer").constant("{{transformer.elasticsearch.primary}}")
                 .setHeader("RecordKey").constant("Company Number")
-                .setHeader("Comparison").constant("company names")
+                .setHeader("Comparison").constant("company statuses")
                 .setHeader("Destination").constant("{{endpoint.elasticsearch.output}}")
-                .setHeader("ResultsTransformer").constant("{{function.mapper.company_names}}")
+                .setHeader("ResultsTransformer").constant("{{function.mapper.company_statuses}}")
                 .setHeader("Upload", constant("{{endpoint.s3.upload}}"))
                 .setHeader("Presign", constant("{{endpoint.s3presigner.download}}"))
-                .setHeader(AWS2S3Constants.KEY, simple("company/results_name_primary_mongo_${date:now:yyyyMMdd}T${date:now:hhmmss}.csv"))
+                .setHeader(AWS2S3Constants.KEY, simple("company/results_status_primary_mongo_${date:now:yyyyMMdd}T${date:now:hhmmss}.csv"))
                 .setHeader(AWS2S3Constants.DOWNLOAD_LINK_EXPIRATION_TIME, constant("{{aws.expiry}}"))
                 .to("{{function.name.compare_results}}");
-
     }
+
 }
