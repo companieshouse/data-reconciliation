@@ -21,7 +21,7 @@ public class CompanyStatusCompareMongoDBPrimarySearch extends RouteBuilder {
                 .setHeader("RecordKey").constant("Company Number")
                 .setHeader("Comparison").constant("company statuses")
                 .setHeader("Destination").constant("{{endpoint.elasticsearch.output}}")
-                .setHeader("ResultsTransformer").constant("{{function.mapper.company_statuses}}")
+                .setHeader("ResultsTransformer").constant("{{function.mapper.company_status}}")
                 .setHeader("Upload", constant("{{endpoint.s3.upload}}"))
                 .setHeader("Presign", constant("{{endpoint.s3presigner.download}}"))
                 .setHeader(AWS2S3Constants.KEY, simple("company/results_status_primary_mongo_${date:now:yyyyMMdd}T${date:now:hhmmss}.csv"))

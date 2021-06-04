@@ -28,23 +28,23 @@ public class CompareFieldsResultsTransformer {
      *                          another endpoint.
      * @param targetDescription A description of the second endpoint from which {@link Results
      *                          results} have been retrieved.
-     * @param recordKey         A description of the type of data being compared.
+     * @param recordType        A description of the type of data being compared.
      * @return A {@link List list} containing {@link Map company number and data name-value
      * pairings}.
      */
     public List<Map<String, Object>> transform(Results srcResults,
-                                               String srcDescription,
-                                               Results targetResults,
-                                               String targetDescription,
-                                               String recordKey,
-                                               CompanyResultsMappable mapper) {
+            String srcDescription,
+            Results targetResults,
+            String targetDescription,
+            String recordType,
+            CompanyResultsMappable mapper) {
 
         // Calculate intersection of both Results objects.
         // Remap Results objects to maps of company number and company name pairings.
         // If value in one map is different add it to the results.
         List<Map<String, Object>> results = new ArrayList<>();
 
-        addRow(results, recordKey, recordKey, srcDescription, srcDescription,
+        addRow(results, recordType, recordType, srcDescription, srcDescription,
                 targetDescription, targetDescription);
 
         Map<String, String> srcModels = mapper.generateMappings(srcResults.getResultModels());
@@ -56,7 +56,7 @@ public class CompareFieldsResultsTransformer {
                                 .get(entry.getKey()).equals(entry.getValue())
                 )
                 .forEach(entry ->
-                        addRow(results, recordKey, entry.getKey(), srcDescription,
+                        addRow(results, recordType, entry.getKey(), srcDescription,
                                 entry.getValue(),
                                 targetDescription, targetModels.get(entry.getKey()))
                 );
