@@ -50,7 +50,7 @@ public class SendElasticsearchEmailRouteTest {
                 interceptSendToEndpoint("mock:kafka-endpoint")
                         .process(exchange -> {
                             ResourceLinksWrapper downloadsList = exchange.getIn().getHeader("ResourceLinks", ResourceLinksWrapper.class);
-                            assertEquals(5, downloadsList.getDownloadLinkList().size());
+                            assertEquals(6, downloadsList.getDownloadLinkList().size());
                         });
             }
         });
@@ -76,13 +76,17 @@ public class SendElasticsearchEmailRouteTest {
                 .withHeader("ResourceLinkReference", "Compare Status Primary Mongo Link")
                 .build();
 
+        Exchange compareStatusAlphaMongoExchange = ExchangeBuilder.anExchange(context)
+                .withHeader("ResourceLinkReference", "Compare Status Alpha Mongo Link")
+                .build();
+
         kafkaEndpoint.expectedMessageCount(1);
         producerTemplate.send(compareNamePrimaryMongoExchange);
         producerTemplate.send(compareNumberAlphaMongoExchange);
         producerTemplate.send(compareNumberPrimaryMongoExchange);
         producerTemplate.send(compareNameAlphaMongoExchange);
         producerTemplate.send(compareStatusPrimaryMongoExchange);
-
+        producerTemplate.send(compareStatusAlphaMongoExchange);
         MockEndpoint.assertIsSatisfied(context);
     }
 

@@ -14,7 +14,8 @@ public class ElasticsearchAlphaIndexResultMapper implements ElasticsearchResultM
     @Override
     public ResultModel mapWithSourceFields(SearchHit hit) {
         String corporateName = getSourceField(hit, "corporate_name");
-        return new ResultModel(hit.getId(), corporateName);
+        String companyStatus = getSourceField(hit, "company_status");
+        return new ResultModel(hit.getId(), corporateName, companyStatus);
     }
 
     @Override
