@@ -1,12 +1,10 @@
 package uk.gov.companieshouse.reconciliation.function.compare_results.transformer;
 
-import java.util.function.Function;
 import org.springframework.stereotype.Component;
-import uk.gov.companieshouse.reconciliation.model.ResultModel;
+import uk.gov.companieshouse.reconciliation.function.compare_results.mapper.CompanyResultsMappable;
 import uk.gov.companieshouse.reconciliation.model.Results;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,16 +28,16 @@ public class CompareFieldsResultsTransformer {
      *                          another endpoint.
      * @param targetDescription A description of the second endpoint from which {@link Results
      *                          results} have been retrieved.
-     * @param recordKey        A description of the type of data being compared.
+     * @param recordKey         A description of the type of data being compared.
      * @return A {@link List list} containing {@link Map company number and data name-value
      * pairings}.
      */
     public List<Map<String, Object>> transform(Results srcResults,
-            String srcDescription,
-            Results targetResults,
-            String targetDescription,
-            String recordKey,
-            Function<Collection<ResultModel>, Map<String, String>> mappingFunction) {
+                                               String srcDescription,
+                                               Results targetResults,
+                                               String targetDescription,
+                                               String recordKey,
+                                               CompanyResultsMappable mapper) {
 
         // Calculate intersection of both Results objects.
         // Remap Results objects to maps of company number and company name pairings.
@@ -49,8 +47,8 @@ public class CompareFieldsResultsTransformer {
         addRow(results, recordKey, recordKey, srcDescription, srcDescription,
                 targetDescription, targetDescription);
 
-        Map<String, String> srcModels = mappingFunction.apply(srcResults.getResultModels());
-        Map<String, String> targetModels = mappingFunction.apply(targetResults.getResultModels());
+        Map<String, String> srcModels = mapper.generateMappings(srcResults.getResultModels());
+        Map<String, String> targetModels = mapper.generateMappings(targetResults.getResultModels());
 
         srcModels.entrySet().stream()
                 .filter(entry ->
