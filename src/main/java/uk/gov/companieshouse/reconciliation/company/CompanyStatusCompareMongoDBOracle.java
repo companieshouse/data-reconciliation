@@ -17,7 +17,7 @@ public class CompanyStatusCompareMongoDBOracle extends RouteBuilder {
                 .setHeader("Src").constant("{{endpoint.mongodb.wrapper.company_profile.collection}}")
                 .setHeader("SrcDescription").constant("MongoDB - Company Profile")
                 .setHeader("Target").constant("{{endpoint.oracle.multi}}")
-                .setHeader("TargetDescription").constant("Oracle DB")
+                .setHeader("TargetDescription").constant("Oracle")
                 .setHeader("OracleQuery").constant("{{queries.oracle.company_status}}")
                 .setHeader("OracleEndpoint").constant("{{endpoint.oracle.corporate_body_collection}}")
                 .setHeader("RecordKey").constant("Company Number")

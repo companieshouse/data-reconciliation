@@ -17,11 +17,11 @@ import org.springframework.stereotype.Component;
  * header(OracleEndpoint): The endpoint representing the Oracle database that will be connected to.<br>
  */
 @Component
-public class OracleMultiCollectionRoute extends RouteBuilder {
+public class OracleCompanyStatusCollectionRoute extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("direct:oracle-multi-collection")
+        from("direct:oracle-company-status-collection")
                 .setBody(header("OracleQuery"))
                 .setBody(xpath("/sql-statements/valid-companies-query/sql-statement/text()"))
                 .toD("${header.OracleEndpoint}")

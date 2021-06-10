@@ -28,12 +28,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 @DirtiesContext
 @TestPropertySource(locations = "classpath:application-stubbed.properties")
-public class OracleMultiCollectionRouteTest {
+public class OracleCompanyStatusCollectionRouteTest {
 
     @Autowired
     private CamelContext context;
 
-    @Produce("direct:oracle-multi-collection")
+    @Produce("direct:oracle-company-status-collection")
     private ProducerTemplate producerTemplate;
 
     @EndpointInject("mock:oracleEndpoint")

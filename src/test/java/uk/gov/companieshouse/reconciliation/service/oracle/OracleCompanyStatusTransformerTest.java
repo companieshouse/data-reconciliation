@@ -19,6 +19,14 @@ import uk.gov.companieshouse.reconciliation.model.Results;
 
 public class OracleCompanyStatusTransformerTest {
 
+    private static final String COMPANY_STATUS_ATTRIBUTE = "CompanyStatus";
+    private static final String COMPANY_STATUS_ACTIVE = "active";
+    private static final String COMPANY_STATUS_DISSOLVED = "dissolved";
+    private static final String COMPANY_STATUS_LIQUIDATION = "liquidation";
+    private static final String INCORPORATION_NUMBER_COLUMN = "INCORPORATION_NUMBER";
+    private static final String INCORPORATION_NUMBER_VALUE = "12345678";
+    private static final String INCORPORATION_NUMBER_VALUE_ALT = "87654321";
+
     private OracleCompanyStatusTransformer transformer;
 
     @BeforeEach
@@ -37,9 +45,9 @@ public class OracleCompanyStatusTransformerTest {
 
         // Status decorator - will be ignored
         Exchange exchangeLiquidation = new DefaultExchange(camelContext);
-        exchangeLiquidation.getIn().setHeader("CompanyStatus", "liquidation");
+        exchangeLiquidation.getIn().setHeader(COMPANY_STATUS_ATTRIBUTE, COMPANY_STATUS_LIQUIDATION);
         exchangeLiquidation.getIn().setBody(Collections.singletonList(new HashMap<String, Object>() {{
-            put("INCORPORATION_NUMBER", "12345678");
+            put(INCORPORATION_NUMBER_COLUMN, INCORPORATION_NUMBER_VALUE);
         }}));
         List<Exchange> source = Collections.emptyList();
 
@@ -57,7 +65,7 @@ public class OracleCompanyStatusTransformerTest {
         // Given
         List<Map<String, Object>> validCompanies = Collections.singletonList(
                 new HashMap<String, Object>() {{
-                    put("INCORPORATION_NUMBER", "12345678");
+                    put(INCORPORATION_NUMBER_COLUMN, INCORPORATION_NUMBER_VALUE);
                 }}
         );
 
@@ -65,7 +73,7 @@ public class OracleCompanyStatusTransformerTest {
         List<Exchange> source = Collections.emptyList();
 
         Results expected = new Results(Collections.singletonList(
-                new ResultModel("12345678", "", "active")
+                new ResultModel(INCORPORATION_NUMBER_VALUE, "", COMPANY_STATUS_ACTIVE)
         ));
 
         // When
@@ -80,31 +88,31 @@ public class OracleCompanyStatusTransformerTest {
         // Given
         List<Map<String, Object>> validCompanies = Arrays.asList(
                 new HashMap<String, Object>() {{
-                    put("INCORPORATION_NUMBER", "12345678");
+                    put(INCORPORATION_NUMBER_COLUMN, INCORPORATION_NUMBER_VALUE);
                 }},
                 new HashMap<String, Object>() {{
-                    put("INCORPORATION_NUMBER", "87654321");
+                    put(INCORPORATION_NUMBER_COLUMN, INCORPORATION_NUMBER_VALUE_ALT);
                 }}
         );
 
         CamelContext camelContext = new DefaultCamelContext();
         // Company status decorators
         Exchange exchangeLiquidation = new DefaultExchange(camelContext);
-        exchangeLiquidation.getIn().setHeader("CompanyStatus", "liquidation");
+        exchangeLiquidation.getIn().setHeader(COMPANY_STATUS_ATTRIBUTE, COMPANY_STATUS_LIQUIDATION);
         exchangeLiquidation.getIn().setBody(Collections.singletonList(new HashMap<String, Object>() {{
-            put("INCORPORATION_NUMBER", "12345678");
+            put(INCORPORATION_NUMBER_COLUMN, INCORPORATION_NUMBER_VALUE);
         }}));
         Exchange exchangeDissolved = new DefaultExchange(camelContext);
-        exchangeDissolved.getIn().setHeader("CompanyStatus", "dissolved");
+        exchangeDissolved.getIn().setHeader(COMPANY_STATUS_ATTRIBUTE, COMPANY_STATUS_DISSOLVED);
         exchangeDissolved.getIn().setBody(Collections.singletonList(new HashMap<String, Object>() {{
-            put("INCORPORATION_NUMBER", "87654321");
+            put(INCORPORATION_NUMBER_COLUMN, INCORPORATION_NUMBER_VALUE_ALT);
         }}));
 
         List<Exchange> source = Arrays.asList(exchangeLiquidation, exchangeDissolved);
 
         Results expected = new Results(Arrays.asList(
-                new ResultModel("12345678", "", "liquidation"),
-                new ResultModel("87654321", "", "dissolved"))
+                new ResultModel(INCORPORATION_NUMBER_VALUE, "", COMPANY_STATUS_LIQUIDATION),
+                new ResultModel(INCORPORATION_NUMBER_VALUE_ALT, "", COMPANY_STATUS_DISSOLVED))
         );
 
         // When
@@ -119,23 +127,23 @@ public class OracleCompanyStatusTransformerTest {
         // Given
         CamelContext camelContext = new DefaultCamelContext();
         Exchange exchangeActive = new DefaultExchange(camelContext);
-        exchangeActive.getIn().setHeader("CompanyStatus", "");
+        exchangeActive.getIn().setHeader(COMPANY_STATUS_ATTRIBUTE, "");
         exchangeActive.getIn().setBody(Collections.singletonList(new HashMap<String, Object>() {{
-            put("INCORPORATION_NUMBER", "12345678");
+            put(INCORPORATION_NUMBER_COLUMN, INCORPORATION_NUMBER_VALUE);
         }}));
         Exchange exchangeDissolved = new DefaultExchange(camelContext);
-        exchangeDissolved.getIn().setHeader("CompanyStatus", null);
+        exchangeDissolved.getIn().setHeader(COMPANY_STATUS_ATTRIBUTE, null);
         exchangeDissolved.getIn().setBody(Collections.singletonList(new HashMap<String, Object>()));
 
         List<Exchange> source = Arrays.asList(exchangeActive, exchangeDissolved);
 
         Results expected = new Results(Collections.singletonList(
-                new ResultModel("12345678", "", "")
+                new ResultModel(INCORPORATION_NUMBER_VALUE, "", "")
         ));
 
         List<Map<String, Object>> validCompanies = Collections.singletonList(
                 new HashMap<String, Object>() {{
-                    put("INCORPORATION_NUMBER", "12345678");
+                    put(INCORPORATION_NUMBER_COLUMN, INCORPORATION_NUMBER_VALUE);
                 }}
         );
 
