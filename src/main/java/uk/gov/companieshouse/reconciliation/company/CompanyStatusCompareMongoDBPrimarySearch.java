@@ -9,7 +9,7 @@ public class CompanyStatusCompareMongoDBPrimarySearch extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("{{endpoint.company_status_mongo_primary.cron.tab}}")
+        from("{{endpoint.company_status_mongo_primary.timer}}")
                 .setHeader("Src").constant("{{endpoint.mongodb.wrapper.company_profile.collection}}")
                 .setHeader("SrcDescription").constant("MongoDB - Company Profile")
                 .setHeader("Target").constant("{{endpoint.elasticsearch.collection}}")
