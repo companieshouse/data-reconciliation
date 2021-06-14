@@ -2,6 +2,9 @@ package uk.gov.companieshouse.reconciliation.function.email;
 
 import java.util.Objects;
 
+/**
+ *  Request information needed to upload a file to S3
+ */
 public class PublisherResourceRequest {
 
     private final String objectKey;

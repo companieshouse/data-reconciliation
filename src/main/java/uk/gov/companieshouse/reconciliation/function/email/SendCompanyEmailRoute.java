@@ -3,7 +3,7 @@ package uk.gov.companieshouse.reconciliation.function.email;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.reconciliation.function.email.aggregator.EmailAggregationStrategy;
-import uk.gov.companieshouse.reconciliation.function.email.aggregator.EmailPublisherAggregationStrategy;
+import uk.gov.companieshouse.reconciliation.function.email.aggregator.S3EmailPublisherAggregationStrategy;
 
 /**
  * Sends an email comprising of company profile results gathered from comparison jobs.
@@ -15,7 +15,7 @@ public class SendCompanyEmailRoute extends RouteBuilder {
     public void configure() throws Exception {
 
         from("direct:send-company-email")
-                .aggregate(constant(true), new EmailPublisherAggregationStrategy())
+                .aggregate(constant(true), new S3EmailPublisherAggregationStrategy())
                 .completionSize(2)
                 .split(method(EmailPublisherSplitter.class), new EmailAggregationStrategy())
                 .bean(EmailPublisherMapper.class)

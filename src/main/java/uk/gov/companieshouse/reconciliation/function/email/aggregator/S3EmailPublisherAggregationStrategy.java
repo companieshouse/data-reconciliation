@@ -9,7 +9,10 @@ import uk.gov.companieshouse.reconciliation.function.email.PublisherResourceRequ
 import java.util.ArrayList;
 import java.util.Optional;
 
-public class EmailPublisherAggregationStrategy implements AggregationStrategy {
+/**
+ * Accumulates results published by comparison functions and maps them to a collection of requests to be sent to S3
+ */
+public class S3EmailPublisherAggregationStrategy implements AggregationStrategy {
     @Override
     public Exchange aggregate(Exchange prev, Exchange curr) {
         Exchange targetExchange = Optional.ofNullable(prev).orElse(curr);

@@ -3,6 +3,9 @@ package uk.gov.companieshouse.reconciliation.function.email;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.aws2.s3.AWS2S3Constants;
 
+/**
+ * Serialises requests to upload results to S3
+ */
 public class EmailPublisherMapper {
 
     public void map(PublisherResourceRequest request, Exchange targetExchange) {
