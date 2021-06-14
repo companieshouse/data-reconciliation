@@ -15,8 +15,8 @@ public class SendCompanyEmailRoute extends RouteBuilder {
     public void configure() throws Exception {
 
         from("direct:send-company-email")
-                .aggregate(constant(true), new S3EmailPublisherAggregationStrategy())
-                .completionSize(2)
+                .aggregate(header("ComparisonGroup"), new S3EmailPublisherAggregationStrategy())
+                .completion(header("Completed").isEqualTo(true))
                 .split(method(EmailPublisherSplitter.class), new EmailAggregationStrategy())
                 .bean(EmailPublisherMapper.class)
                 .to("direct:s3-publisher")
