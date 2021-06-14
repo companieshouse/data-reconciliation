@@ -7,6 +7,8 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.ExchangeBuilder;
+import org.apache.camel.builder.ExpressionBuilder;
+import org.apache.camel.component.aws2.s3.AWS2S3Constants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
@@ -34,11 +36,19 @@ public class SendCompanyEmailRouteTest {
     @EndpointInject("mock:kafka-endpoint")
     private MockEndpoint kafkaEndpoint;
 
+    @EndpointInject("mock:s3-uploader")
+    private MockEndpoint s3Uploader;
+
+    @EndpointInject("mock:s3-presigner")
+    private MockEndpoint s3Presigner;
+
     @Produce("direct:send-company-email")
     private ProducerTemplate producerTemplate;
 
     @AfterEach
     void after() {
+        s3Uploader.reset();
+        s3Presigner.reset();
         kafkaEndpoint.reset();
     }
 
@@ -56,12 +66,26 @@ public class SendCompanyEmailRouteTest {
         });
         context.start();
 
+        s3Uploader.expectedMessageCount(2);
+        s3Presigner.expectedMessageCount(2);
+        s3Presigner.returnReplyBody(ExpressionBuilder.constantExpression("URL"));
+
         Exchange firstExchange = ExchangeBuilder.anExchange(context)
-                .withHeader("ResourceLinkReference", "Compare Count Link")
+                .withHeader(AWS2S3Constants.KEY, "Key")
+                .withHeader(AWS2S3Constants.DOWNLOAD_LINK_EXPIRATION_TIME, 300L)
+                .withHeader("ResourceLinkDescription", "Compare Count Link")
+                .withHeader("Upload", "mock:s3-uploader")
+                .withHeader("Presign", "mock:s3-presigner")
+                .withBody("CSV1")
                 .build();
 
         Exchange secondExchange = ExchangeBuilder.anExchange(context)
-                .withHeader("ResourceLinkReference", "Compare Collection Link")
+                .withHeader(AWS2S3Constants.KEY, "Key")
+                .withHeader(AWS2S3Constants.DOWNLOAD_LINK_EXPIRATION_TIME, 300L)
+                .withHeader("ResourceLinkDescription", "Compare Collection Link")
+                .withHeader("Upload", "mock:s3-uploader")
+                .withHeader("Presign", "mock:s3-presigner")
+                .withBody("CSV2")
                 .build();
 
 
