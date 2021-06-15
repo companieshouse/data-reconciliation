@@ -1,6 +1,6 @@
 package uk.gov.companieshouse.reconciliation.config;
 
-public class ComparisonGroupConfig {
+public abstract class AbstractAggregationConfiguration {
 
     private String groupName;
     private int size;
