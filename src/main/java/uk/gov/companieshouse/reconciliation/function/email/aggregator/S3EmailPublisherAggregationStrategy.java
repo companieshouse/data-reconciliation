@@ -5,7 +5,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.aws2.s3.AWS2S3Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.gov.companieshouse.reconciliation.config.AbstractAggregationConfiguration;
 import uk.gov.companieshouse.reconciliation.config.AggregationHandler;
 import uk.gov.companieshouse.reconciliation.function.email.PublisherResourceRequest;
 import uk.gov.companieshouse.reconciliation.function.email.PublisherResourceRequestWrapper;
@@ -54,7 +53,7 @@ public class S3EmailPublisherAggregationStrategy implements AggregationStrategy 
     }
 
     private int getCompletionSizeForGroup(String group) {
-        return Optional.ofNullable(configuration.getAggregationConfiguration(group)).map(AbstractAggregationConfiguration::getSize)
+        return Optional.ofNullable(configuration.getAggregationConfiguration(group).getSize())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid comparison group specified: " + group));
     }
 }
