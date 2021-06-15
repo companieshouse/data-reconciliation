@@ -24,7 +24,7 @@ public class DisqualifiedOfficerCompareTrigger extends RouteBuilder {
                 .setHeader(MongoDbConstants.DISTINCT_QUERY_FIELD, constant("officer_id_raw"))
                 .setHeader("Target", simple("{{endpoint.mongodb.wrapper.disqualifications.collection}}"))
                 .setHeader("Comparison", simple("disqualified officers"))
-                .setHeader("ComparisonGroup", constant("DisqualifiedOfficer"))
+                .setHeader("ComparisonGroup", constant("Disqualified officer"))
                 .setHeader("RecordType", constant("Disqualified Officer"))
                 .setHeader("Destination", simple("{{endpoint.output}}"))
                 .setHeader("Upload", simple("{{endpoint.s3.upload}}"))

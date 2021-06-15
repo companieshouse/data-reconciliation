@@ -25,7 +25,7 @@ public class CompanyCountTrigger extends RouteBuilder {
                 .setHeader("Target", constant("{{endpoint.mongodb.company_profile_count}}"))
                 .setHeader("TargetName", constant("MongoDB"))
                 .setHeader("Comparison", constant("company profiles"))
-                .setHeader("ComparisonGroup", constant("CompanyProfile"))
+                .setHeader("ComparisonGroup", constant("Company profile"))
                 .setHeader("Destination", constant("{{endpoint.output}}"))
                 .setHeader("Upload", constant("{{endpoint.s3.upload}}"))
                 .setHeader("Presign", constant("{{endpoint.s3presigner.download}}"))
