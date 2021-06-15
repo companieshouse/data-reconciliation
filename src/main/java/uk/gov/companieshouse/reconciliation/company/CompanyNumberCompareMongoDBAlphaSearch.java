@@ -14,7 +14,7 @@ public class CompanyNumberCompareMongoDBAlphaSearch extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("{{endpoint.company_collection_mongo_alpha.cron.tab}}")
+        from("{{endpoint.company_collection_mongo_alpha.timer}}")
                 .setHeader("MongoDescription", constant("MongoDB"))
                 .setHeader("MongoTargetHeader", constant("SrcList"))
                 .setHeader(MongoDbConstants.DISTINCT_QUERY_FIELD, constant("_id"))
