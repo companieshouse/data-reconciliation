@@ -10,20 +10,20 @@ import java.util.Map;
 
 @Configuration
 @ComponentScan("uk.gov.companieshouse.reconciliation.config")
-public class ComparisonGroupMapConfig {
+public class AggregationHandlerConfiguration {
     private ComparisonGroupConfig companyConfig;
     private ComparisonGroupConfig dsqConfig;
     private ComparisonGroupConfig elasticsearchConfig;
 
     @Autowired
-    public ComparisonGroupMapConfig(ComparisonGroupConfig companyConfig, ComparisonGroupConfig dsqConfig, ComparisonGroupConfig elasticsearchConfig) {
+    public AggregationHandlerConfiguration(ComparisonGroupConfig companyConfig, ComparisonGroupConfig dsqConfig, ComparisonGroupConfig elasticsearchConfig) {
         this.companyConfig = companyConfig;
         this.dsqConfig = dsqConfig;
         this.elasticsearchConfig = elasticsearchConfig;
     }
 
     @Bean
-    public AggregationHandler comparisonGroupConfigMap() {
+    public AggregationHandler aggregationHandler() {
         Map<String, ComparisonGroupConfig> map = new HashMap<>();
 
         map.put(companyConfig.getGroupName(), companyConfig);
