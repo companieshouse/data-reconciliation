@@ -3,6 +3,10 @@ package uk.gov.companieshouse.reconciliation.function.email.aggregator;
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.aws2.s3.AWS2S3Constants;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import uk.gov.companieshouse.reconciliation.config.AbstractAggregationConfiguration;
+import uk.gov.companieshouse.reconciliation.config.AggregationHandler;
 import uk.gov.companieshouse.reconciliation.function.email.PublisherResourceRequest;
 import uk.gov.companieshouse.reconciliation.function.email.PublisherResourceRequestWrapper;
 
@@ -12,22 +16,23 @@ import java.util.Optional;
 /**
  * Accumulates results published by comparison functions and maps them to a collection of requests to be sent to S3
  */
+@Component
 public class S3EmailPublisherAggregationStrategy implements AggregationStrategy {
+
+    private AggregationHandler configuration;
+
+    @Autowired
+    public S3EmailPublisherAggregationStrategy(AggregationHandler configuration) {
+        this.configuration = configuration;
+    }
 
     @Override
     public Exchange aggregate(Exchange prev, Exchange curr) {
 
         Exchange targetExchange = Optional.ofNullable(prev).orElse(curr);
 
-        // Define how many messages a comparison group should have before being marked as complete.
-        // Need a way to keep track of how many messages has been processed inside a comparison group.
-        // Need a way marking a comparison group to complete after all relevant messages has been processed.
         String comparisonGroup = targetExchange.getIn().getHeader("ComparisonGroup", String.class);
-        Integer numberOfMessages = targetExchange.getIn().getHeader(comparisonGroup, Integer.class);
-
-        if (numberOfMessages == null) {
-            numberOfMessages = 0;
-        }
+        Integer numberOfMessages = Optional.ofNullable(targetExchange.getIn().getHeader(comparisonGroup, Integer.class)).orElse(0);
 
         targetExchange.getIn().setHeader(comparisonGroup, ++numberOfMessages);
 
@@ -49,14 +54,7 @@ public class S3EmailPublisherAggregationStrategy implements AggregationStrategy 
     }
 
     private int getCompletionSizeForGroup(String group) {
-        if ("CompanyProfile".equals(group)) {
-            return 2;
-        } else if ("Elasticsearch".equals(group)) {
-            return 6;
-        } else if ("DisqualifiedOfficer".equals(group)) {
-            return 1;
-        } else {
-            throw new IllegalArgumentException("Invalid comparison group specified: " + group);
-        }
+        return Optional.ofNullable(configuration.getAggregationConfiguration(group)).map(AbstractAggregationConfiguration::getSize)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid comparison group specified: " + group));
     }
 }

@@ -7,6 +7,10 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.companieshouse.reconciliation.config.AggregationHandler;
 import uk.gov.companieshouse.reconciliation.function.email.PublisherResourceRequest;
 import uk.gov.companieshouse.reconciliation.function.email.PublisherResourceRequestWrapper;
 
@@ -17,16 +21,20 @@ import java.util.Collections;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
+@ExtendWith(MockitoExtension.class)
 public class S3EmailPublisherAggregationStrategyTest {
 
     private S3EmailPublisherAggregationStrategy aggregationStrategy;
 
     private CamelContext context;
 
+    @Mock
+    private AggregationHandler aggregationHandler;
+
     @BeforeEach
     void setup() {
         context = new DefaultCamelContext();
-        aggregationStrategy = new S3EmailPublisherAggregationStrategy();
+        aggregationStrategy = new S3EmailPublisherAggregationStrategy(aggregationHandler);
     }
 
     @Test
