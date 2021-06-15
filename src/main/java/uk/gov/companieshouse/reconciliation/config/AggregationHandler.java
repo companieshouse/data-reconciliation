@@ -10,20 +10,14 @@ import java.util.Map;
 @Component
 public class AggregationHandler {
 
-    private Map<String, AbstractAggregationConfiguration> comparisonGroupSizes;
+    private Map<String, ComparisonGroupConfig> groupConfigMap;
 
     @Autowired
-    public AggregationHandler(CompanyAggregationConfiguration companyAggregationConfiguration,
-                              DisqualifiedOfficerConfiguration disqualifiedOfficerConfiguration,
-                              ElasticsearchConfiguration elasticsearchConfiguration) {
-        this.comparisonGroupSizes = new HashMap<>();
-        this.comparisonGroupSizes.put(companyAggregationConfiguration.getGroupName(), companyAggregationConfiguration);
-        this.comparisonGroupSizes.put(disqualifiedOfficerConfiguration.getGroupName(), disqualifiedOfficerConfiguration);
-        this.comparisonGroupSizes.put(elasticsearchConfiguration.getGroupName(), elasticsearchConfiguration);
-        this.comparisonGroupSizes = Collections.unmodifiableMap(this.comparisonGroupSizes);
+    public AggregationHandler(Map<String, ComparisonGroupConfig> groupConfigMap) {
+        this.groupConfigMap = groupConfigMap;
     }
 
-    public AbstractAggregationConfiguration getAggregationConfiguration(String comparisonGroup) {
-        return comparisonGroupSizes.get(comparisonGroup);
+    public ComparisonGroupConfig getAggregationConfiguration(String comparisonGroup) {
+        return groupConfigMap.get(comparisonGroup);
     }
 }
