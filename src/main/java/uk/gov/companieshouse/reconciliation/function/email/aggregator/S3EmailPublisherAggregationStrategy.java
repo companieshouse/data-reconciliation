@@ -31,7 +31,7 @@ public class S3EmailPublisherAggregationStrategy implements AggregationStrategy 
 
         Exchange targetExchange = Optional.ofNullable(prev).orElse(curr);
 
-        String comparisonGroup = targetExchange.getIn().getHeader("ComparisonGroup", String.class);
+        String comparisonGroup = curr.getIn().getHeader("ComparisonGroup", String.class);
         Integer numberOfMessages = Optional.ofNullable(targetExchange.getIn().getHeader(comparisonGroup, Integer.class)).orElse(0);
 
         targetExchange.getIn().setHeader(comparisonGroup, ++numberOfMessages);
