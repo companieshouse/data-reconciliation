@@ -21,7 +21,7 @@ public class CompanyStatusCompareMongoDBAlphaSearch extends RouteBuilder {
                 .setHeader("RecordKey").constant("Company Number")
                 .setHeader("Comparison").constant("company statuses")
                 .setHeader("ComparisonGroup", constant("Elasticsearch"))
-                .setHeader("Destination").constant("{{endpoint.company.output}}")
+                .setHeader("Destination").constant("{{endpoint.output}}")
                 .setHeader("ResultsTransformer").constant("{{function.mapper.company_statuses}}")
                 .setHeader("Upload", constant("{{endpoint.s3.upload}}"))
                 .setHeader("Presign", constant("{{endpoint.s3presigner.download}}"))

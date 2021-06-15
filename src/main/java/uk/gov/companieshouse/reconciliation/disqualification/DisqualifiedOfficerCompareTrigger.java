@@ -26,7 +26,7 @@ public class DisqualifiedOfficerCompareTrigger extends RouteBuilder {
                 .setHeader("Comparison", simple("disqualified officers"))
                 .setHeader("ComparisonGroup", constant("DisqualifiedOfficer"))
                 .setHeader("RecordType", constant("Disqualified Officer"))
-                .setHeader("Destination", simple("{{endpoint.company.output}}"))
+                .setHeader("Destination", simple("{{endpoint.output}}"))
                 .setHeader("Upload", simple("{{endpoint.s3.upload}}"))
                 .setHeader("Presign", simple("{{endpoint.s3presigner.download}}"))
                 .setHeader(AWS2S3Constants.KEY, simple("dsq_officer/collection_${date:now:yyyyMMdd}-${date:now:hhmmss}.csv"))

@@ -30,7 +30,7 @@ public class CompanyNumberCompareMongoDBPrimarySearch extends RouteBuilder {
                 .setHeader("Comparison", constant("company numbers"))
                 .setHeader("ComparisonGroup", constant("Elasticsearch"))
                 .setHeader("RecordType", constant("Company Number"))
-                .setHeader("Destination", simple("{{endpoint.company.output}}"))
+                .setHeader("Destination", simple("{{endpoint.output}}"))
                 .setHeader("Upload", simple("{{endpoint.s3.upload}}"))
                 .setHeader("Presign", simple("{{endpoint.s3presigner.download}}"))
                 .setHeader(AWS2S3Constants.KEY, simple("company/collection_primary_mongo_${date:now:yyyyMMdd}T${date:now:hhmmss}.csv"))

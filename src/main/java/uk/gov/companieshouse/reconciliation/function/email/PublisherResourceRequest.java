@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.reconciliation.function.email;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -13,15 +14,17 @@ public class PublisherResourceRequest {
     private final String presignerEndpoint;
     private final String resourceDescription;
     private final byte[] results;
+    private final String comparisonGroup;
 
     public PublisherResourceRequest(String objectKey, long expirationTimeInMillis, String uploaderEndpoint,
-                                    String presignerEndpoint, String resourceDescription, byte[] results) {
+                                    String presignerEndpoint, String resourceDescription, byte[] results, String comparisonGroup) {
         this.objectKey = objectKey;
         this.expirationTimeInMillis = expirationTimeInMillis;
         this.uploaderEndpoint = uploaderEndpoint;
         this.presignerEndpoint = presignerEndpoint;
         this.resourceDescription = resourceDescription;
         this.results = results;
+        this.comparisonGroup = comparisonGroup;
     }
 
     public String getObjectKey() {
@@ -48,24 +51,20 @@ public class PublisherResourceRequest {
         return results;
     }
 
+    public String getDescription() {
+        return comparisonGroup;
+    }
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof PublisherResourceRequest)) {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         PublisherResourceRequest that = (PublisherResourceRequest) o;
-        return getExpirationTimeInMillis() == that.getExpirationTimeInMillis() &&
-                Objects.equals(getObjectKey(), that.getObjectKey()) &&
-                Objects.equals(getUploaderEndpoint(), that.getUploaderEndpoint()) &&
-                Objects.equals(getPresignerEndpoint(), that.getPresignerEndpoint()) &&
-                Objects.equals(getResourceDescription(), that.getResourceDescription());
+        return expirationTimeInMillis == that.expirationTimeInMillis && Objects.equals(objectKey, that.objectKey) && Objects.equals(uploaderEndpoint, that.uploaderEndpoint) && Objects.equals(presignerEndpoint, that.presignerEndpoint) && Objects.equals(resourceDescription, that.resourceDescription) && Objects.equals(comparisonGroup, that.comparisonGroup);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getObjectKey(), getExpirationTimeInMillis(), getUploaderEndpoint(), getPresignerEndpoint(), getResourceDescription());
+        return Objects.hash(objectKey, expirationTimeInMillis, uploaderEndpoint, presignerEndpoint, resourceDescription, comparisonGroup);
     }
 }

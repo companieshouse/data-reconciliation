@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @DirtiesContext
 @TestPropertySource(locations = {"classpath:application-stubbed.properties", "classpath:comparison-groups.properties"})
 @UseAdviceWith
-public class SendCompanyEmailRouteTest {
+public class SendEmailRouteTest {
 
     @Autowired
     private ModelCamelContext context;
@@ -42,7 +42,7 @@ public class SendCompanyEmailRouteTest {
     @EndpointInject("mock:s3-presigner")
     private MockEndpoint s3Presigner;
 
-    @Produce("direct:send-company-email")
+    @Produce("direct:send-email")
     private ProducerTemplate producerTemplate;
 
     @AfterEach

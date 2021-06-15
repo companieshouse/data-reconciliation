@@ -10,7 +10,7 @@ import uk.gov.companieshouse.reconciliation.function.email.aggregator.S3EmailPub
  * Sends an email comprising of company profile results gathered from comparison jobs.
  */
 @Component
-public class SendCompanyEmailRoute extends RouteBuilder {
+public class SendEmailRoute extends RouteBuilder {
 
     @Autowired
     private S3EmailPublisherAggregationStrategy s3EmailPublisherAggregationStrategy;
@@ -18,7 +18,7 @@ public class SendCompanyEmailRoute extends RouteBuilder {
     @Override
     public void configure() throws Exception {
 
-        from("direct:send-company-email")
+        from("direct:send-email")
                 .aggregate(header("ComparisonGroup"), s3EmailPublisherAggregationStrategy)
                 .completion(header("Completed").isEqualTo(true))
                 .split(method(EmailPublisherSplitter.class), new EmailAggregationStrategy())
@@ -26,7 +26,7 @@ public class SendCompanyEmailRoute extends RouteBuilder {
                 .to("direct:s3-publisher")
                 .end()
                 .setHeader("CompletionDate", simple("${date:now:dd MMMM yyyy}"))
-                .setHeader("EmailSubject", simple("Company profile comparisons (${header.CompletionDate})"))
+                .setHeader("EmailSubject", simple("${header.ComparisonGroup} comparisons (${header.CompletionDate})"))
                 .to("{{endpoint.kafka.sender}}");
     }
 }

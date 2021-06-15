@@ -15,5 +15,6 @@ public class EmailPublisherMapper {
         targetExchange.getIn().setHeader("Presign", request.getPresignerEndpoint());
         targetExchange.getIn().setHeader("ResourceLinkDescription", request.getResourceDescription());
         targetExchange.getIn().setBody(request.getResults());
+        targetExchange.getIn().setHeader("ComparisonGroup", request.getDescription());
     }
 }
