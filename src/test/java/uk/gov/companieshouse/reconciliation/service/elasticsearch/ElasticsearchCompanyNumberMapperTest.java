@@ -22,6 +22,7 @@ import uk.gov.companieshouse.reconciliation.model.Results;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @CamelSpringBootTest
@@ -58,5 +59,18 @@ public class ElasticsearchCompanyNumberMapperTest {
         assertTrue(actual.getResultList().contains("12345678"));
         assertEquals("Description", actual.getResultDesc());
         MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    void testSkipTransformationIfFailureHeaderSet() {
+        Exchange request = new DefaultExchange(context);
+        request.getIn().setHeader("ElasticsearchTargetHeader", "Header");
+        request.getIn().setHeader("ElasticsearchEndpoint", "mock:elasticsearch-wrapper");
+        request.getIn().setHeader("ElasticsearchDescription", "Description");
+        elasticsearchServiceWrapper.returnReplyHeader("Failed", ExpressionBuilder.constantExpression(true));
+        elasticsearchServiceWrapper.expectedMessageCount(1);
+        Exchange exchange = producerTemplate.send(request);
+        assertNull(exchange.getIn().getBody());
+        assertNull(exchange.getProperty("CamelExceptionCaught"));
     }
 }

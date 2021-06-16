@@ -7,13 +7,11 @@ import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.function.Executable;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.reconciliation.model.ResourceLink;
 import uk.gov.companieshouse.reconciliation.model.ResourceLinksWrapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
 public class EmailAggregationStrategyTest {
@@ -42,18 +40,5 @@ public class EmailAggregationStrategyTest {
         assertEquals(exchange, result);
         assertEquals("Link", wrapper.getDownloadLink());
         assertEquals("Description", wrapper.getDescription());
-    }
-
-    @Test
-    void testThrowIllegalArgumentExceptionIfResourceLinkAbsent() {
-        //given
-        Exchange exchange = new DefaultExchange(context);
-
-        //when
-        Executable actual = () -> emailAggregationStrategy.aggregate(null, exchange);
-
-        //then
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, actual);
-        assertEquals("Mandatory header not present: ResourceLinkReference", exception.getMessage());
     }
 }

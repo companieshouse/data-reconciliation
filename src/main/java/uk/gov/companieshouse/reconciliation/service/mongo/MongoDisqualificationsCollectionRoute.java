@@ -1,8 +1,10 @@
 package uk.gov.companieshouse.reconciliation.service.mongo;
 
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.caffeine.CaffeineConstants;
 import org.apache.camel.component.mongodb.MongoDbConstants;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.reconciliation.function.compare_collection.entity.ResourceList;
 
@@ -17,9 +19,19 @@ import uk.gov.companieshouse.reconciliation.function.compare_collection.entity.R
 @Component
 public class MongoDisqualificationsCollectionRoute extends RouteBuilder {
 
+    @Value("${wrappers.retries}")
+    private int retries;
+
     @Override
     public void configure() throws Exception {
         from("direct:mongodb-disqualifications-collection")
+                .errorHandler(defaultErrorHandler().maximumRedeliveries(retries))
+                    .onException(RuntimeException.class)
+                    .handled(true)
+                    .log(LoggingLevel.ERROR, "Failed to retrieve disqualification data from MongoDB")
+                    .setHeader("Failed").constant(true)
+                .end()
+                .setHeader("Failed").constant(true)
                 .setHeader(CaffeineConstants.ACTION).constant(CaffeineConstants.ACTION_GET)
                 .setHeader(CaffeineConstants.KEY).constant("{{endpoint.mongodb.disqualifications.cache.key}}")
                 .to("{{endpoint.cache}}")

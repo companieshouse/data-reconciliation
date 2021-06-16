@@ -1,5 +1,8 @@
 package uk.gov.companieshouse.reconciliation.service.mongo;
 
+import com.mongodb.MongoException;
+import com.mongodb.client.model.Aggregates;
+import com.mongodb.client.model.Projections;
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -20,6 +23,7 @@ import org.springframework.test.context.TestPropertySource;
 import uk.gov.companieshouse.reconciliation.function.compare_collection.entity.ResourceList;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -90,6 +94,26 @@ public class MongoDisqualificationsCollectionRouteTest {
         //then
         assertTrue(actual.contains("12345678"));
         assertTrue(actual.contains("ABCD1234"));
+        MockEndpoint.assertIsSatisfied(camelContext);
+    }
+
+    @Test
+    void testSetFailedHeaderIfMongoExceptionThrown() throws InterruptedException {
+        //given
+        cache.expectedHeaderValuesReceivedInAnyOrder(CaffeineConstants.ACTION, CaffeineConstants.ACTION_GET);
+        cache.expectedHeaderValuesReceivedInAnyOrder(CaffeineConstants.KEY, "mongoDisqualifications");
+        cache.returnReplyHeader(CaffeineConstants.ACTION_HAS_RESULT, ExpressionBuilder.constantExpression(false));
+        mongoEndpoint.whenAnyExchangeReceived(exchange -> {
+            throw new MongoException("Error");
+        });
+        mongoEndpoint.expectedHeaderReceived(MongoDbConstants.DISTINCT_QUERY_FIELD, "officer_id_raw");
+        Exchange exchange = new DefaultExchange(camelContext);
+
+        //when
+        Exchange result = template.send(exchange);
+
+        //then
+        assertTrue(result.getIn().getHeader("Failed", Boolean.class));
         MockEndpoint.assertIsSatisfied(camelContext);
     }
 }

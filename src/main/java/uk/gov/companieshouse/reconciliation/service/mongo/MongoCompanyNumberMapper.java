@@ -22,6 +22,9 @@ public class MongoCompanyNumberMapper extends RouteBuilder {
     public void configure() throws Exception {
         from("direct:mongo-company_number-mapper")
                 .to("{{endpoint.mongodb.wrapper.company_profile.collection}}")
-                .bean(MongoCompanyNumberTransformer.class);
+                .choice()
+                .when(header("Failed").isNull())
+                    .bean(MongoCompanyNumberTransformer.class)
+                .end();
     }
 }

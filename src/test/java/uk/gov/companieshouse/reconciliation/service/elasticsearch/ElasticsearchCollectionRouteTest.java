@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
+import uk.gov.companieshouse.reconciliation.component.elasticsearch.slicedscroll.client.ElasticsearchException;
 import uk.gov.companieshouse.reconciliation.component.elasticsearch.slicedscroll.client.ElasticsearchSlicedScrollIterator;
 import uk.gov.companieshouse.reconciliation.model.ResultModel;
 import uk.gov.companieshouse.reconciliation.model.Results;
@@ -68,7 +69,7 @@ public class ElasticsearchCollectionRouteTest {
     void testStoreResourceListInRequiredHeaderUncached() throws InterruptedException {
         elasticsearchEndpoint.expectedBodyReceived().constant("QUERY");
         elasticsearchEndpoint.whenAnyExchangeReceived(exchange ->
-            exchange.getIn().setBody(iterator)
+                exchange.getIn().setBody(iterator)
         );
         cache.expectedHeaderValuesReceivedInAnyOrder(CaffeineConstants.ACTION, CaffeineConstants.ACTION_GET, CaffeineConstants.ACTION_PUT);
         cache.expectedHeaderValuesReceivedInAnyOrder(CaffeineConstants.KEY, "elasticsearchCache", "elasticsearchCache");
@@ -97,6 +98,24 @@ public class ElasticsearchCollectionRouteTest {
         exchange.getIn().setBody(new Object());
         Exchange actual = producer.send(exchange);
         assertTrue(actual.getIn().getBody(Results.class).contains(new ResultModel("12345678", "ACME LIMITED")));
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    void testSetFailedHeaderIfExceptionThrownDuringScrollingSearch() throws InterruptedException {
+        elasticsearchEndpoint.expectedBodyReceived().constant("QUERY");
+        elasticsearchEndpoint.whenAnyExchangeReceived(exchange -> {
+            throw new ElasticsearchException("Failed");
+        });
+        cache.expectedHeaderValuesReceivedInAnyOrder(CaffeineConstants.ACTION, CaffeineConstants.ACTION_GET);
+        cache.expectedHeaderValuesReceivedInAnyOrder(CaffeineConstants.KEY, "elasticsearchCache");
+        cache.returnReplyHeader(CaffeineConstants.ACTION_HAS_RESULT, ExpressionBuilder.constantExpression(false));
+        transformer.expectedMessageCount(0);
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeaders(getHeaders());
+        exchange.getIn().setBody(new Object());
+        Exchange actual = producer.send(exchange);
+        assertTrue(actual.getIn().getHeader("Failed", Boolean.class));
         MockEndpoint.assertIsSatisfied(context);
     }
 

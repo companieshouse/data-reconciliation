@@ -2,8 +2,10 @@ package uk.gov.companieshouse.reconciliation.service.mongo;
 
 import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Projections;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.caffeine.CaffeineConstants;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -18,9 +20,18 @@ import java.util.Collections;
 @Component
 public class MongoCompanyProfileCollectionRoute extends RouteBuilder {
 
+    @Value("${wrappers.retries}")
+    private int retries;
+
     @Override
     public void configure() throws Exception {
         from("direct:mongodb-company_profile-collection")
+                .errorHandler(defaultErrorHandler().maximumRedeliveries(retries))
+                    .onException(RuntimeException.class)
+                    .handled(true)
+                    .log(LoggingLevel.ERROR, "Failed to retrieve company profile data from MongoDB")
+                    .setHeader("Failed").constant(true)
+                .end()
                 .setHeader(CaffeineConstants.ACTION).constant(CaffeineConstants.ACTION_GET)
                 .setHeader(CaffeineConstants.KEY).constant("{{endpoint.mongodb.company_profile.cache.key}}")
                 .to("{{endpoint.cache}}")

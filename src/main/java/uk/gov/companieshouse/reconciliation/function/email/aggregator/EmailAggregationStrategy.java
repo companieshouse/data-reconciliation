@@ -2,6 +2,8 @@ package uk.gov.companieshouse.reconciliation.function.email.aggregator;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.gov.companieshouse.reconciliation.model.ResourceLinksWrapper;
 
 import java.util.ArrayList;
@@ -11,6 +13,8 @@ import java.util.Optional;
  * Aggregates comparison messages into a {@link uk.gov.companieshouse.reconciliation.model.ResourceLinksWrapper collection of links}.
  */
 public class EmailAggregationStrategy implements AggregationStrategy {
+
+    public static final Logger LOGGER = LoggerFactory.getLogger(EmailAggregationStrategy.class);
 
     private static final String RESOURCE_LINKS_HEADER = "ResourceLinks";
     private static final String LINK_REFERENCE_HEADER = "ResourceLinkReference";
@@ -41,7 +45,7 @@ public class EmailAggregationStrategy implements AggregationStrategy {
         if (linkReference.isPresent()) {
             downloadLinks.addDownloadLink(linkReference.get(), header(newExchange, LINK_DESCRIPTION_HEADER).orElse(null));
         } else {
-            throw new IllegalArgumentException("Mandatory header not present: ResourceLinkReference");
+            LOGGER.warn("ResourceLinkReference is absent");
         }
         return exchange;
     }

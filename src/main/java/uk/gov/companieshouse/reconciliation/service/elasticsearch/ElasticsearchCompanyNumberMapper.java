@@ -24,6 +24,9 @@ public class ElasticsearchCompanyNumberMapper extends RouteBuilder {
     public void configure() throws Exception {
         from("direct:elasticsearch-company_number-mapper")
                 .to("{{endpoint.elasticsearch.collection}}")
-                .bean(ElasticsearchCompanyNumberTransformer.class);
+                .choice()
+                .when(header("Failed").isNull())
+                    .bean(ElasticsearchCompanyNumberTransformer.class)
+                .end();
     }
 }

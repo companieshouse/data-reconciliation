@@ -16,6 +16,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import uk.gov.companieshouse.reconciliation.function.compare_collection.entity.ResourceList;
 
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -66,6 +67,27 @@ public class OracleCollectionRouteTest {
         assertEquals("description", resourceList.getResultDesc());
         assertTrue(resourceList.getResultList().contains("12345678"));
         assertTrue(resourceList.getResultList().contains("ABCD1234"));
+        MockEndpoint.assertIsSatisfied(camelContext);
+    }
+
+    @Test
+    void testSetFailedHeaderIfSQLExceptionThrown() throws InterruptedException {
+        //given
+        oracleEndpoint.whenAnyExchangeReceived(exchange -> {
+            throw new SQLException("Failed");
+        });
+        oracleEndpoint.expectedBodiesReceived("SELECT '12345678' FROM DUAL");
+        Exchange exchange = new DefaultExchange(camelContext);
+        exchange.getIn().setHeader("OracleQuery", "SELECT '12345678' FROM DUAL");
+        exchange.getIn().setHeader("OracleEndpoint", "mock:oracleEndpoint");
+        exchange.getIn().setHeader("OracleTargetHeader", "target");
+        exchange.getIn().setHeader("OracleDescription", "description");
+
+        //when
+        Exchange result = template.send(exchange);
+
+        //then
+        assertTrue(result.getIn().getHeader("Failed", Boolean.class));
         MockEndpoint.assertIsSatisfied(camelContext);
     }
 }

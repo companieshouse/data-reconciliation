@@ -2,6 +2,9 @@ package uk.gov.companieshouse.reconciliation.function.compare_results;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
+import uk.gov.companieshouse.reconciliation.function.ComparisonFailedException;
+
+import java.util.Optional;
 
 /**
  * Compare resource data from two endpoints with each other.<br>
@@ -25,15 +28,29 @@ public class CompareResultsRoute extends RouteBuilder {
     @Override
     public void configure() throws Exception {
         from("direct:compare_results")
+                .onException(ComparisonFailedException.class)
+                    .setHeader("ResourceLinkDescription").simple("Comparison failed for ${header.Comparison} in ${header.SrcDescription} and ${header.TargetDescription}.")
+                    .log("Compare results failed: ${header.ResourceLinkDescription}")
+                    .handled(true)
+                    .toD("${header.Destination}")
+                .end()
                 .enrich()
                 .simple("${header.Src}")
                 .aggregationStrategy((oldExchange, newExchange) -> {
+                    Boolean failed = Optional.ofNullable(newExchange.getIn().getHeader("Failed", Boolean.class)).orElse(false);
+                    if(failed) {
+                        throw new ComparisonFailedException("Comparison failed");
+                    }
                     oldExchange.getIn().setHeader("SrcList", newExchange.getIn().getBody());
                     return oldExchange;
                 })
                 .enrich()
                 .simple("${header.Target}")
                 .aggregationStrategy((oldExchange, newExchange) -> {
+                    Boolean failed = Optional.ofNullable(newExchange.getIn().getHeader("Failed", Boolean.class)).orElse(false);
+                    if(failed) {
+                        throw new ComparisonFailedException("Comparison failed");
+                    }
                     oldExchange.getIn().setHeader("TargetList", newExchange.getIn().getBody());
                     return oldExchange;
                 })
@@ -43,7 +60,7 @@ public class CompareResultsRoute extends RouteBuilder {
                 .toD("${header.Presign}")
                 .setHeader("ResourceLinkReference", body())
                 .setHeader("ResourceLinkDescription").simple("Comparisons completed for ${header.Comparison} in ${header.SrcDescription} and ${header.TargetDescription}.")
-                .log("Compare Results: ${header.ResourceLinkDescription}")
+                .log("Compare results succeeded: ${header.ResourceLinkDescription}")
                 .toD("${header.Destination}");
     }
 }

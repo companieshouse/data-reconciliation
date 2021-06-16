@@ -1,7 +1,9 @@
 package uk.gov.companieshouse.reconciliation.function.compare_collection;
 
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
+import uk.gov.companieshouse.reconciliation.function.ComparisonFailedException;
 import uk.gov.companieshouse.reconciliation.function.compare_collection.transformer.CompareCollectionTransformer;
 
 /**
@@ -25,22 +27,29 @@ public class CompareCollectionRoute extends RouteBuilder {
     @Override
     public void configure() throws Exception {
         from("direct:compare_collection")
-                .enrich()
-                .simple("${header.Src}")
-                .enrich()
-                .simple("${header.Target}")
+                .onException(ComparisonFailedException.class)
+                    .setHeader("ResourceLinkDescription", simple("Comparison failed for ${header.Comparison} in ${header.SrcDescription} and ${header.TargetDescription}."))
+                    .log(LoggingLevel.ERROR, "${header.ResourceLinkDescription}")
+                    .handled(true)
+                    .toD("${header.Destination}")
+                .end()
+                .toD("${header.Src}")
+                .choice()
+                .when(header("Failed").isEqualTo(true))
+                    .throwException(ComparisonFailedException.class, "Comparison source failed")
+                .end()
+                .toD("${header.Target}")
+                .choice()
+                .when(header("Failed").isEqualTo(true))
+                    .throwException(ComparisonFailedException.class, "Comparison target failed")
+                .end()
                 .bean(CompareCollectionTransformer.class)
                 .marshal().csv()
                 .toD("${header.Upload}")
                 .toD("${header.Presign}")
                 .setHeader("ResourceLinkReference", body())
-                .choice()
-                .when(header("ElasticsearchDescription"))
-                    .setHeader("ResourceLinkDescription", simple("Comparisons completed for ${header.Comparison} in ${header.MongoDescription} and ${header.ElasticsearchDescription}."))
-                .when(header("OracleDescription"))
-                    .setHeader("ResourceLinkDescription", simple("Comparisons completed for ${header.Comparison} in ${header.MongoDescription} and ${header.OracleDescription}."))
-                .end()
-                .log("Compare Collection: ${header.ResourceLinkDescription}")
+                .setHeader("ResourceLinkDescription", simple("Comparisons completed for ${header.Comparison} in ${header.SrcDescription} and ${header.TargetDescription}."))
+                .log("${header.ResourceLinkDescription}")
                 .toD("${header.Destination}");
     }
 }

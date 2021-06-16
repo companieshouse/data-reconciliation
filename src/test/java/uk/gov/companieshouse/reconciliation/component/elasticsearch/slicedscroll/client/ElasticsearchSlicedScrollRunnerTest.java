@@ -127,7 +127,7 @@ public class ElasticsearchSlicedScrollRunnerTest {
     }
 
     @Test
-    void testThrowRuntimeExceptionIfIOExceptionThrown() throws IOException {
+    void testThrowElasticsearchExceptionIfIOExceptionThrown() throws IOException {
         //given
         ElasticsearchSlicedScrollRunner runner = new ElasticsearchSlicedScrollRunner(client, results, 0, 2, QUERY_MATCH_ALL, scrollService, validator);
         when(validator.validateSliceConfiguration(anyInt(), anyInt())).thenReturn(true);
@@ -137,7 +137,7 @@ public class ElasticsearchSlicedScrollRunnerTest {
         Executable actual = runner::run;
 
         //then
-        RuntimeException exception = assertThrows(RuntimeException.class, actual);
+        RuntimeException exception = assertThrows(ElasticsearchException.class, actual);
         assertEquals(IOException.class, exception.getCause().getClass());
     }
 }
