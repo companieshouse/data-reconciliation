@@ -12,10 +12,10 @@ import java.util.stream.Collectors;
 @Configuration
 @ComponentScan("uk.gov.companieshouse.reconciliation.config")
 public class AggregationHandlerConfiguration {
-    private Map<String, ComparisonGroupConfig> comparisonGroupConfigMap;
+    private Map<String, ComparisonGroupModel> comparisonGroupConfigMap;
 
     @Autowired
-    public AggregationHandlerConfiguration(Map<String, ComparisonGroupConfig> comparisonGroupConfigMap) {
+    public AggregationHandlerConfiguration(Map<String, ComparisonGroupModel> comparisonGroupConfigMap) {
         this.comparisonGroupConfigMap = comparisonGroupConfigMap;
     }
 
@@ -23,6 +23,6 @@ public class AggregationHandlerConfiguration {
     public AggregationHandler aggregationHandler() {
         return new AggregationHandler(comparisonGroupConfigMap.values()
                 .stream()
-                .collect(Collectors.toMap(ComparisonGroupConfig::getGroupName, Function.identity())));
+                .collect(Collectors.toMap(ComparisonGroupModel::getGroupName, Function.identity())));
     }
 }

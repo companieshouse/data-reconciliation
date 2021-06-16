@@ -29,7 +29,7 @@ aggregation.completion.&lt;key2&gt;.size = n2
      */
     @Bean
     @ConfigurationProperties(prefix = "aggregation.completion")
-    public Map<String, ComparisonGroupConfig> comparisonGroupConfigMap() {
+    public Map<String, ComparisonGroupModel> comparisonGroupConfigMap() {
         return new HashMap<>();
     }
 }
