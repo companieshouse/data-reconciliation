@@ -13,7 +13,7 @@ public class CompanyStatusCompareMongoDBOracle extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("{{endpoint.company_status_mongo_oracle.cron.tab}}")
+        from("{{endpoint.company_status_mongo_oracle.timer}}")
                 .setHeader("Src").constant("{{endpoint.mongodb.wrapper.company_profile.collection}}")
                 .setHeader("SrcDescription").constant("MongoDB - Company Profile")
                 .setHeader("Target").constant("{{endpoint.oracle.multi}}")
