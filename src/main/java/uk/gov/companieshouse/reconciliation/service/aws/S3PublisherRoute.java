@@ -6,7 +6,7 @@ import uk.gov.companieshouse.reconciliation.function.email.PublisherResourceRequ
 
 /**
  * Publishes {@link PublisherResourceRequest resource request} by uploading CSV files to S3.
- * Assigns a pre-signed url for each request and finally puts the url into a ResourceLinkReference header.
+ * Assigns a pre-signed download link for each request than puts that url into a ResourceLinkReference header.
  */
 @Component
 public class S3PublisherRoute extends RouteBuilder {
