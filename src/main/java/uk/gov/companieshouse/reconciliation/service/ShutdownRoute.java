@@ -24,6 +24,9 @@ public class ShutdownRoute extends RouteBuilder {
                 .aggregationStrategy(AggregationStrategies.useLatest())
                 .completionSize(3)
                 .log(LoggingLevel.INFO, "Triggering application shutdown...")
-                .process(exchange -> new Thread(() -> context.close()).start());
+                .process(exchange -> new Thread(() -> {
+                    context.close();
+                    System.exit(0);
+                }).start());
     }
 }
