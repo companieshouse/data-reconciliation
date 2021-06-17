@@ -56,9 +56,6 @@ public class CompareResultsRoute extends RouteBuilder {
                 })
                 .toD("${header.ResultsTransformer}")
                 .marshal().csv()
-                .toD("${header.Upload}")
-                .toD("${header.Presign}")
-                .setHeader("ResourceLinkReference", body())
                 .setHeader("ResourceLinkDescription").simple("Comparisons completed for ${header.Comparison} in ${header.SrcDescription} and ${header.TargetDescription}.")
                 .log("Compare results succeeded: ${header.ResourceLinkDescription}")
                 .toD("${header.Destination}");

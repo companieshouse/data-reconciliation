@@ -47,7 +47,7 @@ public class DisqualifiedOfficerCompareTriggerTest {
         compareCollection.expectedHeaderReceived(MongoDbConstants.DISTINCT_QUERY_FIELD, "officer_id_raw");
         compareCollection.expectedHeaderReceived("Target", "mock:mongoDisqualificationsCollection");
         compareCollection.expectedHeaderReceived("Comparison", "disqualified officers");
-        compareCollection.expectedHeaderReceived("Destination", "mock:dsq_officer");
+        compareCollection.expectedHeaderReceived("Destination", "mock:result");
         compareCollection.expectedHeaderReceived("RecordType", "Disqualified Officer");
         compareCollection.expectedHeaderReceived("Upload", "mock:s3_bucket_destination");
         compareCollection.expectedHeaderReceived("Presign", "mock:s3_download_link");
