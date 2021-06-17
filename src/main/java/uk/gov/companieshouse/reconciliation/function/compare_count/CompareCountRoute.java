@@ -50,7 +50,7 @@ public class CompareCountRoute extends RouteBuilder {
         from("direct:compare_count")
                 .errorHandler(defaultErrorHandler().maximumRedeliveries(retries))
                 .onException(SQLException.class, MongoException.class)
-                    .setHeader("ResourceLinkDescription", simple("Failed to compare ${header.Comparison} in ${header.SrcName} with ${header.TargetName}."))
+                    .setHeader("ResourceLinkDescription", simple("Failed to compare counts of ${header.Comparison} in ${header.SrcName} with ${header.TargetName}."))
                     .log(LoggingLevel.ERROR, "Compare count failed: ${header.ResourceLinkDescription}")
                     .handled(true)
                     .toD("${header.Destination}")
