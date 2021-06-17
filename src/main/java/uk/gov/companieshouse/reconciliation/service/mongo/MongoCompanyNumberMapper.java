@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
  * <br>
  * IN:<br>
  * <br>
- * header(MongoDescription): A description of the results produced by this pipeline.<br>
+ * header(Description): A description of the results produced by this pipeline.<br>
  * header(MongoTargetHeader): The target header to which results will be mapped.<br>
  * <br>
  * OUT:<br>

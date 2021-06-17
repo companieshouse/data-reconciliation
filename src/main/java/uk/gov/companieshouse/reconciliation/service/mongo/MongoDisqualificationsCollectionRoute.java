@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.reconciliation.service.mongo;
 
+import com.mongodb.MongoException;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.caffeine.CaffeineConstants;
@@ -13,7 +14,7 @@ import uk.gov.companieshouse.reconciliation.function.compare_collection.entity.R
  * <br>
  * IN:<br>
  * <br>
- * header(MongoDescription): A description of the {@link ResourceList resource list} where results will be aggregated.<br>
+ * header(Description): A description of the {@link ResourceList resource list} where results will be aggregated.<br>
  * header(MongoTargetHeader): The header where results will be aggregated as a {@link ResourceList resource list}.<br>
  */
 @Component
@@ -26,12 +27,11 @@ public class MongoDisqualificationsCollectionRoute extends RouteBuilder {
     public void configure() throws Exception {
         from("direct:mongodb-disqualifications-collection")
                 .errorHandler(defaultErrorHandler().maximumRedeliveries(retries))
-                    .onException(RuntimeException.class)
+                    .onException(MongoException.class)
                     .handled(true)
                     .log(LoggingLevel.ERROR, "Failed to retrieve disqualification data from MongoDB")
                     .setHeader("Failed").constant(true)
                 .end()
-                .setHeader("Failed").constant(true)
                 .setHeader(CaffeineConstants.ACTION).constant(CaffeineConstants.ACTION_GET)
                 .setHeader(CaffeineConstants.KEY).constant("{{endpoint.mongodb.disqualifications.cache.key}}")
                 .to("{{endpoint.cache}}")

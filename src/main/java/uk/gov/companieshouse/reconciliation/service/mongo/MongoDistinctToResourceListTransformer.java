@@ -26,7 +26,7 @@ public class MongoDistinctToResourceListTransformer {
      * @param targetHeader The header to which the {@link ResourceList resource list} will be mapped.
      * @param headers {@link java.util.Map Name-value pairings} representing incoming headers.
      */
-    public void transform(@Body List<String> results, @Header("MongoDescription") String description,
+    public void transform(@Body List<String> results, @Header("Description") String description,
                           @Header("MongoTargetHeader") String targetHeader, @Headers Map<String, Object> headers) {
         Set<String> disqualifications = results.stream()
                 .filter(Objects::nonNull)

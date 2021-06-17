@@ -1,13 +1,13 @@
 package uk.gov.companieshouse.reconciliation.service.oracle;
 
-import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
-import org.apache.camel.builder.AggregationStrategies;
-import org.apache.camel.builder.ExpressionBuilder;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.language.xpath.XPathBuilder;
 import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import java.sql.SQLException;
 
 /**
  * Retrieves and aggregates multiple ResultSets from Oracle.<br>
@@ -19,9 +19,18 @@ import org.springframework.stereotype.Component;
 @Component
 public class OracleCompanyStatusCollectionRoute extends RouteBuilder {
 
+    @Value("${wrappers.retries}")
+    private int retries;
+
     @Override
     public void configure() throws Exception {
         from("direct:oracle-company-status-collection")
+                .errorHandler(defaultErrorHandler().maximumRedeliveries(retries))
+                    .onException(SQLException.class)
+                    .handled(true)
+                    .log(LoggingLevel.ERROR, "Failed to retrieve results from Oracle")
+                    .setHeader("Failed").constant(true)
+                .end()
                 .setBody(header("OracleQuery"))
                 .setBody(xpath("/sql-statements/valid-companies-query/sql-statement/text()"))
                 .toD("${header.OracleEndpoint}")

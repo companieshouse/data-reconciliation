@@ -50,7 +50,7 @@ public class MongoCompanyNumberMapperTest {
         Results expectedResults = new Results(Collections.singletonList(new ResultModel("12345678", "ACME LIMITED")));
         mongoEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(expectedResults));
         Exchange exchange = new DefaultExchange(context);
-        exchange.getIn().setHeader("MongoDescription", "description");
+        exchange.getIn().setHeader("Description", "description");
         exchange.getIn().setHeader("MongoTargetHeader", "target");
         Exchange result = producerTemplate.send(exchange);
         ResourceList actual = result.getIn().getHeader("target", ResourceList.class);

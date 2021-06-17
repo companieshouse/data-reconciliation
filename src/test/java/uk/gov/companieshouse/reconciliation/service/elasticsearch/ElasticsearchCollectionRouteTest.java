@@ -123,7 +123,7 @@ public class ElasticsearchCollectionRouteTest {
         Map<String, Object> headers = new HashMap<>();
         headers.put("ElasticsearchTargetHeader", "Output");
         headers.put("ElasticsearchQuery", "QUERY");
-        headers.put("ElasticsearchDescription", "Description");
+        headers.put("Description", "Description");
         headers.put("ElasticsearchLogIndices", 1);
         headers.put("ElasticsearchEndpoint", "mock:elasticsearch-stub");
         headers.put("ElasticsearchCacheKey", "elasticsearchCache");

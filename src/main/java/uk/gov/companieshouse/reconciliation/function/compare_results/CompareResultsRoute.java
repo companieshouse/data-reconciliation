@@ -29,7 +29,7 @@ public class CompareResultsRoute extends RouteBuilder {
     public void configure() throws Exception {
         from("direct:compare_results")
                 .onException(ComparisonFailedException.class)
-                    .setHeader("ResourceLinkDescription").simple("Comparison failed for ${header.Comparison} in ${header.SrcDescription} and ${header.TargetDescription}.")
+                    .setHeader("ResourceLinkDescription").simple("Failed to compare ${header.Comparison} in ${header.SrcDescription} and ${header.TargetDescription}.")
                     .log("Compare results failed: ${header.ResourceLinkDescription}")
                     .handled(true)
                     .toD("${header.Destination}")

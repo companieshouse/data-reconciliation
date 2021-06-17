@@ -14,7 +14,7 @@ import java.sql.SQLException;
  * IN:<br>
  * header(OracleQuery): The query that will be run against the Oracle database.<br>
  * header(OracleEndpoint): The endpoint representing the Oracle database that will be connected to.<br>
- * header(OracleDescription): A description of the {@link ResourceList resource list} that will be aggregated.<br>
+ * header(Description): A description of the {@link ResourceList resource list} that will be aggregated.<br>
  * header(OracleTargetHeader): The header in which results will be aggregated as a {@link ResourceList resource list}.<br>
  */
 @Component

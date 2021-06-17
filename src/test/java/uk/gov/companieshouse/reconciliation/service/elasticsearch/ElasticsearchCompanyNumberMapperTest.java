@@ -51,7 +51,7 @@ public class ElasticsearchCompanyNumberMapperTest {
         Exchange request = new DefaultExchange(context);
         request.getIn().setHeader("ElasticsearchTargetHeader", "Header");
         request.getIn().setHeader("ElasticsearchEndpoint", "mock:elasticsearch-wrapper");
-        request.getIn().setHeader("ElasticsearchDescription", "Description");
+        request.getIn().setHeader("Description", "Description");
         elasticsearchServiceWrapper.returnReplyBody(ExpressionBuilder.constantExpression(new Results(Collections.singletonList(expected))));
         elasticsearchServiceWrapper.expectedMessageCount(1);
         Exchange exchange = producerTemplate.send(request);
@@ -66,7 +66,7 @@ public class ElasticsearchCompanyNumberMapperTest {
         Exchange request = new DefaultExchange(context);
         request.getIn().setHeader("ElasticsearchTargetHeader", "Header");
         request.getIn().setHeader("ElasticsearchEndpoint", "mock:elasticsearch-wrapper");
-        request.getIn().setHeader("ElasticsearchDescription", "Description");
+        request.getIn().setHeader("Description", "Description");
         elasticsearchServiceWrapper.returnReplyHeader("Failed", ExpressionBuilder.constantExpression(true));
         elasticsearchServiceWrapper.expectedMessageCount(1);
         Exchange exchange = producerTemplate.send(request);

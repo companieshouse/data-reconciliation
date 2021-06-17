@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @Component
 public class OracleResultCollectionTransformer {
 
-    public void transform(@Body List<Map<String, Object>> resultSet, @Header("OracleDescription") String description,
+    public void transform(@Body List<Map<String, Object>> resultSet, @Header("Description") String description,
                           @Header("OracleTargetHeader") String targetHeader, @Headers Map<String, Object> headers) {
         Set<String> results = resultSet.stream()
                 .map(e -> e.get("RESULT"))

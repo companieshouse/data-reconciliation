@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.reconciliation.service.mongo;
 
+import com.mongodb.MongoException;
 import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Projections;
 import org.apache.camel.LoggingLevel;
@@ -27,7 +28,7 @@ public class MongoCompanyProfileCollectionRoute extends RouteBuilder {
     public void configure() throws Exception {
         from("direct:mongodb-company_profile-collection")
                 .errorHandler(defaultErrorHandler().maximumRedeliveries(retries))
-                    .onException(RuntimeException.class)
+                    .onException(MongoException.class)
                     .handled(true)
                     .log(LoggingLevel.ERROR, "Failed to retrieve company profile data from MongoDB")
                     .setHeader("Failed").constant(true)

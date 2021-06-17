@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
  * <br>
  * IN:<br>
  * <br>
- * header(ElasticsearchDescription): A description of the results produced by this pipeline.<br>
+ * header(Description): A description of the results produced by this pipeline.<br>
  * header(ElasticsearchTargetHeader): The target header to which results will be mapped.<br>
  * <br>
  * OUT:<br>

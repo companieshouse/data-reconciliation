@@ -31,7 +31,7 @@ public class MongoCompanyNumberTransformer {
      * @param targetHeader The header to which results will be stored.
      * @param headers {@link java.util.Map Name-value pairings} representing incoming headers.
      */
-    public void transform(@Body Results results, @Header("MongoDescription") String description,
+    public void transform(@Body Results results, @Header("Description") String description,
                           @Header("MongoTargetHeader") String targetHeader, @Headers Map<String, Object> headers) {
         resultsToCompanyNumberTransformer.transform(results, description, targetHeader, headers);
     }

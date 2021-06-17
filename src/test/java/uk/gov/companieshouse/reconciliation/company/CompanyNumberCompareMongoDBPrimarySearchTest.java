@@ -37,12 +37,12 @@ public class CompanyNumberCompareMongoDBPrimarySearchTest {
 
     @Test
     void testCorrectHeadersHasBeenSet() throws InterruptedException {
-        compareCollection.expectedHeaderReceived("MongoDescription", "MongoDB");
+        compareCollection.expectedHeaderReceived("SrcDescription", "MongoDB");
         compareCollection.expectedHeaderReceived("MongoTargetHeader", "SrcList");
         compareCollection.expectedHeaderReceived("Src", "direct:mongo-company_number-mapper");
         compareCollection.expectedHeaderReceived("ElasticsearchEndpoint", "mock:elasticsearch-stub");
         compareCollection.expectedHeaderReceived("ElasticsearchQuery", "test");
-        compareCollection.expectedHeaderReceived("ElasticsearchDescription", "Primary Index");
+        compareCollection.expectedHeaderReceived("TargetDescription", "Primary Index");
         compareCollection.expectedHeaderReceived("ElasticsearchTargetHeader", "TargetList");
         compareCollection.expectedHeaderReceived("ElasticsearchLogIndices", "100000");
         compareCollection.expectedHeaderReceived("Target", "direct:elasticsearch-company_number-mapper");

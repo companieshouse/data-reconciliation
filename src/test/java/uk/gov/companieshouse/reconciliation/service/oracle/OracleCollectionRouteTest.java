@@ -57,7 +57,7 @@ public class OracleCollectionRouteTest {
         exchange.getIn().setHeader("OracleQuery", "SELECT '12345678' FROM DUAL");
         exchange.getIn().setHeader("OracleEndpoint", "mock:oracleEndpoint");
         exchange.getIn().setHeader("OracleTargetHeader", "target");
-        exchange.getIn().setHeader("OracleDescription", "description");
+        exchange.getIn().setHeader("Description", "description");
 
         //when
         Exchange result = template.send(exchange);
@@ -81,7 +81,7 @@ public class OracleCollectionRouteTest {
         exchange.getIn().setHeader("OracleQuery", "SELECT '12345678' FROM DUAL");
         exchange.getIn().setHeader("OracleEndpoint", "mock:oracleEndpoint");
         exchange.getIn().setHeader("OracleTargetHeader", "target");
-        exchange.getIn().setHeader("OracleDescription", "description");
+        exchange.getIn().setHeader("Description", "description");
 
         //when
         Exchange result = template.send(exchange);

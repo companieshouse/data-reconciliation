@@ -80,7 +80,7 @@ public class CompareCountRouteTest {
         mockCorporateBodyCountEndpoint.whenAnyExchangeReceived(exchange -> {
             throw new SQLException("Failed");
         });
-        mockResult.expectedHeaderReceived("ResourceLinkDescription", "Failed to compare things in A with B.");
+        mockResult.expectedHeaderReceived("ResourceLinkDescription", "Failed to compare counts of things in A with B.");
         template.sendBodyAndHeaders(0, createHeaders());
         MockEndpoint.assertIsSatisfied(context);
     }

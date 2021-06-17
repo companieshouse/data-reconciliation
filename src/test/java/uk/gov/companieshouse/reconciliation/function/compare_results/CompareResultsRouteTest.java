@@ -93,6 +93,38 @@ public class CompareResultsRouteTest {
         MockEndpoint.assertIsSatisfied(context);
     }
 
+    @Test
+    void testSetLinkDescriptionToFailureMessageIfComparisonSourceFails() throws InterruptedException {
+        //given
+        srcEndpoint.returnReplyHeader("Failed", ExpressionBuilder.constantExpression(true));
+        output.expectedHeaderReceived("ResourceLinkDescription",
+                "Failed to compare companies in MongoDB - Company Profile and Primary Search Index.");
+
+        //when
+        producerTemplate.sendBodyAndHeaders(0, createHeaders());
+
+        //then
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    void testSetLinkDescriptionToFailureMessageIfComparisonTargetFails() throws InterruptedException {
+        // given
+        Results srcResults = new Results(Arrays.asList(new ResultModel("12345678", "ACME LTD"),
+                new ResultModel("23456789", "KICK CIC"),
+                new ResultModel("ABCD1234", "UNLIMITED LTD")));
+        srcEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(srcResults));
+        targetEndpoint.returnReplyHeader("Failed", ExpressionBuilder.constantExpression(true));
+        output.expectedHeaderReceived("ResourceLinkDescription",
+                "Failed to compare companies in MongoDB - Company Profile and Primary Search Index.");
+
+        //when
+        producerTemplate.sendBodyAndHeaders(0, createHeaders());
+
+        //then
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
     private Map<String, Object> createHeaders() {
         Map<String, Object> headers = new HashMap<>();
         headers.put("Src", "mock:src-endpoint");
