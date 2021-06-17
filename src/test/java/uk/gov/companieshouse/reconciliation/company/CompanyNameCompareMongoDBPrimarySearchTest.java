@@ -46,7 +46,7 @@ public class CompanyNameCompareMongoDBPrimarySearchTest {
         target.expectedHeaderReceived("ElasticsearchQuery", "test");
         target.expectedHeaderReceived("RecordKey", "Company Number");
         target.expectedHeaderReceived("Comparison", "company names");
-        target.expectedHeaderReceived("Destination", "mock:elasticsearch");
+        target.expectedHeaderReceived("Destination", "mock:result");
         target.expectedHeaderReceived("Upload", "mock:s3_bucket_destination");
         target.expectedHeaderReceived("Presign", "mock:s3_download_link");
         target.expectedHeaderReceived(AWS2S3Constants.DOWNLOAD_LINK_EXPIRATION_TIME, 2000L);

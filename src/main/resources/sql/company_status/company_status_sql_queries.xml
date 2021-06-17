@@ -30,7 +30,7 @@ WHERE CB.ACTION_CODE_TYPE_ID IN (7001, 7002, 7101, 7401, 7402, 7403) -- Insolven
     AND EXISTS(SELECT 1 -- Liquidation qualifier
                FROM INSOLVENCY_CASE IC
                WHERE CB.CORPORATE_BODY_ID = IC.CORPORATE_BODY_ID
-                 AND INSOLVENCY_CASE_END_DATE > SYSDATE - Ongoing
+                 AND INSOLVENCY_CASE_END_DATE > SYSDATE -- Ongoing
                  AND INSOLVENCY_CASE_TYPE_ID IN (1, 2, 3)) -- Insolvency type: 1=Members Voluntary Liquidation, 2=Creditors Voluntary Liquidation, 3=Compulsory Liquidation
     </sql-statement>
     <sql-statement status="insolvency-proceedings">

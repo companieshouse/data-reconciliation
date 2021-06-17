@@ -46,7 +46,7 @@ public class CompanyNumberCompareMongoDBPrimarySearchTest {
         compareCollection.expectedHeaderReceived("ElasticsearchTargetHeader", "TargetList");
         compareCollection.expectedHeaderReceived("ElasticsearchLogIndices", "100000");
         compareCollection.expectedHeaderReceived("Target", "direct:elasticsearch-company_number-mapper");
-        compareCollection.expectedHeaderReceived("Destination", "mock:elasticsearch");
+        compareCollection.expectedHeaderReceived("Destination", "mock:result");
         compareCollection.expectedHeaderReceived("RecordType", "Company Number");
         compareCollection.expectedHeaderReceived("Upload", "mock:s3_bucket_destination");
         compareCollection.expectedHeaderReceived("Presign", "mock:s3_download_link");
