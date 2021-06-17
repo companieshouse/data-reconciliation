@@ -56,12 +56,11 @@ public class OracleCollectionRouteTest {
         Exchange exchange = new DefaultExchange(camelContext);
         exchange.getIn().setHeader("OracleQuery", "SELECT '12345678' FROM DUAL");
         exchange.getIn().setHeader("OracleEndpoint", "mock:oracleEndpoint");
-        exchange.getIn().setHeader("OracleTargetHeader", "target");
         exchange.getIn().setHeader("Description", "description");
 
         //when
         Exchange result = template.send(exchange);
-        ResourceList resourceList = result.getIn().getHeader("target", ResourceList.class);
+        ResourceList resourceList = result.getIn().getBody(ResourceList.class);
 
         //then
         assertEquals("description", resourceList.getResultDesc());
@@ -80,14 +79,13 @@ public class OracleCollectionRouteTest {
         Exchange exchange = new DefaultExchange(camelContext);
         exchange.getIn().setHeader("OracleQuery", "SELECT '12345678' FROM DUAL");
         exchange.getIn().setHeader("OracleEndpoint", "mock:oracleEndpoint");
-        exchange.getIn().setHeader("OracleTargetHeader", "target");
         exchange.getIn().setHeader("Description", "description");
 
         //when
         Exchange result = template.send(exchange);
 
         //then
-        assertTrue(result.getIn().getHeader("Failed", Boolean.class));
+        assertTrue(result.getIn().getHeader("Failed", boolean.class));
         MockEndpoint.assertIsSatisfied(camelContext);
     }
 }

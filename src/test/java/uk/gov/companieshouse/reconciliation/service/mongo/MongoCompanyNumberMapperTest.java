@@ -51,9 +51,8 @@ public class MongoCompanyNumberMapperTest {
         mongoEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(expectedResults));
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader("Description", "description");
-        exchange.getIn().setHeader("MongoTargetHeader", "target");
         Exchange result = producerTemplate.send(exchange);
-        ResourceList actual = result.getIn().getHeader("target", ResourceList.class);
+        ResourceList actual = result.getIn().getBody(ResourceList.class);
         assertEquals("description", actual.getResultDesc());
         assertTrue(actual.contains("12345678"));
         MockEndpoint.assertIsSatisfied(context);

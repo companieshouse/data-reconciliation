@@ -42,10 +42,14 @@ public class EmailAggregationStrategy implements AggregationStrategy {
         Exchange exchange = Optional.ofNullable(oldExchange).orElse(newExchange);
         ResourceLinksWrapper downloadLinks = createOrGetResourceLinks(exchange);
         Optional<String> linkReference = header(newExchange, LINK_REFERENCE_HEADER);
+        Optional<String> linkDescription = header(newExchange, LINK_DESCRIPTION_HEADER);
         if (linkReference.isPresent()) {
-            downloadLinks.addDownloadLink(linkReference.get(), header(newExchange, LINK_DESCRIPTION_HEADER).orElse(null));
-        } else {
+            downloadLinks.addDownloadLink(linkReference.get(), linkDescription.orElse(null));
+        } else if(linkDescription.isPresent()) {
             LOGGER.warn("ResourceLinkReference is absent");
+            downloadLinks.addDownloadLink(null, linkDescription.get());
+        } else {
+            throw new IllegalStateException("Neither a link description nor a link reference are present");
         }
         return exchange;
     }

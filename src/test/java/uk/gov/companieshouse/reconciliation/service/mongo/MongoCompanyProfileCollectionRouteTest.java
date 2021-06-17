@@ -114,7 +114,7 @@ public class MongoCompanyProfileCollectionRouteTest {
         Exchange result = template.send(exchange);
 
         //then
-        assertTrue(result.getIn().getHeader("Failed", Boolean.class));
+        assertTrue(result.getIn().getHeader("Failed", boolean.class));
         MockEndpoint.assertIsSatisfied(camelContext);
     }
 }

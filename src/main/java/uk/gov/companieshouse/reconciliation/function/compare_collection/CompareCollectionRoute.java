@@ -28,23 +28,32 @@ public class CompareCollectionRoute extends RouteBuilder {
     public void configure() throws Exception {
         from("direct:compare_collection")
                 .onException(ComparisonFailedException.class)
-                    .setHeader("ResourceLinkDescription", simple("Comparison failed for ${header.Comparison} in ${header.SrcDescription} and ${header.TargetDescription}."))
+                    .setHeader("ResourceLinkDescription", simple("Failed to compare ${header.Comparison} in ${header.SrcDescription} and ${header.TargetDescription}."))
+                    .setHeader("Failed").constant(true)
                     .log(LoggingLevel.ERROR, "${header.ResourceLinkDescription}")
                     .handled(true)
                     .toD("${header.Destination}")
                 .end()
                 .setHeader("Description").header("SrcDescription")
-                .toD("${header.Src}")
-                .choice()
-                .when(header("Failed").isEqualTo(true))
-                    .throwException(ComparisonFailedException.class, "Comparison source failed")
-                .end()
+                .enrich()
+                .simple("${header.Src}")
+                .aggregationStrategy((prev, curr) -> {
+                    if(curr.getIn().getHeader("Failed", boolean.class)) {
+                        throw new ComparisonFailedException("Failed");
+                    }
+                    prev.getIn().setHeader("SrcList", curr.getIn().getBody());
+                    return prev;
+                })
                 .setHeader("Description").header("TargetDescription")
-                .toD("${header.Target}")
-                .choice()
-                .when(header("Failed").isEqualTo(true))
-                    .throwException(ComparisonFailedException.class, "Comparison target failed")
-                .end()
+                .enrich()
+                .simple("${header.Target}")
+                .aggregationStrategy((prev, curr) -> {
+                    if(curr.getIn().getHeader("Failed", boolean.class)) {
+                        throw new ComparisonFailedException("Failed");
+                    }
+                    prev.getIn().setHeader("TargetList", curr.getIn().getBody());
+                    return prev;
+                })
                 .bean(CompareCollectionTransformer.class)
                 .marshal().csv()
                 .toD("${header.Upload}")

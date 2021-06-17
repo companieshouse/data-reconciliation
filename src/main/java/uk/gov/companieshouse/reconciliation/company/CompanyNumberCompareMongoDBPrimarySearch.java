@@ -16,13 +16,11 @@ public class CompanyNumberCompareMongoDBPrimarySearch extends RouteBuilder {
     public void configure() throws Exception {
         from("{{endpoint.company_collection_mongo_primary.timer}}")
                 .setHeader("SrcDescription", constant("MongoDB"))
-                .setHeader("MongoTargetHeader", constant("SrcList"))
                 .setHeader(MongoDbConstants.DISTINCT_QUERY_FIELD, constant("_id"))
                 .setHeader("Src", simple("{{endpoint.mongodb.mapper.collection.company_number}}"))
                 .setHeader("ElasticsearchEndpoint", simple("{{endpoint.elasticsearch.primary}}"))
                 .setHeader("ElasticsearchQuery", simple("{{query.elasticsearch.primary.company}}"))
                 .setHeader("TargetDescription", constant("Primary Index"))
-                .setHeader("ElasticsearchTargetHeader", constant("TargetList"))
                 .setHeader("ElasticsearchLogIndices", simple("{{endpoint.elasticsearch.log_indices}}"))
                 .setHeader("ElasticsearchCacheKey", constant("{{endpoint.elasticsearch.primary.cache.key}}"))
                 .setHeader("ElasticsearchTransformer", constant("{{transformer.elasticsearch.primary}}"))

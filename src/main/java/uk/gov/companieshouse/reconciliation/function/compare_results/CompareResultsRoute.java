@@ -4,8 +4,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.reconciliation.function.ComparisonFailedException;
 
-import java.util.Optional;
-
 /**
  * Compare resource data from two endpoints with each other.<br>
  * <br>
@@ -30,6 +28,7 @@ public class CompareResultsRoute extends RouteBuilder {
         from("direct:compare_results")
                 .onException(ComparisonFailedException.class)
                     .setHeader("ResourceLinkDescription").simple("Failed to compare ${header.Comparison} in ${header.SrcDescription} and ${header.TargetDescription}.")
+                    .setHeader("Failed").constant(true)
                     .log("Compare results failed: ${header.ResourceLinkDescription}")
                     .handled(true)
                     .toD("${header.Destination}")
@@ -37,8 +36,7 @@ public class CompareResultsRoute extends RouteBuilder {
                 .enrich()
                 .simple("${header.Src}")
                 .aggregationStrategy((oldExchange, newExchange) -> {
-                    Boolean failed = Optional.ofNullable(newExchange.getIn().getHeader("Failed", Boolean.class)).orElse(false);
-                    if(failed) {
+                    if(newExchange.getIn().getHeader("Failed", boolean.class)) {
                         throw new ComparisonFailedException("Comparison failed");
                     }
                     oldExchange.getIn().setHeader("SrcList", newExchange.getIn().getBody());
@@ -47,8 +45,7 @@ public class CompareResultsRoute extends RouteBuilder {
                 .enrich()
                 .simple("${header.Target}")
                 .aggregationStrategy((oldExchange, newExchange) -> {
-                    Boolean failed = Optional.ofNullable(newExchange.getIn().getHeader("Failed", Boolean.class)).orElse(false);
-                    if(failed) {
+                    if(newExchange.getIn().getHeader("Failed", boolean.class)) {
                         throw new ComparisonFailedException("Comparison failed");
                     }
                     oldExchange.getIn().setHeader("TargetList", newExchange.getIn().getBody());

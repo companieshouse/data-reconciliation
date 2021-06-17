@@ -10,9 +10,6 @@ import org.apache.camel.component.caffeine.CaffeineConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
-import org.elasticsearch.common.bytes.BytesArray;
-import org.elasticsearch.common.text.Text;
-import org.elasticsearch.search.SearchHit;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -30,9 +27,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @CamelSpringBootTest
 @SpringBootTest
@@ -115,13 +109,12 @@ public class ElasticsearchCollectionRouteTest {
         exchange.getIn().setHeaders(getHeaders());
         exchange.getIn().setBody(new Object());
         Exchange actual = producer.send(exchange);
-        assertTrue(actual.getIn().getHeader("Failed", Boolean.class));
+        assertTrue(actual.getIn().getHeader("Failed", boolean.class));
         MockEndpoint.assertIsSatisfied(context);
     }
 
     private Map<String, Object> getHeaders() {
         Map<String, Object> headers = new HashMap<>();
-        headers.put("ElasticsearchTargetHeader", "Output");
         headers.put("ElasticsearchQuery", "QUERY");
         headers.put("Description", "Description");
         headers.put("ElasticsearchLogIndices", 1);

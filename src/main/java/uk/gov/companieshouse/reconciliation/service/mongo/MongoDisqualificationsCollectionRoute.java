@@ -5,7 +5,6 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.caffeine.CaffeineConstants;
 import org.apache.camel.component.mongodb.MongoDbConstants;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.reconciliation.function.compare_collection.entity.ResourceList;
 
@@ -15,19 +14,14 @@ import uk.gov.companieshouse.reconciliation.function.compare_collection.entity.R
  * IN:<br>
  * <br>
  * header(Description): A description of the {@link ResourceList resource list} where results will be aggregated.<br>
- * header(MongoTargetHeader): The header where results will be aggregated as a {@link ResourceList resource list}.<br>
  */
 @Component
 public class MongoDisqualificationsCollectionRoute extends RouteBuilder {
 
-    @Value("${wrappers.retries}")
-    private int retries;
-
     @Override
-    public void configure() throws Exception {
+    public void configure() {
         from("direct:mongodb-disqualifications-collection")
-                .errorHandler(defaultErrorHandler().maximumRedeliveries(retries))
-                    .onException(MongoException.class)
+                .onException(MongoException.class)
                     .handled(true)
                     .log(LoggingLevel.ERROR, "Failed to retrieve disqualification data from MongoDB")
                     .setHeader("Failed").constant(true)

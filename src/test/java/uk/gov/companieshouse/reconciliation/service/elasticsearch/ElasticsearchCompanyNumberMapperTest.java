@@ -49,13 +49,12 @@ public class ElasticsearchCompanyNumberMapperTest {
     void testFetchSearchIndicesAndTransformIntoCompanyNumbers() throws InterruptedException {
         ResultModel expected = new ResultModel("12345678", "ACME LIMITED");
         Exchange request = new DefaultExchange(context);
-        request.getIn().setHeader("ElasticsearchTargetHeader", "Header");
         request.getIn().setHeader("ElasticsearchEndpoint", "mock:elasticsearch-wrapper");
         request.getIn().setHeader("Description", "Description");
         elasticsearchServiceWrapper.returnReplyBody(ExpressionBuilder.constantExpression(new Results(Collections.singletonList(expected))));
         elasticsearchServiceWrapper.expectedMessageCount(1);
         Exchange exchange = producerTemplate.send(request);
-        ResourceList actual = exchange.getIn().getHeader("Header", ResourceList.class);
+        ResourceList actual = exchange.getIn().getBody(ResourceList.class);
         assertTrue(actual.getResultList().contains("12345678"));
         assertEquals("Description", actual.getResultDesc());
         MockEndpoint.assertIsSatisfied(context);
@@ -64,7 +63,6 @@ public class ElasticsearchCompanyNumberMapperTest {
     @Test
     void testSkipTransformationIfFailureHeaderSet() {
         Exchange request = new DefaultExchange(context);
-        request.getIn().setHeader("ElasticsearchTargetHeader", "Header");
         request.getIn().setHeader("ElasticsearchEndpoint", "mock:elasticsearch-wrapper");
         request.getIn().setHeader("Description", "Description");
         elasticsearchServiceWrapper.returnReplyHeader("Failed", ExpressionBuilder.constantExpression(true));

@@ -9,11 +9,10 @@ import org.springframework.stereotype.Component;
  * IN:<br>
  * <br>
  * header(Description): A description of the results produced by this pipeline.<br>
- * header(MongoTargetHeader): The target header to which results will be mapped.<br>
  * <br>
  * OUT:<br>
  * <br>
- * *header(MongoTargetHeader): Company numbers of company profiles fetched from MongoDB.<br>
+ * body(): Company numbers of company profiles fetched from MongoDB.<br>
  */
 @Component
 public class MongoCompanyNumberMapper extends RouteBuilder {
@@ -23,7 +22,7 @@ public class MongoCompanyNumberMapper extends RouteBuilder {
         from("direct:mongo-company_number-mapper")
                 .to("{{endpoint.mongodb.wrapper.company_profile.collection}}")
                 .choice()
-                .when(header("Failed").isNull())
+                .when(header("Failed").isNotEqualTo(true))
                     .bean(MongoCompanyNumberTransformer.class)
                 .end();
     }

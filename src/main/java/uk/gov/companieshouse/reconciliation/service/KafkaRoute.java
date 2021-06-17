@@ -2,10 +2,10 @@ package uk.gov.companieshouse.reconciliation.service;
 
 import email.email_send;
 import org.apache.camel.LoggingLevel;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.kafka.common.KafkaException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import uk.gov.companieshouse.reconciliation.common.RetryableRoute;
 import uk.gov.companieshouse.reconciliation.model.EmailSendData;
 import uk.gov.companieshouse.reconciliation.model.ResourceLinksWrapper;
 
@@ -36,9 +36,7 @@ import java.time.format.DateTimeFormatter;
  *
  */
 @Component
-public class KafkaRoute extends RouteBuilder {
-
-    private static final String EMAIL_SUBJECT = "Company profile comparisons";
+public class KafkaRoute extends RetryableRoute {
 
     @Value("${email.recipient.list}")
     private String emailRecipientList;
@@ -58,13 +56,10 @@ public class KafkaRoute extends RouteBuilder {
     @Value("${email.date.format}")
     private String emailDateFormat;
 
-    @Value("${wrappers.retries}")
-    private int retries;
-
     @Override
-    public void configure() throws Exception {
+    public void configure() {
+        super.configure();
         from("direct:send-to-kafka")
-                .errorHandler(defaultErrorHandler().maximumRedeliveries(retries))
                 .onException(KafkaException.class)
                     .handled(true)
                     .log(LoggingLevel.ERROR, "Failed to send email for comparison group: ${header.ComparisonGroup}")

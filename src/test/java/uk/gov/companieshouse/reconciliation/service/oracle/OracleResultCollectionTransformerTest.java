@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import uk.gov.companieshouse.reconciliation.function.compare_collection.entity.ResourceList;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,11 +24,9 @@ public class OracleResultCollectionTransformerTest {
     void testFilterNullValuesFromResults() {
         //given
         List<Map<String, Object>> results = Collections.singletonList(Collections.singletonMap("RESULT", null));
-        Map<String, Object> headers = new HashMap<>();
 
         //when
-        transformer.transform(results, "Description", "Target", headers);
-        ResourceList actual = (ResourceList) headers.get("Target");
+        ResourceList actual = transformer.transform(results, "Description");
 
         //then
         assertEquals(0, actual.size());
@@ -39,14 +36,11 @@ public class OracleResultCollectionTransformerTest {
     void testReturnStringRepresentationOfValues() {
         //given
         List<Map<String, Object>> results = Collections.singletonList(Collections.singletonMap("RESULT", 42));
-        Map<String, Object> headers = new HashMap<>();
 
         //when
-        transformer.transform(results, "Description", "Target", headers);
-        ResourceList actual = (ResourceList) headers.get("Target");
+        ResourceList actual = transformer.transform(results, "Description");
 
         //then
-        assertTrue(headers.containsKey("Target"));
         assertEquals("Description", actual.getResultDesc());
         assertTrue(actual.contains("42"));
     }

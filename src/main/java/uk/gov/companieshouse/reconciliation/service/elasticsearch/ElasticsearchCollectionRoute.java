@@ -1,11 +1,10 @@
 package uk.gov.companieshouse.reconciliation.service.elasticsearch;
 
 import org.apache.camel.LoggingLevel;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.caffeine.CaffeineConstants;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.reconciliation.component.elasticsearch.slicedscroll.client.ElasticsearchException;
+import uk.gov.companieshouse.reconciliation.common.RetryableRoute;
 
 /**
  * Retrieves hits from an Elasticsearch search index.<br>
@@ -21,16 +20,13 @@ import uk.gov.companieshouse.reconciliation.component.elasticsearch.slicedscroll
  * Elasticsearch.
  */
 @Component
-public class ElasticsearchCollectionRoute extends RouteBuilder {
-
-    @Value("${wrappers.retries}")
-    private int retries;
+public class ElasticsearchCollectionRoute extends RetryableRoute {
 
     @Override
-    public void configure() throws Exception {
+    public void configure() {
+        super.configure();
         from("direct:elasticsearch-collection")
-                .errorHandler(defaultErrorHandler().maximumRedeliveries(retries))
-                    .onException(ElasticsearchException.class)
+                .onException(ElasticsearchException.class)
                     .handled(true)
                     .setHeader("Failed").constant(true)
                     .log(LoggingLevel.ERROR, "Failed to retrieve results from Elasticsearch")

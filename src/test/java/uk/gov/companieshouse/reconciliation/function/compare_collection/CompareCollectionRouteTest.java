@@ -49,8 +49,8 @@ public class CompareCollectionRouteTest {
 
     @Test
     void testCompareCollections() throws InterruptedException {
-        mockFruitTreeEndpoint.returnReplyHeader("SrcList", ExpressionBuilder.constantExpression(new ResourceList(Arrays.asList("apple", "strawberry"), "Fruit Tree")));
-        mockFruitBasketEndpoint.returnReplyHeader("TargetList", ExpressionBuilder.constantExpression(new ResourceList(Arrays.asList("apple", "orange", "pineapple"), "Fruit Basket")));
+        mockFruitTreeEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(new ResourceList(Arrays.asList("apple", "strawberry"), "Fruit Tree")));
+        mockFruitBasketEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(new ResourceList(Arrays.asList("apple", "orange", "pineapple"), "Fruit Basket")));
         mockCompareResult.expectedBodyReceived().constant("Fruit,Exclusive To\r\nstrawberry,Fruit Tree\r\norange,Fruit Basket\r\npineapple,Fruit Basket\r\n".getBytes());
         producerTemplate.send(createExchange());
         MockEndpoint.assertIsSatisfied(context);
@@ -58,8 +58,8 @@ public class CompareCollectionRouteTest {
 
     @Test
     void testCompareCollectionsHandleNulls() throws InterruptedException {
-        mockFruitTreeEndpoint.returnReplyHeader("SrcList", ExpressionBuilder.constantExpression(new ResourceList(Arrays.asList("apple", null), "Fruit Tree")));
-        mockFruitBasketEndpoint.returnReplyHeader("TargetList", ExpressionBuilder.constantExpression(new ResourceList(Arrays.asList("apple", "orange", "pineapple"), "Fruit Basket")));
+        mockFruitTreeEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(new ResourceList(Arrays.asList("apple", null), "Fruit Tree")));
+        mockFruitBasketEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(new ResourceList(Arrays.asList("apple", "orange", "pineapple"), "Fruit Basket")));
         mockCompareResult.expectedBodyReceived().constant("Fruit,Exclusive To\r\n,Fruit Tree\r\norange,Fruit Basket\r\npineapple,Fruit Basket\r\n".getBytes());
         producerTemplate.send(createExchange());
         MockEndpoint.assertIsSatisfied(context);
@@ -69,16 +69,16 @@ public class CompareCollectionRouteTest {
     void testCompareCollectionSetsDescriptionToFailureMessageIfComparisonFailsDueToSrc() throws InterruptedException {
         mockFruitTreeEndpoint.returnReplyHeader("Failed", ExpressionBuilder.constantExpression(true));
         mockFruitBasketEndpoint.expectedMessageCount(0);
-        mockCompareResult.expectedHeaderReceived("ResourceLinkDescription", "Comparison failed for fruit in fruit tree and fruit basket.");
+        mockCompareResult.expectedHeaderReceived("ResourceLinkDescription", "Failed to compare fruit in fruit tree and fruit basket.");
         producerTemplate.send(createExchange());
         MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     void testCompareCollectionSetsDescriptionToFailureMessageIfComparisonFailsDueToTarget() throws InterruptedException {
-        mockFruitTreeEndpoint.returnReplyHeader("SrcList", ExpressionBuilder.constantExpression(new ResourceList(Arrays.asList("apple", null), "Fruit Tree")));
+        mockFruitTreeEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(new ResourceList(Arrays.asList("apple", null), "Fruit Tree")));
         mockFruitBasketEndpoint.returnReplyHeader("Failed", ExpressionBuilder.constantExpression(true));
-        mockCompareResult.expectedHeaderReceived("ResourceLinkDescription", "Comparison failed for fruit in fruit tree and fruit basket.");
+        mockCompareResult.expectedHeaderReceived("ResourceLinkDescription", "Failed to compare fruit in fruit tree and fruit basket.");
         producerTemplate.send(createExchange());
         MockEndpoint.assertIsSatisfied(context);
     }

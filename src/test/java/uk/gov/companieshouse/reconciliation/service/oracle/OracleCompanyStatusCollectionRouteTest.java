@@ -109,7 +109,7 @@ public class OracleCompanyStatusCollectionRouteTest {
         Exchange result = producerTemplate.send(exchange);
 
         //then
-        assertTrue(result.getIn().getHeader("Failed", Boolean.class));
+        assertTrue(result.getIn().getHeader("Failed", boolean.class));
         MockEndpoint.assertIsSatisfied(context);
     }
 

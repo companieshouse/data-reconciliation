@@ -4,10 +4,9 @@ import com.mongodb.MongoException;
 import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Projections;
 import org.apache.camel.LoggingLevel;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.caffeine.CaffeineConstants;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import uk.gov.companieshouse.reconciliation.common.RetryableRoute;
 
 import java.util.Collections;
 
@@ -19,16 +18,13 @@ import java.util.Collections;
  * body(): {@link uk.gov.companieshouse.reconciliation.model.Results Company profiles} fetched from the collection.<br>
  */
 @Component
-public class MongoCompanyProfileCollectionRoute extends RouteBuilder {
-
-    @Value("${wrappers.retries}")
-    private int retries;
+public class MongoCompanyProfileCollectionRoute extends RetryableRoute {
 
     @Override
-    public void configure() throws Exception {
+    public void configure() {
+        super.configure();
         from("direct:mongodb-company_profile-collection")
-                .errorHandler(defaultErrorHandler().maximumRedeliveries(retries))
-                    .onException(MongoException.class)
+                .onException(MongoException.class)
                     .handled(true)
                     .log(LoggingLevel.ERROR, "Failed to retrieve company profile data from MongoDB")
                     .setHeader("Failed").constant(true)

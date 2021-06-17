@@ -1,8 +1,6 @@
 package uk.gov.companieshouse.reconciliation.service.mongo;
 
 import com.mongodb.MongoException;
-import com.mongodb.client.model.Aggregates;
-import com.mongodb.client.model.Projections;
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -23,7 +21,6 @@ import org.springframework.test.context.TestPropertySource;
 import uk.gov.companieshouse.reconciliation.function.compare_collection.entity.ResourceList;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -62,11 +59,10 @@ public class MongoDisqualificationsCollectionRouteTest {
         mongoEndpoint.expectedHeaderReceived(MongoDbConstants.DISTINCT_QUERY_FIELD, "officer_id_raw");
         Exchange exchange = new DefaultExchange(camelContext);
         exchange.getIn().setBody("undefined");
-        exchange.getIn().setHeader("MongoTargetHeader", "target");
 
         //when
         Exchange result = template.send(exchange);
-        ResourceList actual = result.getIn().getHeader("target", ResourceList.class);
+        ResourceList actual = result.getIn().getBody(ResourceList.class);
 
         //then
         assertTrue(actual.contains("12345678"));
@@ -85,11 +81,10 @@ public class MongoDisqualificationsCollectionRouteTest {
         });
         mongoEndpoint.expectedMessageCount(0);
         Exchange exchange = new DefaultExchange(camelContext);
-        exchange.getIn().setHeader("MongoTargetHeader", "target");
 
         //when
         Exchange result = template.send(exchange);
-        ResourceList actual = result.getIn().getHeader("target", ResourceList.class);
+        ResourceList actual = result.getIn().getBody(ResourceList.class);
 
         //then
         assertTrue(actual.contains("12345678"));
@@ -113,7 +108,7 @@ public class MongoDisqualificationsCollectionRouteTest {
         Exchange result = template.send(exchange);
 
         //then
-        assertTrue(result.getIn().getHeader("Failed", Boolean.class));
+        assertTrue(result.getIn().getHeader("Failed", boolean.class));
         MockEndpoint.assertIsSatisfied(camelContext);
     }
 }

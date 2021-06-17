@@ -2,10 +2,9 @@ package uk.gov.companieshouse.reconciliation.service.oracle;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import uk.gov.companieshouse.reconciliation.common.RetryableRoute;
 
 import java.sql.SQLException;
 
@@ -17,16 +16,13 @@ import java.sql.SQLException;
  * header(OracleEndpoint): The endpoint representing the Oracle database that will be connected to.<br>
  */
 @Component
-public class OracleCompanyStatusCollectionRoute extends RouteBuilder {
-
-    @Value("${wrappers.retries}")
-    private int retries;
+public class OracleCompanyStatusCollectionRoute extends RetryableRoute {
 
     @Override
-    public void configure() throws Exception {
+    public void configure() {
+        super.configure();
         from("direct:oracle-company-status-collection")
-                .errorHandler(defaultErrorHandler().maximumRedeliveries(retries))
-                    .onException(SQLException.class)
+                .onException(SQLException.class)
                     .handled(true)
                     .log(LoggingLevel.ERROR, "Failed to retrieve results from Oracle")
                     .setHeader("Failed").constant(true)

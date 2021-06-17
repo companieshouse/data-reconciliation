@@ -2,9 +2,8 @@ package uk.gov.companieshouse.reconciliation.function.compare_count;
 
 import com.mongodb.MongoException;
 import org.apache.camel.LoggingLevel;
-import org.apache.camel.builder.RouteBuilder;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import uk.gov.companieshouse.reconciliation.common.RetryableRoute;
 import uk.gov.companieshouse.reconciliation.function.compare_collection.entity.ResourceList;
 import uk.gov.companieshouse.reconciliation.function.compare_count.transformer.CompareCountTransformer;
 
@@ -39,18 +38,16 @@ import java.util.Optional;
  * WeightAbs: An unsigned integer indicating how many more resources one endpoint has than another.
  */
 @Component
-public class CompareCountRoute extends RouteBuilder {
-
-    @Value("${wrappers.retries}")
-    private int retries;
+public class CompareCountRoute extends RetryableRoute {
 
     @Override
     @SuppressWarnings("unchecked")
     public void configure() {
+        super.configure();
         from("direct:compare_count")
-                .errorHandler(defaultErrorHandler().maximumRedeliveries(retries))
                 .onException(SQLException.class, MongoException.class)
                     .setHeader("ResourceLinkDescription", simple("Failed to compare counts of ${header.Comparison} in ${header.SrcName} with ${header.TargetName}."))
+                    .setHeader("Failed").constant(true)
                     .log(LoggingLevel.ERROR, "Compare count failed: ${header.ResourceLinkDescription}")
                     .handled(true)
                     .toD("${header.Destination}")
