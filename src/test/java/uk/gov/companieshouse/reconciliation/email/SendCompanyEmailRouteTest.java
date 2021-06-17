@@ -50,24 +50,28 @@ public class SendCompanyEmailRouteTest {
                 interceptSendToEndpoint("mock:kafka-endpoint")
                         .process(exchange -> {
                             ResourceLinksWrapper downloadsList = exchange.getIn().getHeader("ResourceLinks", ResourceLinksWrapper.class);
-                            assertEquals(2, downloadsList.getDownloadLinkList().size());
+                            assertEquals(3, downloadsList.getDownloadLinkList().size());
                         });
             }
         });
         context.start();
 
-        Exchange firstExchange = ExchangeBuilder.anExchange(context)
+        Exchange compareCountExchange = ExchangeBuilder.anExchange(context)
                 .withHeader("ResourceLinkReference", "Compare Count Link")
                 .build();
 
-        Exchange secondExchange = ExchangeBuilder.anExchange(context)
+        Exchange compareCollectionExchange = ExchangeBuilder.anExchange(context)
                 .withHeader("ResourceLinkReference", "Compare Collection Link")
                 .build();
 
+        Exchange compareStatusOracleMongoExchange = ExchangeBuilder.anExchange(context)
+                .withHeader("ResourceLinkReference", "Compare Company Oracle Mongo Status Link")
+                .build();
 
         kafkaEndpoint.expectedMessageCount(1);
-        producerTemplate.send(firstExchange);
-        producerTemplate.send(secondExchange);
+        producerTemplate.send(compareCountExchange);
+        producerTemplate.send(compareStatusOracleMongoExchange);
+        producerTemplate.send(compareStatusOracleMongoExchange);
 
         MockEndpoint.assertIsSatisfied(context);
     }

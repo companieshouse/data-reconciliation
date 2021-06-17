@@ -18,6 +18,16 @@ public class ResultModel {
         this.companyStatus = companyStatus;
     }
 
+    private ResultModel(Builder builder) {
+        companyNumber = builder.companyNumber;
+        companyName = builder.companyName;
+        companyStatus = builder.companyStatus;
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public String getCompanyNumber() {
         return companyNumber;
     }
@@ -47,5 +57,34 @@ public class ResultModel {
     @Override
     public int hashCode() {
         return Objects.hash(companyNumber, companyName, companyStatus);
+    }
+
+    public static class Builder {
+
+        private String companyNumber;
+        private String companyName;
+        private String companyStatus;
+
+        private Builder() {
+        }
+
+        public Builder withCompanyNumber(String companyNumber) {
+            this.companyNumber = companyNumber;
+            return this;
+        }
+
+        public Builder withCompanyName(String companyName) {
+            this.companyName = companyName;
+            return this;
+        }
+
+        public Builder withCompanyStatus(String companyStatus) {
+            this.companyStatus = companyStatus;
+            return this;
+        }
+
+        public ResultModel build() {
+            return new ResultModel(this);
+        }
     }
 }
