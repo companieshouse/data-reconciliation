@@ -9,7 +9,7 @@ public class CompanyStatusCompareMongoDBAlphaSearch extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("{{endpoint.company_status_mongo_alpha.cron.tab}}")
+        from("{{endpoint.company_status_mongo_alpha.timer}}")
                 .setHeader("Src").constant("{{endpoint.mongodb.wrapper.company_profile.collection}}")
                 .setHeader("SrcDescription").constant("MongoDB - Company Profile")
                 .setHeader("Target").constant("{{endpoint.elasticsearch.collection}}")
@@ -22,7 +22,7 @@ public class CompanyStatusCompareMongoDBAlphaSearch extends RouteBuilder {
                 .setHeader("Comparison").constant("company statuses")
                 .setHeader("ComparisonGroup", constant("Elasticsearch"))
                 .setHeader("Destination").constant("{{endpoint.output}}")
-                .setHeader("ResultsTransformer").constant("{{function.mapper.company_statuses}}")
+                .setHeader("ResultsTransformer").constant("{{function.mapper.company_status}}")
                 .setHeader("Upload", constant("{{endpoint.s3.upload}}"))
                 .setHeader("Presign", constant("{{endpoint.s3presigner.download}}"))
                 .setHeader(AWS2S3Constants.KEY, simple("company/results_status_alpha_mongo_${date:now:yyyyMMdd}T${date:now:hhmmss}.csv"))

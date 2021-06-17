@@ -5,8 +5,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.reconciliation.function.compare_collection.entity.ResourceList;
 
-import java.util.HashSet;
-
 /**
  * Retrieves and aggregates a ResultSet from Oracle.<br>
  * <br>

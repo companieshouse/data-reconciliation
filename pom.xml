@@ -48,7 +48,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel.springboot</groupId>
-            <artifactId>camel-cron-starter</artifactId>
+            <artifactId>camel-timer-starter</artifactId>
             <version>${apache.camel.version}</version>
         </dependency>
         <dependency>

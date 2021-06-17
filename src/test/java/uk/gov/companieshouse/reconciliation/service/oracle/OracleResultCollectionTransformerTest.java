@@ -6,12 +6,10 @@ import uk.gov.companieshouse.reconciliation.function.compare_collection.entity.R
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class OracleResultCollectionTransformerTest {

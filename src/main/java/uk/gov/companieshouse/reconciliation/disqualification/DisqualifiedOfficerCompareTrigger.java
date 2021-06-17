@@ -13,7 +13,7 @@ public class DisqualifiedOfficerCompareTrigger extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("{{endpoint.dsq_officer_collection.cron.tab}}")
+        from("{{endpoint.dsq_officer_collection.timer}}")
                 .setHeader("OracleQuery", simple("{{query.oracle.dsq_officer_collection}}"))
                 .setHeader("OracleEndpoint", simple("{{endpoint.oracle.dsq_officer_collection}}"))
                 .setHeader("OracleDescription", constant("Oracle"))

@@ -83,6 +83,7 @@ public class KafkaRoute extends RouteBuilder {
                 )
                 .marshal().avro()
                 .process(exchange -> exchange.getIn().removeHeaders("*"))
-                .to("{{endpoint.kafka}}");
+                .to("{{endpoint.kafka}}")
+                .to("{{endpoint.shutdown}}");
     }
 }

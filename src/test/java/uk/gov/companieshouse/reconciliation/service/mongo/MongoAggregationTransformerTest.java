@@ -35,13 +35,13 @@ public class MongoAggregationTransformerTest {
     @Test
     void testDefaultEmptyStringIfIdOrCompanyNameNull(){
         //given
-        List<Document> results = Collections.singletonList(Document.parse("{\"_id\": null, \"data\": {\"company_name\": null}}"));
+        List<Document> results = Collections.singletonList(Document.parse("{\"_id\": null, \"data\": {\"company_name\": null, \"company_status\": null}}"));
 
         //when
         Results actual = transformer.transform(results);
 
         //then
-        assertTrue(actual.contains(new ResultModel("", "")));
+        assertTrue(actual.contains(new ResultModel("", "", "")));
     }
 
     @Test

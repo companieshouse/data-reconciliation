@@ -33,16 +33,21 @@ public class KafkaRouteTest {
     private ProducerTemplate kafkaRouteProducer;
 
     @EndpointInject("mock:kafka-endpoint")
-    private MockEndpoint mockEndpoint;
+    private MockEndpoint kafkaEndpoint;
+
+    @EndpointInject("mock:shutdown")
+    private MockEndpoint shutdownEndpoint;
 
     @BeforeEach
     void setUp() {
-        mockEndpoint.reset();
+        kafkaEndpoint.reset();
+        shutdownEndpoint.reset();
     }
 
     @Test
     void testSendMessageToKafka() throws InterruptedException {
-        mockEndpoint.expectedMessageCount(1);
+        kafkaEndpoint.expectedMessageCount(1);
+        shutdownEndpoint.expectedMessageCount(1);
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader("ResourceLinks", new ResourceLinksWrapper(Collections.singletonList(new ResourceLink("link", "description"))));
         Exchange actual = kafkaRouteProducer.send(exchange);
