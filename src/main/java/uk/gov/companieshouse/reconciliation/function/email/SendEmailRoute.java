@@ -21,6 +21,7 @@ public class SendEmailRoute extends RouteBuilder {
         from("direct:send-email")
                 .aggregate(header("ComparisonGroup"), s3EmailPublisherAggregationStrategy)
                 .completion(header("Completed").isEqualTo(true))
+                .bean(EmailLinksSorter.class)
                 .split(method(EmailPublisherSplitter.class), new EmailAggregationStrategy())
                 .bean(EmailPublisherMapper.class)
                 .to("direct:s3-publisher")

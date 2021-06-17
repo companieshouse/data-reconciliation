@@ -48,6 +48,7 @@ public class CompanyNameCompareMongoDBAlphaSearchTest {
         target.expectedHeaderReceived("Destination", "mock:result");
         target.expectedHeaderReceived("Upload", "mock:s3_bucket_destination");
         target.expectedHeaderReceived("Presign", "mock:s3_download_link");
+        target.expectedHeaderReceived("OrderNumber", 5);
         target.expectedHeaderReceived(AWS2S3Constants.DOWNLOAD_LINK_EXPIRATION_TIME, 2000L);
         producerTemplate.sendBody(0);
         MockEndpoint.assertIsSatisfied(context);

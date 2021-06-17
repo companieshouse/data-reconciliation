@@ -35,6 +35,7 @@ public class CompanyStatusCompareMongoDBOracleTest {
         mockEndpoint.expectedHeaderReceived("TargetDescription", "Oracle");
         mockEndpoint.expectedHeaderReceived("OracleQuery", "SELECT 1 FROM DUAL");
         mockEndpoint.expectedHeaderReceived("OracleEndpoint", "mock:fruitTree");
+        mockEndpoint.expectedHeaderReceived("OrderNumber", 3);
         producerTemplate.sendBody(0);
         MockEndpoint.assertIsSatisfied(context);
     }

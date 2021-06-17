@@ -51,6 +51,7 @@ public class DisqualifiedOfficerCompareTriggerTest {
         compareCollection.expectedHeaderReceived("RecordType", "Disqualified Officer");
         compareCollection.expectedHeaderReceived("Upload", "mock:s3_bucket_destination");
         compareCollection.expectedHeaderReceived("Presign", "mock:s3_download_link");
+        compareCollection.expectedHeaderReceived("OrderNumber", 1);
         producerTemplate.sendBody(0);
         MockEndpoint.assertIsSatisfied(context);
     }

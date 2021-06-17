@@ -43,6 +43,7 @@ public class CompanyCountTriggerTest {
         compareCount.expectedHeaderReceived("Comparison", "company profiles");
         compareCount.expectedHeaderReceived("Upload", "mock:s3_bucket_destination");
         compareCount.expectedHeaderReceived("Presign", "mock:s3_download_link");
+        compareCount.expectedHeaderReceived("OrderNumber", 1);
         compareCount.expectedHeaderReceived(AWS2S3Constants.DOWNLOAD_LINK_EXPIRATION_TIME, 2000L);
         compareCount.expectedBodyReceived().body().isEqualTo("SELECT 1 FROM DUAL");
         producerTemplate.sendBody(0);
