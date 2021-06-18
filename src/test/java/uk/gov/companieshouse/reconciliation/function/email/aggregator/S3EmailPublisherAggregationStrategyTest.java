@@ -58,7 +58,6 @@ public class S3EmailPublisherAggregationStrategyTest {
         curr.getIn().setHeader("Upload", "uploaderEndpoint");
         curr.getIn().setHeader("Presign", "presignerEndpoint");
         curr.getIn().setHeader("ResourceLinkDescription", "resourceLinkDescription");
-        curr.getIn().setHeader("OrderNumber", 1);
         curr.getIn().setBody("results".getBytes());
 
         when(aggregationHandler.getAggregationConfiguration(anyString())).thenReturn(comparisonGroupModel);
