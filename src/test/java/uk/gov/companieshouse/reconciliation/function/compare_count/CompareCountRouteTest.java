@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.reconciliation.function.compare_count;
 
+import com.mongodb.MongoException;
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
@@ -15,6 +16,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,7 +52,7 @@ public class CompareCountRouteTest {
     void testEndpointAIsGreaterThanEndpointB() throws InterruptedException {
         mockCorporateBodyCountEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(BigDecimal.valueOf(15)));
         mockCompanyProfileCountEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(10L));
-        mockResult.allMessages().header("ResourceLinkDescription").isEqualTo("A has 5 more things than B.");
+        mockResult.expectedHeaderReceived("ResourceLinkDescription", "A has 5 more things than B.");
         template.sendBodyAndHeaders(0, createHeaders());
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -59,7 +61,7 @@ public class CompareCountRouteTest {
     void testEndpointBIsGreaterThanEndpointA() throws InterruptedException {
         mockCorporateBodyCountEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(BigDecimal.valueOf(10)));
         mockCompanyProfileCountEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(20L));
-        mockResult.allMessages().header("ResourceLinkDescription").isEqualTo("B has 10 more things than A.");
+        mockResult.expectedHeaderReceived("ResourceLinkDescription", "B has 10 more things than A.");
         template.sendBodyAndHeaders(0, createHeaders());
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -68,7 +70,27 @@ public class CompareCountRouteTest {
     void testEndpointsAreTheSame() throws InterruptedException {
         mockCorporateBodyCountEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(BigDecimal.valueOf(10)));
         mockCompanyProfileCountEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(10));
-        mockResult.allMessages().header("ResourceLinkDescription").isEqualTo("A and B contain the same number of things.");
+        mockResult.expectedHeaderReceived("ResourceLinkDescription", "A and B contain the same number of things.");
+        template.sendBodyAndHeaders(0, createHeaders());
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    void testSetLinkDescriptionToFailureMessageIfComparisonFailsDueToSQLException() throws InterruptedException {
+        mockCorporateBodyCountEndpoint.whenAnyExchangeReceived(exchange -> {
+            throw new SQLException("Failed");
+        });
+        mockResult.expectedHeaderReceived("ResourceLinkDescription", "Failed to compare counts of things in A with B.");
+        template.sendBodyAndHeaders(0, createHeaders());
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    void testSetLinkDescriptionToFailureMessageIfComparisonFailsDueToMongoException() throws InterruptedException {
+        mockCorporateBodyCountEndpoint.whenAnyExchangeReceived(exchange -> {
+            throw new MongoException("Failed");
+        });
+        mockResult.expectedHeaderReceived("ResourceLinkDescription", "Failed to compare counts of things in A with B.");
         template.sendBodyAndHeaders(0, createHeaders());
         MockEndpoint.assertIsSatisfied(context);
     }

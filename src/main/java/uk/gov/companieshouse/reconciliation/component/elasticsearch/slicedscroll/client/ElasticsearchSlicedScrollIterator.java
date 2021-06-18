@@ -68,7 +68,7 @@ public class ElasticsearchSlicedScrollIterator implements Runnable, Iterator<Sea
                 }
             }
             if(completedExceptionally) {
-                throw new RuntimeException("Failed to retrieve results from Elasticsearch");
+                throw new ElasticsearchException("Failed to retrieve results from Elasticsearch");
             }
             if (current == null || !current.hasNext()) {
                 current = hits.poll();
@@ -76,7 +76,7 @@ public class ElasticsearchSlicedScrollIterator implements Runnable, Iterator<Sea
             return current != null && current.hasNext();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new RuntimeException(e);
+            throw new ElasticsearchException(e);
         }
     }
 
@@ -102,7 +102,7 @@ public class ElasticsearchSlicedScrollIterator implements Runnable, Iterator<Sea
         } catch (CompletionException e) {
             this.completedExceptionally = true;
             futures.forEach(f -> f.cancel(true));
-            throw new RuntimeException(e);
+            throw new ElasticsearchException(e);
         } finally {
             try {
                 List<String> scrollIdsToClear = runners.stream()

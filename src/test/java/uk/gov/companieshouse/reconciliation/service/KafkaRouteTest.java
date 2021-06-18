@@ -8,6 +8,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
+import org.apache.kafka.common.KafkaException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,23 @@ public class KafkaRouteTest {
         shutdownEndpoint.expectedMessageCount(1);
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader("ResourceLinks", new ResourceLinksWrapper(Collections.singletonList(new ResourceLink("link", "description"))));
+        exchange.getIn().setHeader("ComparisonGroup", "group");
+        Exchange actual = kafkaRouteProducer.send(exchange);
+        assertNull(actual.getIn().getHeader("Content-Type"));
+        assertNull(actual.getIn().getHeader("ResourceLinks"));
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    void testHandleKafkaException() throws InterruptedException {
+        kafkaEndpoint.whenAnyExchangeReceived(exchange -> {
+            throw new KafkaException("Failed");
+        });
+        kafkaEndpoint.expectedMessageCount(1);
+        shutdownEndpoint.expectedMessageCount(1);
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader("ResourceLinks", new ResourceLinksWrapper(Collections.singletonList(new ResourceLink("link", "description"))));
+        exchange.getIn().setHeader("ComparisonGroup", "group");
         Exchange actual = kafkaRouteProducer.send(exchange);
         assertNull(actual.getIn().getHeader("Content-Type"));
         assertNull(actual.getIn().getHeader("ResourceLinks"));

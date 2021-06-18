@@ -13,6 +13,7 @@ import uk.gov.companieshouse.reconciliation.model.ResourceLink;
 import uk.gov.companieshouse.reconciliation.model.ResourceLinksWrapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
@@ -45,7 +46,23 @@ public class EmailAggregationStrategyTest {
     }
 
     @Test
-    void testThrowIllegalArgumentExceptionIfResourceLinkAbsent() {
+    void testLinkReferenceAbsent() {
+        //given
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader("ResourceLinkDescription", "Description");
+
+        //when
+        Exchange result = emailAggregationStrategy.aggregate(null, exchange);
+        ResourceLink wrapper = result.getIn().getHeader("ResourceLinks", ResourceLinksWrapper.class).getDownloadLinkList().get(0);
+
+        //then
+        assertEquals(exchange, result);
+        assertNull(wrapper.getDownloadLink());
+        assertEquals("Description", wrapper.getDescription());
+    }
+
+    @Test
+    void testThrowIllegalStateExceptionIfLinkReferenceAndDescriptionAbsent() {
         //given
         Exchange exchange = new DefaultExchange(context);
 
@@ -53,7 +70,6 @@ public class EmailAggregationStrategyTest {
         Executable actual = () -> emailAggregationStrategy.aggregate(null, exchange);
 
         //then
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, actual);
-        assertEquals("Mandatory header not present: ResourceLinkReference", exception.getMessage());
+        assertThrows(IllegalStateException.class, actual);
     }
 }

@@ -67,8 +67,8 @@ public class S3EmailPublisherAggregationStrategyTest {
         Exchange actual = aggregationStrategy.aggregate(null, curr);
 
         // then
-        assertEquals(new PublisherResourceRequestWrapper(Collections.singletonList(new PublisherResourceRequest("key", 300L, "uploaderEndpoint", "presignerEndpoint", "resourceLinkDescription", "results".getBytes(), "group"))), actual.getIn().getHeader("PublisherResourceRequests"));
-        assertTrue(actual.getIn().getHeader("Completed", Boolean.class));
+        assertEquals(new PublisherResourceRequestWrapper(Collections.singletonList(new PublisherResourceRequest("key", 300L, "uploaderEndpoint", "presignerEndpoint", "resourceLinkDescription", "results".getBytes(), "group", false))), actual.getIn().getHeader("PublisherResourceRequests"));
+        assertTrue(actual.getIn().getHeader("Completed", boolean.class));
         verify(aggregationHandler).getAggregationConfiguration("group");
     }
 
@@ -76,7 +76,7 @@ public class S3EmailPublisherAggregationStrategyTest {
     void testAggregateFurtherMessages() {
         // given
         Exchange prev = new DefaultExchange(context);
-        prev.getIn().setHeader("PublisherResourceRequests", new PublisherResourceRequestWrapper(new ArrayList<>(Collections.singletonList(new PublisherResourceRequest("key", 300L, "uploaderEndpoint", "presignerEndpoint", "resourceLinkDescription", "results".getBytes(), "group")))));
+        prev.getIn().setHeader("PublisherResourceRequests", new PublisherResourceRequestWrapper(new ArrayList<>(Collections.singletonList(new PublisherResourceRequest("key", 300L, "uploaderEndpoint", "presignerEndpoint", "resourceLinkDescription", "results".getBytes(), "group", false)))));
 
         Exchange curr = new DefaultExchange(context);
         curr.getIn().setHeader("ComparisonGroup", "group");
@@ -85,6 +85,7 @@ public class S3EmailPublisherAggregationStrategyTest {
         curr.getIn().setHeader("Upload", "uploaderEndpoint2");
         curr.getIn().setHeader("Presign", "presignerEndpoint2");
         curr.getIn().setHeader("ResourceLinkDescription", "resourceLinkDescription2");
+        curr.getIn().setHeader("Failed", true);
         curr.getIn().setBody("results2".getBytes());
 
         when(aggregationHandler.getAggregationConfiguration(anyString())).thenReturn(comparisonGroupModel);
@@ -94,7 +95,7 @@ public class S3EmailPublisherAggregationStrategyTest {
         Exchange actual = aggregationStrategy.aggregate(prev, curr);
 
         // then
-        assertEquals(new PublisherResourceRequestWrapper(Arrays.asList(new PublisherResourceRequest("key", 300L, "uploaderEndpoint", "presignerEndpoint", "resourceLinkDescription", "results".getBytes(), "group"), new PublisherResourceRequest("key2", 301L, "uploaderEndpoint2", "presignerEndpoint2", "resourceLinkDescription2", "results2".getBytes(), "group"))), actual.getIn().getHeader("PublisherResourceRequests"));
+        assertEquals(new PublisherResourceRequestWrapper(Arrays.asList(new PublisherResourceRequest("key", 300L, "uploaderEndpoint", "presignerEndpoint", "resourceLinkDescription", "results".getBytes(), "group", false), new PublisherResourceRequest("key2", 301L, "uploaderEndpoint2", "presignerEndpoint2", "resourceLinkDescription2", "results2".getBytes(), "group", true))), actual.getIn().getHeader("PublisherResourceRequests"));
         assertSame(prev, actual);
         assertNull(actual.getIn().getHeader("Completed"));
         verify(aggregationHandler).getAggregationConfiguration("group");
@@ -104,7 +105,7 @@ public class S3EmailPublisherAggregationStrategyTest {
     void testIllegalArgumentExceptionIsThrownIfComparisonGroupUnhandled() {
         // given
         Exchange prev = new DefaultExchange(context);
-        prev.getIn().setHeader("PublisherResourceRequests", new PublisherResourceRequestWrapper(new ArrayList<>(Collections.singletonList(new PublisherResourceRequest("key", 300L, "uploaderEndpoint", "presignerEndpoint", "resourceLinkDescription", "results".getBytes(), "group")))));
+        prev.getIn().setHeader("PublisherResourceRequests", new PublisherResourceRequestWrapper(new ArrayList<>(Collections.singletonList(new PublisherResourceRequest("key", 300L, "uploaderEndpoint", "presignerEndpoint", "resourceLinkDescription", "results".getBytes(), "group", false)))));
 
         Exchange curr = new DefaultExchange(context);
         curr.getIn().setHeader("ComparisonGroup", "group");

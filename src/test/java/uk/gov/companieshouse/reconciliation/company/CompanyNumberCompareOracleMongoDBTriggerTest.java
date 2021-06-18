@@ -39,11 +39,9 @@ public class CompanyNumberCompareOracleMongoDBTriggerTest {
     void testCreateCompanyNumberCompareMessage() throws InterruptedException {
         compareCollection.expectedHeaderReceived("OracleQuery", "SELECT '12345678' FROM DUAL");
         compareCollection.expectedHeaderReceived("OracleEndpoint", "mock:fruitTree");
-        compareCollection.expectedHeaderReceived("OracleDescription", "Oracle");
-        compareCollection.expectedHeaderReceived("OracleTargetHeader", "SrcList");
+        compareCollection.expectedHeaderReceived("SrcDescription", "Oracle");
         compareCollection.expectedHeaderReceived("Src", "direct:oracle-collection");
-        compareCollection.expectedHeaderReceived("MongoDescription", "MongoDB");
-        compareCollection.expectedHeaderReceived("MongoTargetHeader", "TargetList");
+        compareCollection.expectedHeaderReceived("TargetDescription", "MongoDB");
         compareCollection.expectedHeaderReceived("Target", "direct:mongo-company_number-mapper");
         compareCollection.expectedHeaderReceived("Destination", "mock:result");
         compareCollection.expectedHeaderReceived("Comparison", "company numbers");

@@ -1,12 +1,16 @@
 package uk.gov.companieshouse.reconciliation.function.compare_count;
 
-import org.apache.camel.builder.RouteBuilder;
+import com.mongodb.MongoException;
+import org.apache.camel.LoggingLevel;
 import org.springframework.stereotype.Component;
+import uk.gov.companieshouse.reconciliation.common.RetryableRoute;
 import uk.gov.companieshouse.reconciliation.function.compare_collection.entity.ResourceList;
 import uk.gov.companieshouse.reconciliation.function.compare_count.transformer.CompareCountTransformer;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.Collections;
+import java.util.Optional;
 
 /**
  * Compare counts of resources from two endpoints with each other.
@@ -34,17 +38,32 @@ import java.util.Collections;
  * WeightAbs: An unsigned integer indicating how many more resources one endpoint has than another.
  */
 @Component
-public class CompareCountRoute extends RouteBuilder {
+public class CompareCountRoute extends RetryableRoute {
 
     @Override
+    @SuppressWarnings("unchecked")
     public void configure() {
+        super.configure();
         from("direct:compare_count")
+                .onException(SQLException.class, MongoException.class)
+                    .setHeader("ResourceLinkDescription", simple("Failed to compare counts of ${header.Comparison} in ${header.SrcName} with ${header.TargetName}."))
+                    .setHeader("Failed").constant(true)
+                    .log(LoggingLevel.ERROR, "Compare count failed: ${header.ResourceLinkDescription}")
+                    .handled(true)
+                    .toD("${header.Destination}")
+                .end()
                 .enrich().simple("${header.Src}").aggregationStrategy((base, src) -> {
-                    base.getIn().setHeader("SrcCount", src.getMessage().getBody(BigDecimal.class));
+                    BigDecimal result = Optional.ofNullable(src.getMessage().getBody(BigDecimal.class)).orElse(BigDecimal.ZERO);
+                    base.getIn().setHeader("SrcCount", result);
+                    base.getIn().setHeader("SrcList", new ResourceList(Collections.singletonList(result.toString()),
+                            src.getIn().getHeader("SrcName", String.class)));
                     return base;
                 })
                 .enrich().simple("${header.Target}").aggregationStrategy((base, target) -> {
-                    base.getIn().setHeader("TargetCount", target.getMessage().getBody(BigDecimal.class));
+                    BigDecimal result = Optional.ofNullable(target.getMessage().getBody(BigDecimal.class)).orElse(BigDecimal.ZERO);
+                    base.getIn().setHeader("TargetCount", result);
+                    base.getIn().setHeader("TargetList", new ResourceList(Collections.singletonList(result.toString()),
+                            target.getIn().getHeader("TargetName", String.class)));
                     return base;
                 })
                 .process(exchange -> {
@@ -52,16 +71,6 @@ public class CompareCountRoute extends RouteBuilder {
                             .subtract(exchange.getIn().getHeader("TargetCount", BigDecimal.class));
                     exchange.getIn().setHeader("Weight", weight);
                     exchange.getIn().setHeader("WeightAbs", weight.abs());
-                })
-                .enrich().simple(("${header.Src}")).aggregationStrategy((base, src) -> {
-                    base.getIn().setHeader("SrcList", new ResourceList(Collections.singletonList(src.getIn().getHeader("SrcCount", String.class)),
-                            src.getIn().getHeader("SrcName", String.class)));
-                    return base;
-                })
-                .enrich().simple("${header.Target}").aggregationStrategy((base, target) -> {
-                    base.getIn().setHeader("TargetList", new ResourceList(Collections.singletonList(target.getIn().getHeader("TargetCount", String.class)),
-                            target.getIn().getHeader("TargetName", String.class)));
-                    return base;
                 })
                 .bean(CompareCountTransformer.class)
                 .marshal().csv()
@@ -71,9 +80,9 @@ public class CompareCountRoute extends RouteBuilder {
                     .when(header("Weight").isGreaterThan(0))
                         .setHeader("ResourceLinkDescription", simple("${header.SrcName} has ${header.WeightAbs} more ${header.Comparison} than ${header.TargetName}."))
                     .otherwise()
-                        .setHeader("ResourceLinkDescription",simple("${header.SrcName} and ${header.TargetName} contain the same number of ${header.Comparison}."))
+                        .setHeader("ResourceLinkDescription", simple("${header.SrcName} and ${header.TargetName} contain the same number of ${header.Comparison}."))
                 .end()
-                .log("Compare Count: ${header.ResourceLinkDescription}")
+                .log("Compare count succeeded: ${header.ResourceLinkDescription}")
                 .toD("${header.Destination}");
     }
 }

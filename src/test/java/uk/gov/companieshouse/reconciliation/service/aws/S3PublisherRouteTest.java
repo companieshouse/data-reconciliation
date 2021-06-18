@@ -15,8 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
+import software.amazon.awssdk.awscore.exception.AwsServiceException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @CamelSpringBootTest
 @SpringBootTest
@@ -50,6 +52,31 @@ public class S3PublisherRouteTest {
         s3Presigner.whenAnyExchangeReceived(exchange -> exchange.getIn().setBody("url"));
         Exchange result = producerTemplate.send(getExchange());
         assertEquals("url", result.getIn().getHeader("ResourceLinkReference"));
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    void testSetFailedHeaderToTrueIfAwsExceptionThrownDuringUpload() throws InterruptedException {
+        s3Upload.expectedBodyReceived().constant("file");
+        s3Upload.expectedHeaderReceived(AWS2S3Constants.KEY, "key");
+        s3Upload.whenAnyExchangeReceived(exchange -> {
+            throw AwsServiceException.builder().build();
+        });
+        s3Presigner.expectedMessageCount(0);
+        Exchange result = producerTemplate.send(getExchange());
+        assertTrue(result.getIn().getHeader("Failed", boolean.class));
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    void testSetFailedHeaderToTrueIfAwsExceptionThrownPresigningFile() throws InterruptedException {
+        s3Upload.expectedBodyReceived().constant("file");
+        s3Upload.expectedHeaderReceived(AWS2S3Constants.KEY, "key");
+        s3Presigner.whenAnyExchangeReceived(exchange -> {
+            throw AwsServiceException.builder().build();
+        });
+        Exchange result = producerTemplate.send(getExchange());
+        assertTrue(result.getIn().getHeader("Failed", boolean.class));
         MockEndpoint.assertIsSatisfied(context);
     }
 

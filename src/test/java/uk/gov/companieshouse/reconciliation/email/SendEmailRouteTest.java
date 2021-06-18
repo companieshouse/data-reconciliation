@@ -65,19 +65,18 @@ public class SendEmailRouteTest {
             }
         });
         context.start();
-
-        s3Uploader.expectedMessageCount(6);
-        s3Presigner.expectedMessageCount(6);
+        s3Uploader.expectedMessageCount(5);
+        s3Presigner.expectedMessageCount(5);
         s3Presigner.returnReplyBody(ExpressionBuilder.constantExpression("URL"));
 
-        Exchange firstCompanyExchange = buildExchange("Key", 300L, "Company profile", "Compare Count Link", "apple");
-        Exchange secondCompanyExchange = buildExchange("Key", 300L, "Company profile", "Compare Collection Link", "orange");
+        Exchange firstCompanyExchange = buildExchange("Key", 300L, "Company profile", "Compare Count Link", "apple", true);
+        Exchange secondCompanyExchange = buildExchange("Key", 300L, "Company profile", "Compare Collection Link", "orange", false);
 
-        Exchange firstDsqExchange = buildExchange("Key", 300L, "Disqualified officer", "Disqualified Officer Link 1", "pear");
-        Exchange secondDsqExchange = buildExchange("Key", 300L, "Disqualified officer", "Disqualified Officer Link 2", "carrot");
+        Exchange firstDsqExchange = buildExchange("Key", 300L, "Disqualified officer", "Disqualified Officer Link 1", "pear", false);
+        Exchange secondDsqExchange = buildExchange("Key", 300L, "Disqualified officer", "Disqualified Officer Link 2", "carrot", false);
 
-        Exchange firstElasticsearchExchange = buildExchange("Key", 300L, "Elasticsearch", "Elasticsearch link 1", "strawberry");
-        Exchange secondElasticsearchExchange = buildExchange("Key", 300L, "Elasticsearch", "Elasticsearch link 2", "raspberry");
+        Exchange firstElasticsearchExchange = buildExchange("Key", 300L, "Elasticsearch", "Elasticsearch link 1", "strawberry", false);
+        Exchange secondElasticsearchExchange = buildExchange("Key", 300L, "Elasticsearch", "Elasticsearch link 2", "raspberry", false);
 
         kafkaEndpoint.expectedMessageCount(3);
 
@@ -91,7 +90,7 @@ public class SendEmailRouteTest {
         MockEndpoint.assertIsSatisfied(context);
     }
 
-    private Exchange buildExchange(String key, long expirationTime, String group, String linkDescription, String body) {
+    private Exchange buildExchange(String key, long expirationTime, String group, String linkDescription, String body, boolean failed) {
         return ExchangeBuilder.anExchange(context)
                 .withHeader(AWS2S3Constants.KEY, key)
                 .withHeader(AWS2S3Constants.DOWNLOAD_LINK_EXPIRATION_TIME, expirationTime)
@@ -99,6 +98,7 @@ public class SendEmailRouteTest {
                 .withHeader("ResourceLinkDescription", linkDescription)
                 .withHeader("Upload", "mock:s3-uploader")
                 .withHeader("Presign", "mock:s3-presigner")
+                .withHeader("Failed", failed)
                 .withBody(body)
                 .build();
     }

@@ -17,12 +17,14 @@ import org.springframework.test.context.TestPropertySource;
 import uk.gov.companieshouse.reconciliation.model.ResultModel;
 import uk.gov.companieshouse.reconciliation.model.Results;
 
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @CamelSpringBootTest
 @SpringBootTest
@@ -89,6 +91,25 @@ public class OracleCompanyStatusCollectionRouteTest {
         producerTemplate.send(exchange);
         Results actual = exchange.getIn().getBody(Results.class);
         assertEquals(new Results(Arrays.asList(new ResultModel("12345678", "", "dissolved"))), actual);
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    void testSetFailedHeaderIfSQLExceptionThrown() throws InterruptedException {
+        //given
+        oracleEndpoint.whenAnyExchangeReceived(exchange -> {
+            throw new SQLException("Failed");
+        });
+        oracleEndpoint.expectedBodiesReceived("SELECT '12345678' as incorporation_number FROM DUAL");
+        oracleEndpoint.expectedMessageCount(1);
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeaders(headers());
+
+        //when
+        Exchange result = producerTemplate.send(exchange);
+
+        //then
+        assertTrue(result.getIn().getHeader("Failed", boolean.class));
         MockEndpoint.assertIsSatisfied(context);
     }
 

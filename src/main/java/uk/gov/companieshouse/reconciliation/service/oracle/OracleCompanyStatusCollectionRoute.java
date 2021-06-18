@@ -1,13 +1,12 @@
 package uk.gov.companieshouse.reconciliation.service.oracle;
 
-import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
-import org.apache.camel.builder.AggregationStrategies;
-import org.apache.camel.builder.ExpressionBuilder;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.language.xpath.XPathBuilder;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
 import org.springframework.stereotype.Component;
+import uk.gov.companieshouse.reconciliation.common.RetryableRoute;
+
+import java.sql.SQLException;
 
 /**
  * Retrieves and aggregates multiple ResultSets from Oracle.<br>
@@ -17,11 +16,17 @@ import org.springframework.stereotype.Component;
  * header(OracleEndpoint): The endpoint representing the Oracle database that will be connected to.<br>
  */
 @Component
-public class OracleCompanyStatusCollectionRoute extends RouteBuilder {
+public class OracleCompanyStatusCollectionRoute extends RetryableRoute {
 
     @Override
-    public void configure() throws Exception {
+    public void configure() {
+        super.configure();
         from("direct:oracle-company-status-collection")
+                .onException(SQLException.class)
+                    .handled(true)
+                    .log(LoggingLevel.ERROR, "Failed to retrieve results from Oracle")
+                    .setHeader("Failed").constant(true)
+                .end()
                 .setBody(header("OracleQuery"))
                 .setBody(xpath("/sql-statements/valid-companies-query/sql-statement/text()"))
                 .toD("${header.OracleEndpoint}")

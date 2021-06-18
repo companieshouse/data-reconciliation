@@ -133,7 +133,7 @@ public class ElasticsearchSlicedScrollIteratorTest {
     }
 
     @Test
-    void testThrowRuntimeExceptionIfCompletedExceptionally() throws IOException {
+    void testThrowElasticsearchExceptionIfCompletedExceptionally() throws IOException {
         //given
         when(factory.getRunner(any(ElasticsearchScrollingSearchClient.class), any(), anyInt(), anyInt(), anyString(), any())).thenReturn(runner);
         doThrow(RuntimeException.class).when(runner).run();
@@ -149,7 +149,7 @@ public class ElasticsearchSlicedScrollIteratorTest {
         };
 
         //then
-        RuntimeException exception = assertThrows(RuntimeException.class, actual);
+        ElasticsearchException exception = assertThrows(ElasticsearchException.class, actual);
         assertEquals("Failed to retrieve results from Elasticsearch", exception.getMessage());
         verify(client, times(0)).clearScroll(any());
     }

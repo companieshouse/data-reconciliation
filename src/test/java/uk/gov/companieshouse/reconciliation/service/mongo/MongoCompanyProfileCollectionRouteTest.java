@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.reconciliation.service.mongo;
 
+import com.mongodb.MongoException;
 import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Projections;
 import org.apache.camel.CamelContext;
@@ -94,6 +95,26 @@ public class MongoCompanyProfileCollectionRouteTest {
         //then
         assertTrue(actual.contains(new ResultModel("12345678", "ACME LTD", "active")));
         assertTrue(actual.contains(new ResultModel("ABCD1234", "DENTIST LTD", "dissolved")));
+        MockEndpoint.assertIsSatisfied(camelContext);
+    }
+
+    @Test
+    void testSetFailedHeaderIfMongoExceptionThrown() throws InterruptedException {
+        //given
+        cache.expectedHeaderValuesReceivedInAnyOrder(CaffeineConstants.ACTION, CaffeineConstants.ACTION_GET);
+        cache.expectedHeaderValuesReceivedInAnyOrder(CaffeineConstants.KEY, "mongoCompanyProfile");
+        cache.returnReplyHeader(CaffeineConstants.ACTION_HAS_RESULT, ExpressionBuilder.constantExpression(false));
+        mongoEndpoint.whenAnyExchangeReceived(exchange -> {
+            throw new MongoException("Error");
+        });
+        mongoEndpoint.expectedBodyReceived().constant(Collections.singletonList(Aggregates.project(Projections.include("_id", "data.company_name", "data.company_status"))));
+        Exchange exchange = new DefaultExchange(camelContext);
+
+        //when
+        Exchange result = template.send(exchange);
+
+        //then
+        assertTrue(result.getIn().getHeader("Failed", boolean.class));
         MockEndpoint.assertIsSatisfied(camelContext);
     }
 }

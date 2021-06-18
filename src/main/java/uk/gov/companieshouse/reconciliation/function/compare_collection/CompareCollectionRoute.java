@@ -1,7 +1,9 @@
 package uk.gov.companieshouse.reconciliation.function.compare_collection;
 
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
+import uk.gov.companieshouse.reconciliation.function.ComparisonFailedException;
 import uk.gov.companieshouse.reconciliation.function.compare_collection.transformer.CompareCollectionTransformer;
 
 /**
@@ -25,19 +27,37 @@ public class CompareCollectionRoute extends RouteBuilder {
     @Override
     public void configure() throws Exception {
         from("direct:compare_collection")
+                .onException(ComparisonFailedException.class)
+                    .setHeader("ResourceLinkDescription", simple("Failed to compare ${header.Comparison} in ${header.SrcDescription} and ${header.TargetDescription}."))
+                    .setHeader("Failed").constant(true)
+                    .log(LoggingLevel.ERROR, "${header.ResourceLinkDescription}")
+                    .handled(true)
+                    .toD("${header.Destination}")
+                .end()
+                .setHeader("Description").header("SrcDescription")
                 .enrich()
                 .simple("${header.Src}")
+                .aggregationStrategy((prev, curr) -> {
+                    if(curr.getIn().getHeader("Failed", boolean.class)) {
+                        throw new ComparisonFailedException("Failed");
+                    }
+                    prev.getIn().setHeader("SrcList", curr.getIn().getBody());
+                    return prev;
+                })
+                .setHeader("Description").header("TargetDescription")
                 .enrich()
                 .simple("${header.Target}")
+                .aggregationStrategy((prev, curr) -> {
+                    if(curr.getIn().getHeader("Failed", boolean.class)) {
+                        throw new ComparisonFailedException("Failed");
+                    }
+                    prev.getIn().setHeader("TargetList", curr.getIn().getBody());
+                    return prev;
+                })
                 .bean(CompareCollectionTransformer.class)
                 .marshal().csv()
-                .choice()
-                .when(header("ElasticsearchDescription"))
-                    .setHeader("ResourceLinkDescription", simple("Comparisons completed for ${header.Comparison} in ${header.MongoDescription} and ${header.ElasticsearchDescription}."))
-                .when(header("OracleDescription"))
-                    .setHeader("ResourceLinkDescription", simple("Comparisons completed for ${header.Comparison} in ${header.MongoDescription} and ${header.OracleDescription}."))
-                .end()
-                .log("Compare Collection: ${header.ResourceLinkDescription}")
+                .setHeader("ResourceLinkDescription", simple("Comparisons completed for ${header.Comparison} in ${header.SrcDescription} and ${header.TargetDescription}."))
+                .log("${header.ResourceLinkDescription}")
                 .toD("${header.Destination}");
     }
 }
