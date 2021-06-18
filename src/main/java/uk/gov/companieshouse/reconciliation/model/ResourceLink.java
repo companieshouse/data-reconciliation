@@ -1,5 +1,7 @@
 package uk.gov.companieshouse.reconciliation.model;
 
+import java.util.Objects;
+
 /**
  * A link to a resource and a description of that resource.
  */
@@ -31,5 +33,18 @@ public class ResourceLink {
      */
     public String getDescription() {
         return description;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ResourceLink that = (ResourceLink) o;
+        return Objects.equals(linkId, that.linkId) && Objects.equals(downloadLink, that.downloadLink) && Objects.equals(description, that.description);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(linkId, downloadLink, description);
     }
 }

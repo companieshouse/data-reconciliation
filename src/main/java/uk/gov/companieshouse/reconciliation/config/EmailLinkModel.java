@@ -1,13 +1,13 @@
 package uk.gov.companieshouse.reconciliation.config;
 
-public class LinkModel {
+public class EmailLinkModel {
     private short rank;
-
-    public short getRank() {
-        return rank;
-    }
 
     public void setRank(short rank) {
         this.rank = rank;
+    }
+
+    public short getRank() {
+        return rank;
     }
 }

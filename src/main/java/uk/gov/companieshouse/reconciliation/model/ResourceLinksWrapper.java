@@ -2,6 +2,7 @@ package uk.gov.companieshouse.reconciliation.model;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Aggregates {@link ResourceLink download links} to comparison results.
@@ -35,5 +36,18 @@ public class ResourceLinksWrapper {
      */
     public List<ResourceLink> getDownloadLinkList() {
         return Collections.unmodifiableList(downloadLinkList);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ResourceLinksWrapper that = (ResourceLinksWrapper) o;
+        return Objects.equals(emailId, that.emailId) && Objects.equals(downloadLinkList, that.downloadLinkList);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(emailId, downloadLinkList);
     }
 }

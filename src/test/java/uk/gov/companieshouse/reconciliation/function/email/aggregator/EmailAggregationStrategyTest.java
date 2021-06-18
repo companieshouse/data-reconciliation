@@ -34,6 +34,7 @@ public class EmailAggregationStrategyTest {
         exchange.getIn().setHeader("LinkId", "LinkId");
         exchange.getIn().setHeader("ResourceLinkReference", "Link");
         exchange.getIn().setHeader("ResourceLinkDescription", "Description");
+        exchange.getIn().setHeader("EmailId", "EmailId");
 
         //when
         Exchange result = emailAggregationStrategy.aggregate(null, exchange);

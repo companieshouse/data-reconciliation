@@ -4,6 +4,7 @@ import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import uk.gov.companieshouse.reconciliation.model.ResourceLinksWrapper;
 
+import javax.crypto.spec.OAEPParameterSpec;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -15,6 +16,8 @@ public class EmailAggregationStrategy implements AggregationStrategy {
     private static final String RESOURCE_LINKS_HEADER = "ResourceLinks";
     private static final String LINK_REFERENCE_HEADER = "ResourceLinkReference";
     private static final String LINK_DESCRIPTION_HEADER = "ResourceLinkDescription";
+    private static final String LINK_ID_HEADER = "LinkId";
+    private static final String EMAIL_ID_HEADER = "EmailId";
 
     /**
      * Aggregates comparison messages.<br>
@@ -28,32 +31,38 @@ public class EmailAggregationStrategy implements AggregationStrategy {
      * OUT:<br>
      * header(ResourceLinks) - A {@link ResourceLinksWrapper collection of links}.<br>
      * <br>
-     * @param oldExchange   A {@link Exchange to the previous exchange} which will be aggregated to a final result.
-     * @param newExchange   A {@link Exchange to the next exchange} which will be aggregated to final result.
+     *
+     * @param oldExchange A {@link Exchange to the previous exchange} which will be aggregated to a final result.
+     * @param newExchange A {@link Exchange to the next exchange} which will be aggregated to final result.
      * @return A {@link Exchange} representing the aggregated results of both exchanges.
      */
     @Override
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+        Optional<String> linkReference = header(newExchange, LINK_REFERENCE_HEADER);
+        if (! linkReference.isPresent()) {
+            throw new IllegalArgumentException("Mandatory header not present: ResourceLinkReference");
+        };
         //on first invocation, oldExchange will be null as this is the first message that we are aggregating
         Exchange exchange = Optional.ofNullable(oldExchange).orElse(newExchange);
         ResourceLinksWrapper downloadLinks = createOrGetResourceLinks(exchange);
-        Optional<String> linkReference = header(newExchange, LINK_REFERENCE_HEADER);
-        if (linkReference.isPresent()) {
-            Optional<String> linkId = header(exchange, "LinkId");
-            downloadLinks.addDownloadLink(linkId.get(), linkReference.get(), header(newExchange, LINK_DESCRIPTION_HEADER).orElse(null));
-        } else {
-            throw new IllegalArgumentException("Mandatory header not present: ResourceLinkReference");
+        Optional<String> linkId = header(exchange, LINK_ID_HEADER);
+        if (! linkId.isPresent()) {
+            throw new IllegalArgumentException("Mandatory header not present: LinkId");
         }
+        downloadLinks.addDownloadLink(linkId.get(), linkReference.get(), header(newExchange, LINK_DESCRIPTION_HEADER).orElse(null));
         return exchange;
     }
 
     private ResourceLinksWrapper createOrGetResourceLinks(Exchange exchange) {
         ResourceLinksWrapper resourceLinks = exchange.getIn().getHeader(RESOURCE_LINKS_HEADER, ResourceLinksWrapper.class);
         if (resourceLinks == null) {
-            String emailId = exchange.getIn().getHeader("EmailId", String.class);
-            resourceLinks = new ResourceLinksWrapper(emailId, new ArrayList<>());
-            exchange.getIn().setHeader(RESOURCE_LINKS_HEADER, resourceLinks);
+            Optional<String> emailId = Optional.ofNullable(exchange.getIn().getHeader(EMAIL_ID_HEADER, String.class));
+            if (! emailId.isPresent()) {
+                throw new IllegalArgumentException("Mandatory header not present: EmailId");
+            }
+            resourceLinks = new ResourceLinksWrapper(emailId.get(), new ArrayList<>());
         }
+        exchange.getIn().setHeader(RESOURCE_LINKS_HEADER, resourceLinks);
         return resourceLinks;
     }
 
