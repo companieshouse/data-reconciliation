@@ -21,11 +21,11 @@ public class SendEmailRoute extends RouteBuilder {
         from("direct:send-email")
                 .aggregate(header("ComparisonGroup"), s3EmailPublisherAggregationStrategy)
                 .completion(header("Completed").isEqualTo(true))
-                .bean(EmailLinksSorter.class)
                 .split(method(EmailPublisherSplitter.class), new EmailAggregationStrategy())
                 .bean(EmailPublisherMapper.class)
                 .to("direct:s3-publisher")
                 .end()
+                .bean(EmailLinksSorter.class)
                 .setHeader("CompletionDate", simple("${date:now:dd MMMM yyyy}"))
                 .setHeader("EmailSubject", simple("${header.ComparisonGroup} comparisons (${header.CompletionDate})"))
                 .to("{{endpoint.kafka.sender}}");

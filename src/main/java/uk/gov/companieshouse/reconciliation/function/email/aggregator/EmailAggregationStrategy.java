@@ -39,7 +39,8 @@ public class EmailAggregationStrategy implements AggregationStrategy {
         ResourceLinksWrapper downloadLinks = createOrGetResourceLinks(exchange);
         Optional<String> linkReference = header(newExchange, LINK_REFERENCE_HEADER);
         if (linkReference.isPresent()) {
-            downloadLinks.addDownloadLink(linkReference.get(), header(newExchange, LINK_DESCRIPTION_HEADER).orElse(null));
+            Optional<String> linkId = header(exchange, "LinkId");
+            downloadLinks.addDownloadLink(linkId.get(), linkReference.get(), header(newExchange, LINK_DESCRIPTION_HEADER).orElse(null));
         } else {
             throw new IllegalArgumentException("Mandatory header not present: ResourceLinkReference");
         }
@@ -49,7 +50,8 @@ public class EmailAggregationStrategy implements AggregationStrategy {
     private ResourceLinksWrapper createOrGetResourceLinks(Exchange exchange) {
         ResourceLinksWrapper resourceLinks = exchange.getIn().getHeader(RESOURCE_LINKS_HEADER, ResourceLinksWrapper.class);
         if (resourceLinks == null) {
-            resourceLinks = new ResourceLinksWrapper(new ArrayList<>());
+            String emailId = exchange.getIn().getHeader("EmailId", String.class);
+            resourceLinks = new ResourceLinksWrapper(emailId, new ArrayList<>());
             exchange.getIn().setHeader(RESOURCE_LINKS_HEADER, resourceLinks);
         }
         return resourceLinks;

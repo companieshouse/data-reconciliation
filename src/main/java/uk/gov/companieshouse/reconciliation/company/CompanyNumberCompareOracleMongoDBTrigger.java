@@ -37,7 +37,8 @@ public class CompanyNumberCompareOracleMongoDBTrigger extends RouteBuilder {
                 .setHeader("Destination", simple("{{endpoint.output}}"))
                 .setHeader("Upload", simple("{{endpoint.s3.upload}}"))
                 .setHeader("Presign", simple("{{endpoint.s3presigner.download}}"))
-                .setHeader("OrderNumber", constant(2))
+                .setHeader("EmailId", constant("company-profile-email"))
+                .setHeader("LinkId", constant("company-number-link"))
                 .setHeader(AWS2S3Constants.KEY, simple("company/collection_${date:now:yyyyMMdd}T${date:now:hhmmss}.csv"))
                 .setHeader(AWS2S3Constants.DOWNLOAD_LINK_EXPIRATION_TIME, constant("{{aws.expiry}}"))
                 .to("{{function.name.compare_collection}}");

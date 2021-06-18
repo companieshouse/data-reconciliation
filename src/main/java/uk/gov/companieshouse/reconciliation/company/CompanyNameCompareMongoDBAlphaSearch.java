@@ -29,7 +29,8 @@ public class CompanyNameCompareMongoDBAlphaSearch extends RouteBuilder {
                 .setHeader("ResultsTransformer").constant("{{function.mapper.company_name}}")
                 .setHeader("Upload", constant("{{endpoint.s3.upload}}"))
                 .setHeader("Presign", constant("{{endpoint.s3presigner.download}}"))
-                .setHeader("OrderNumber", constant(5))
+                .setHeader("EmailId", constant("elastic-search-email"))
+                .setHeader("LinkId", constant("compare-company-name-alpha"))
                 .setHeader(AWS2S3Constants.KEY, simple("company/results_name_alpha_mongo_${date:now:yyyyMMdd}T${date:now:hhmmss}.csv"))
                 .setHeader(AWS2S3Constants.DOWNLOAD_LINK_EXPIRATION_TIME, constant("{{aws.expiry}}"))
                 .to("{{function.name.compare_results}}");

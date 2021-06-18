@@ -8,10 +8,16 @@ import java.util.List;
  */
 public class ResourceLinksWrapper {
 
+    private String emailId;
     private final List<ResourceLink> downloadLinkList;
 
-    public ResourceLinksWrapper(List<ResourceLink> downloadLinkList) {
+    public ResourceLinksWrapper(String emailId, List<ResourceLink> downloadLinkList) {
+        this.emailId = emailId;
         this.downloadLinkList = downloadLinkList;
+    }
+
+    public String getEmailId() {
+        return emailId;
     }
 
     /**
@@ -20,8 +26,8 @@ public class ResourceLinksWrapper {
      * @param link A link to a resource.
      * @param description A description of the resource that the link relates to.
      */
-    public void addDownloadLink(String link, String description){
-        this.downloadLinkList.add(new ResourceLink(link, description));
+    public void addDownloadLink(String linkId, String link, String description){
+        this.downloadLinkList.add(new ResourceLink(linkId, link, description));
     }
 
     /**
