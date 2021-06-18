@@ -22,7 +22,7 @@ public class CompanyNumberCompareOracleMongoDBTrigger extends RouteBuilder {
     public void configure() throws Exception {
         from("{{endpoint.company_collection.timer}}")
                 .setHeader("OracleQuery", simple("{{query.oracle.corporate_body_collection}}"))
-                .setHeader("OracleEndpoint", simple("{{endpoint.oracle.corporate_body_collection}}"))
+                .setHeader("OracleEndpoint", simple("{{endpoint.oracle.list}}"))
                 .setHeader("SrcDescription", constant("Oracle"))
                 .setHeader("Src", simple("{{endpoint.oracle.collection}}"))
                 .setHeader("MongoEndpoint", simple("{{endpoint.mongodb.company_profile_collection}}"))

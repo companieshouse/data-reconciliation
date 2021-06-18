@@ -43,7 +43,9 @@ public class DisqualifiedOfficerCompareTriggerTest {
         compareCollection.expectedHeaderReceived("Src", "direct:oracle-collection");
         compareCollection.expectedHeaderReceived("TargetDescription", "MongoDB");
         compareCollection.expectedHeaderReceived(MongoDbConstants.DISTINCT_QUERY_FIELD, "officer_id_raw");
-        compareCollection.expectedHeaderReceived("Target", "mock:mongoDisqualificationsCollection");
+        compareCollection.expectedHeaderReceived("Target", "mock:mongoDistinctCollection");
+        compareCollection.expectedHeaderReceived("MongoDistinctEndpoint", "mock:dsq_compare_target");
+        compareCollection.expectedHeaderReceived("MongoDistinctCacheKey", "mongoDisqualifications");
         compareCollection.expectedHeaderReceived("Comparison", "disqualified officers");
         compareCollection.expectedHeaderReceived("Destination", "mock:result");
         compareCollection.expectedHeaderReceived("RecordType", "Disqualified Officer");

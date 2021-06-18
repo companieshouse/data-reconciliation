@@ -20,7 +20,7 @@ public class CompanyCountTrigger extends RouteBuilder {
     public void configure() throws Exception {
         from("{{endpoint.company_count.timer}}")
                 .setBody(constant("{{query.oracle.corporate_body_count}}"))
-                .setHeader("Src", constant("{{endpoint.oracle.corporate_body_count}}"))
+                .setHeader("Src", constant("{{endpoint.oracle.single}}"))
                 .setHeader("SrcName", constant("Oracle"))
                 .setHeader("Target", constant("{{endpoint.mongodb.company_profile_count}}"))
                 .setHeader("TargetName", constant("MongoDB"))

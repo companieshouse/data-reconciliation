@@ -20,15 +20,17 @@ public class DisqualifiedOfficerCompareTrigger extends RouteBuilder {
                 .setHeader("Src", simple("{{endpoint.oracle.collection}}"))
                 .setHeader("TargetDescription", constant("MongoDB"))
                 .setHeader(MongoDbConstants.DISTINCT_QUERY_FIELD, constant("officer_id_raw"))
-                .setHeader("Target", simple("{{endpoint.mongodb.wrapper.disqualifications.collection}}"))
-                .setHeader("Comparison", simple("disqualified officers"))
+                .setHeader("Target", constant("{{endpoint.mongodb.wrapper.distinct.collection}}"))
+                .setHeader("MongoDistinctEndpoint", constant("{{endpoint.mongodb.disqualifications_collection}}"))
+                .setHeader("MongoDistinctCacheKey", constant("{{endpoint.mongodb.disqualifications.cache.key}}"))
+                .setHeader("Comparison", constant("disqualified officers"))
                 .setHeader("ComparisonGroup", constant("Disqualified officer"))
                 .setHeader("RecordType", constant("Disqualified Officer"))
-                .setHeader("Destination", simple("{{endpoint.output}}"))
-                .setHeader("Upload", simple("{{endpoint.s3.upload}}"))
-                .setHeader("Presign", simple("{{endpoint.s3presigner.download}}"))
+                .setHeader("Destination", constant("{{endpoint.output}}"))
+                .setHeader("Upload", constant("{{endpoint.s3.upload}}"))
+                .setHeader("Presign", constant("{{endpoint.s3presigner.download}}"))
                 .setHeader(AWS2S3Constants.KEY, simple("dsq_officer/collection_${date:now:yyyyMMdd}-${date:now:hhmmss}.csv"))
-                .setHeader(AWS2S3Constants.DOWNLOAD_LINK_EXPIRATION_TIME, simple("{{aws.expiry}}"))
+                .setHeader(AWS2S3Constants.DOWNLOAD_LINK_EXPIRATION_TIME, constant("{{aws.expiry}}"))
                 .to("{{function.name.compare_collection}}");
     }
 }

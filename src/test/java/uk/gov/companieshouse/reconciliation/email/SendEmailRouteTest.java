@@ -65,8 +65,8 @@ public class SendEmailRouteTest {
             }
         });
         context.start();
-        s3Uploader.expectedMessageCount(5);
-        s3Presigner.expectedMessageCount(5);
+        s3Uploader.expectedMessageCount(7);
+        s3Presigner.expectedMessageCount(7);
         s3Presigner.returnReplyBody(ExpressionBuilder.constantExpression("URL"));
 
         Exchange firstCompanyExchange = buildExchange("Key", 300L, "Company profile", "Compare Count Link", "apple", true);
@@ -78,7 +78,10 @@ public class SendEmailRouteTest {
         Exchange firstElasticsearchExchange = buildExchange("Key", 300L, "Elasticsearch", "Elasticsearch link 1", "strawberry", false);
         Exchange secondElasticsearchExchange = buildExchange("Key", 300L, "Elasticsearch", "Elasticsearch link 2", "raspberry", false);
 
-        kafkaEndpoint.expectedMessageCount(3);
+        Exchange firstInsolvencyExchange = buildExchange("Key", 300L, "Company insolvency", "Insolvency link 1", "avocado", false);
+        Exchange secondInsolvencyExchange = buildExchange("Key", 300L, "Company insolvency", "Insolvency link 2", "kale", false);
+
+        kafkaEndpoint.expectedMessageCount(4);
 
         producerTemplate.send(firstCompanyExchange);
         producerTemplate.send(secondCompanyExchange);
@@ -86,6 +89,8 @@ public class SendEmailRouteTest {
         producerTemplate.send(secondDsqExchange);
         producerTemplate.send(firstElasticsearchExchange);
         producerTemplate.send(secondElasticsearchExchange);
+        producerTemplate.send(firstInsolvencyExchange);
+        producerTemplate.send(secondInsolvencyExchange);
 
         MockEndpoint.assertIsSatisfied(context);
     }

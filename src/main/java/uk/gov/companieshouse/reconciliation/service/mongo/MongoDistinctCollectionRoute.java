@@ -4,7 +4,6 @@ import com.mongodb.MongoException;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.caffeine.CaffeineConstants;
-import org.apache.camel.component.mongodb.MongoDbConstants;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.reconciliation.function.compare_collection.entity.ResourceList;
 
@@ -14,26 +13,29 @@ import uk.gov.companieshouse.reconciliation.function.compare_collection.entity.R
  * IN:<br>
  * <br>
  * header(Description): A description of the {@link ResourceList resource list} where results will be aggregated.<br>
+ * header(MongoDistinctEndpoint): A Mongo DB endpoint from which results will be fetched.<br>
+ * header(MongoDistinctCacheKey): The cache key underneath which results will be stored.<br>
+ * header(CamelMongoDbDistinctQueryField): The field for which to return distinct values.<br>
+ * header(CamelMongoDbCriteria): An optional field used to filter documents that are returned.<br>
  */
 @Component
-public class MongoDisqualificationsCollectionRoute extends RouteBuilder {
+public class MongoDistinctCollectionRoute extends RouteBuilder {
 
     @Override
     public void configure() {
-        from("direct:mongodb-disqualifications-collection")
+        from("direct:mongodb-distinct-collection")
                 .onException(MongoException.class)
                     .handled(true)
-                    .log(LoggingLevel.ERROR, "Failed to retrieve disqualification data from MongoDB")
+                    .log(LoggingLevel.ERROR, "Failed to retrieve collection data from MongoDB")
                     .setHeader("Failed").constant(true)
                 .end()
                 .setHeader(CaffeineConstants.ACTION).constant(CaffeineConstants.ACTION_GET)
-                .setHeader(CaffeineConstants.KEY).constant("{{endpoint.mongodb.disqualifications.cache.key}}")
+                .setHeader(CaffeineConstants.KEY).header("MongoDistinctCacheKey")
                 .to("{{endpoint.cache}}")
                 .choice()
                 .when(header(CaffeineConstants.ACTION_HAS_RESULT).isEqualTo(false))
-                    .setHeader(MongoDbConstants.DISTINCT_QUERY_FIELD).constant("officer_id_raw")
-                    .to("{{endpoint.mongodb.disqualifications_collection}}")
-                    .log("${body.size()} disqualifications have been fetched from mongodb.")
+                    .toD("${header.MongoDistinctEndpoint}")
+                    .log("${body.size()} items have been fetched from mongodb.")
                     .setHeader(CaffeineConstants.ACTION).constant(CaffeineConstants.ACTION_PUT)
                     .to("{{endpoint.cache}}")
                 .otherwise()
