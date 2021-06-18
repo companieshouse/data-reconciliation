@@ -49,7 +49,7 @@ public class KafkaRouteTest {
         kafkaEndpoint.expectedMessageCount(1);
         shutdownEndpoint.expectedMessageCount(1);
         Exchange exchange = new DefaultExchange(context);
-        exchange.getIn().setHeader("ResourceLinks", new ResourceLinksWrapper(Collections.singletonList(new ResourceLink("link", "description"))));
+        exchange.getIn().setHeader("ResourceLinks", new ResourceLinksWrapper("emailId", Collections.singletonList(new ResourceLink("linkId", "link", "description"))));
         Exchange actual = kafkaRouteProducer.send(exchange);
         assertNull(actual.getIn().getHeader("Content-Type"));
         assertNull(actual.getIn().getHeader("ResourceLinks"));

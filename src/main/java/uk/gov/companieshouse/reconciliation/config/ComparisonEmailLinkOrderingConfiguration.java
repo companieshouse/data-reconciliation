@@ -14,7 +14,7 @@ public class ComparisonEmailLinkOrderingConfiguration {
 
     @Bean
     @ConfigurationProperties(prefix = "comparison-email")
-    public Map<String, Map<String, LinkModel>> comparisonGroupConfigMap() {
+    public Map<String, Map<String, LinkModel>> comparisonEmailLinkConfigMap() {
         return new HashMap<>();
     }
 }

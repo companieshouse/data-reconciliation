@@ -31,6 +31,7 @@ public class EmailAggregationStrategyTest {
     void testAddResourceLink() {
         //given
         Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader("LinkId", "LinkId");
         exchange.getIn().setHeader("ResourceLinkReference", "Link");
         exchange.getIn().setHeader("ResourceLinkDescription", "Description");
 
@@ -40,6 +41,7 @@ public class EmailAggregationStrategyTest {
 
         //then
         assertEquals(exchange, result);
+        assertEquals("LinkId", wrapper.getLinkId());
         assertEquals("Link", wrapper.getDownloadLink());
         assertEquals("Description", wrapper.getDescription());
     }

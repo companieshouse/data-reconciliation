@@ -29,7 +29,7 @@ public class EmailPublisherMapperTest {
     void testMapResourceRequestToExchange() {
         //given
         Exchange targetExchange = new DefaultExchange(context);
-        PublisherResourceRequest request = new PublisherResourceRequest("key", 300, "uploader", "presigner", "description", "BODY".getBytes(), "group", 1);
+        PublisherResourceRequest request = new PublisherResourceRequest("key", 300, "uploader", "presigner", "description", "BODY".getBytes(), "group");
 
         //when
         emailPublisherMapper.map(request, targetExchange);

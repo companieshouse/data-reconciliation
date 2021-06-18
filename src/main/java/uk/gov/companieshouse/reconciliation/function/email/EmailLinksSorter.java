@@ -14,19 +14,15 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * Sorts {@link List<PublisherResourceRequest> a list of publisher source requests} into an natural order
- * based of the assigned orderNumber header.
+ * TODO: Redo Javadoc
  **/
 public class EmailLinksSorter {
 
-    private static final String ELASTICSEARCH_GROUP = "Elasticsearch";
-    private static final String COMPANY_PROFILE_GROUP = "Company profile";
-
-    private Map<String, Map<String, LinkModel>> comparisonGroupConfigMap;
+    private Map<String, Map<String, LinkModel>> comparisonEmailLinkConfigMap;
 
     @Autowired
-    public EmailLinksSorter(Map<String, Map<String, LinkModel>> comparisonGroupConfigMap) {
-        this.comparisonGroupConfigMap = comparisonGroupConfigMap;
+    public EmailLinksSorter(Map<String, Map<String, LinkModel>> comparisonEmailLinkConfigMap) {
+        this.comparisonEmailLinkConfigMap = comparisonEmailLinkConfigMap;
     }
 
     public void map(Exchange exchange) {
@@ -36,7 +32,7 @@ public class EmailLinksSorter {
         List<ResourceLink> resourceLinks = resourceLinksWrapper.getDownloadLinkList();
 
         // Key: Link Id, Value: LinkModel
-        Map<String, LinkModel> linkModelMap = comparisonGroupConfigMap.get(resourceLinksWrapper.getEmailId());
+        Map<String, LinkModel> linkModelMap = comparisonEmailLinkConfigMap.get(resourceLinksWrapper.getEmailId());
 
         List<ResourceLink> sortedResourceLinks = resourceLinks.stream()
                 .sorted(Comparator.comparingInt(a -> linkModelMap.get(a.getLinkId()).getRank()))
