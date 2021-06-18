@@ -32,6 +32,4 @@ public class ResourceLink {
     public String getDescription() {
         return description;
     }
-
-
 }

@@ -33,7 +33,6 @@ public class CompanyNumberCompareMongoDBPrimarySearch extends RouteBuilder {
                 .setHeader("Destination", simple("{{endpoint.output}}"))
                 .setHeader("Upload", simple("{{endpoint.s3.upload}}"))
                 .setHeader("Presign", simple("{{endpoint.s3presigner.download}}"))
-                .setHeader("OrderNumber", constant(1))
                 .setHeader(AWS2S3Constants.KEY, simple("company/collection_primary_mongo_${date:now:yyyyMMdd}T${date:now:hhmmss}.csv"))
                 .setHeader(AWS2S3Constants.DOWNLOAD_LINK_EXPIRATION_TIME, simple("{{aws.expiry}}"))
                 .to("{{function.name.compare_collection}}");
