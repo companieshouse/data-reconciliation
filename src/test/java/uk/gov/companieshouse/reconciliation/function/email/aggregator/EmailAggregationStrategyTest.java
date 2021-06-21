@@ -10,8 +10,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.TestPropertySource;
 import uk.gov.companieshouse.reconciliation.config.AggregationHandler;
 import uk.gov.companieshouse.reconciliation.config.ComparisonGroupModel;
 import uk.gov.companieshouse.reconciliation.config.EmailLinkModel;
