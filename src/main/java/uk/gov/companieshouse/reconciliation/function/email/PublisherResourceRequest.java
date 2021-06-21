@@ -15,9 +15,10 @@ public class PublisherResourceRequest {
     private final String resourceDescription;
     private final byte[] results;
     private final String comparisonGroup;
+    private final String linkId;
 
     public PublisherResourceRequest(String objectKey, long expirationTimeInMillis, String uploaderEndpoint,
-                                    String presignerEndpoint, String resourceDescription, byte[] results, String comparisonGroup) {
+                                    String presignerEndpoint, String resourceDescription, byte[] results, String comparisonGroup, String linkId) {
         this.objectKey = objectKey;
         this.expirationTimeInMillis = expirationTimeInMillis;
         this.uploaderEndpoint = uploaderEndpoint;
@@ -25,6 +26,7 @@ public class PublisherResourceRequest {
         this.resourceDescription = resourceDescription;
         this.results = results;
         this.comparisonGroup = comparisonGroup;
+        this.linkId = linkId;
     }
 
     public String getObjectKey() {
@@ -55,16 +57,22 @@ public class PublisherResourceRequest {
         return comparisonGroup;
     }
 
+    public String getLinkId() {
+        return linkId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PublisherResourceRequest that = (PublisherResourceRequest) o;
-        return expirationTimeInMillis == that.expirationTimeInMillis && Objects.equals(objectKey, that.objectKey) && Objects.equals(uploaderEndpoint, that.uploaderEndpoint) && Objects.equals(presignerEndpoint, that.presignerEndpoint) && Objects.equals(resourceDescription, that.resourceDescription) && Objects.equals(comparisonGroup, that.comparisonGroup);
+        return expirationTimeInMillis == that.expirationTimeInMillis && Objects.equals(objectKey, that.objectKey) && Objects.equals(uploaderEndpoint, that.uploaderEndpoint) && Objects.equals(presignerEndpoint, that.presignerEndpoint) && Objects.equals(resourceDescription, that.resourceDescription) && Arrays.equals(results, that.results) && Objects.equals(comparisonGroup, that.comparisonGroup) && Objects.equals(linkId, that.linkId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(objectKey, expirationTimeInMillis, uploaderEndpoint, presignerEndpoint, resourceDescription, comparisonGroup);
+        int result = Objects.hash(objectKey, expirationTimeInMillis, uploaderEndpoint, presignerEndpoint, resourceDescription, comparisonGroup, linkId);
+        result = 31 * result + Arrays.hashCode(results);
+        return result;
     }
 }

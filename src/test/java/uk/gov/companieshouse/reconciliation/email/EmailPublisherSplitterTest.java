@@ -23,12 +23,12 @@ public class EmailPublisherSplitterTest {
     @Test
     void testReturnListOfPublisherResourceRequests() {
         //given
-        PublisherResourceRequestWrapper resourceRequestWrapper = new PublisherResourceRequestWrapper(Collections.singletonList(new PublisherResourceRequest("key", 300, "uploader", "presigner", "description", "BODY".getBytes(), "group")));
+        PublisherResourceRequestWrapper resourceRequestWrapper = new PublisherResourceRequestWrapper(Collections.singletonList(new PublisherResourceRequest("key", 300, "uploader", "presigner", "description", "BODY".getBytes(), "group", "linkId")));
 
         //when
         List<PublisherResourceRequest> actual = splitter.split(resourceRequestWrapper);
 
         //then
-        assertEquals(Collections.singletonList(new PublisherResourceRequest("key", 300, "uploader", "presigner", "description", "BODY".getBytes(), "group")), actual);
+        assertEquals(Collections.singletonList(new PublisherResourceRequest("key", 300, "uploader", "presigner", "description", "BODY".getBytes(), "group", "linkId")), actual);
     }
 }

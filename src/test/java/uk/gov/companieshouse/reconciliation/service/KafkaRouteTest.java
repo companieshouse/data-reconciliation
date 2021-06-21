@@ -17,6 +17,8 @@ import org.springframework.test.context.TestPropertySource;
 import uk.gov.companieshouse.reconciliation.model.ResourceLink;
 import uk.gov.companieshouse.reconciliation.model.ResourceLinksWrapper;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.TreeSet;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -49,7 +51,7 @@ public class KafkaRouteTest {
         kafkaEndpoint.expectedMessageCount(1);
         shutdownEndpoint.expectedMessageCount(1);
         Exchange exchange = new DefaultExchange(context);
-        exchange.getIn().setHeader("ResourceLinks", new ResourceLinksWrapper("emailId", Collections.singletonList(new ResourceLink("linkId", "link", "description"))));
+        exchange.getIn().setHeader("ResourceLinks", new ResourceLinksWrapper(new TreeSet<ResourceLink>(Comparator.comparing(ResourceLink::getRank)){{add(new ResourceLink((short)1, "link", "description"));}}));
         Exchange actual = kafkaRouteProducer.send(exchange);
         assertNull(actual.getIn().getHeader("Content-Type"));
         assertNull(actual.getIn().getHeader("ResourceLinks"));

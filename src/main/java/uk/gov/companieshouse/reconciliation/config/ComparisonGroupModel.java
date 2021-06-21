@@ -1,9 +1,16 @@
 package uk.gov.companieshouse.reconciliation.config;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import java.util.Map;
+
 public class ComparisonGroupModel {
 
+    @NotEmpty
     private String groupName;
-    private int size;
+
+    @NotNull
+    private Map<String, EmailLinkModel> emailLinkModel;
 
     public String getGroupName() {
         return groupName;
@@ -14,10 +21,14 @@ public class ComparisonGroupModel {
     }
 
     public int getSize() {
-        return size;
+        return emailLinkModel.size();
     }
 
-    public void setSize(int size) {
-        this.size = size;
+    public Map<String, EmailLinkModel> getEmailLinkModel() {
+        return emailLinkModel;
+    }
+
+    public void setEmailLinkModel(Map<String, EmailLinkModel> emailLinkModel) {
+        this.emailLinkModel = emailLinkModel;
     }
 }

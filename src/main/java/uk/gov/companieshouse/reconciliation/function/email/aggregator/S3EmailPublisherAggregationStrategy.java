@@ -48,7 +48,8 @@ public class S3EmailPublisherAggregationStrategy implements AggregationStrategy 
                 curr.getIn().getHeader("Upload", String.class),
                 curr.getIn().getHeader("Presign", String.class),
                 curr.getIn().getHeader("ResourceLinkDescription", String.class),
-                curr.getIn().getBody(byte[].class), comparisonGroup));
+                curr.getIn().getBody(byte[].class), comparisonGroup,
+                curr.getIn().getHeader("LinkId", String.class)));
         targetExchange.getIn().setHeader("PublisherResourceRequests", resourceRequests);
         return targetExchange;
     }

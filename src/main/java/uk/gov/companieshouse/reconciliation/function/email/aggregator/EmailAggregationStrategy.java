@@ -2,11 +2,14 @@ package uk.gov.companieshouse.reconciliation.function.email.aggregator;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
+import org.springframework.beans.factory.annotation.Autowired;
+import uk.gov.companieshouse.reconciliation.config.AggregationHandler;
+import uk.gov.companieshouse.reconciliation.config.ComparisonGroupModel;
+import uk.gov.companieshouse.reconciliation.config.EmailLinkModel;
+import uk.gov.companieshouse.reconciliation.model.ResourceLink;
 import uk.gov.companieshouse.reconciliation.model.ResourceLinksWrapper;
 
-import javax.crypto.spec.OAEPParameterSpec;
-import java.util.ArrayList;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Aggregates comparison messages into a {@link uk.gov.companieshouse.reconciliation.model.ResourceLinksWrapper collection of links}.
@@ -16,8 +19,14 @@ public class EmailAggregationStrategy implements AggregationStrategy {
     private static final String RESOURCE_LINKS_HEADER = "ResourceLinks";
     private static final String LINK_REFERENCE_HEADER = "ResourceLinkReference";
     private static final String LINK_DESCRIPTION_HEADER = "ResourceLinkDescription";
+    private static final String COMPARISON_GROUP_HEADER = "ComparisonGroup";
     private static final String LINK_ID_HEADER = "LinkId";
-    private static final String EMAIL_ID_HEADER = "EmailId";
+
+    private AggregationHandler aggregationHandler;
+
+    public EmailAggregationStrategy(AggregationHandler aggregationHandler) {
+        this.aggregationHandler = aggregationHandler;
+    }
 
     /**
      * Aggregates comparison messages.<br>
@@ -43,26 +52,36 @@ public class EmailAggregationStrategy implements AggregationStrategy {
             throw new IllegalArgumentException("Mandatory header not present: ResourceLinkReference");
         };
         //on first invocation, oldExchange will be null as this is the first message that we are aggregating
-        Exchange exchange = Optional.ofNullable(oldExchange).orElse(newExchange);
-        ResourceLinksWrapper downloadLinks = createOrGetResourceLinks(exchange);
-        Optional<String> linkId = header(exchange, LINK_ID_HEADER);
+        ResourceLinksWrapper downloadLinks = createOrGetResourceLinks(oldExchange);
+        newExchange.getIn().setHeader(RESOURCE_LINKS_HEADER, downloadLinks);
+
+        Optional<String> linkId = header(newExchange, LINK_ID_HEADER);
         if (! linkId.isPresent()) {
             throw new IllegalArgumentException("Mandatory header not present: LinkId");
         }
-        downloadLinks.addDownloadLink(linkId.get(), linkReference.get(), header(newExchange, LINK_DESCRIPTION_HEADER).orElse(null));
-        return exchange;
+
+        Optional<String> comparisonGroup = header(newExchange, COMPARISON_GROUP_HEADER);
+        if (! comparisonGroup.isPresent()) {
+            throw new IllegalArgumentException("Mandatory header not present: ComparisonGroup");
+        }
+
+        EmailLinkModel emailLinkModel = aggregationHandler.getAggregationConfiguration(comparisonGroup.get()).getEmailLinkModel().get(linkId.get());
+        if (emailLinkModel == null) {
+            throw new IllegalArgumentException("Mandatory configuration present: EmailLinkModel :" + linkId.get());
+        }
+
+        downloadLinks.addDownloadLink(emailLinkModel.getRank(), linkReference.get(), header(newExchange, LINK_DESCRIPTION_HEADER).orElse(null));
+
+        return newExchange;
     }
 
     private ResourceLinksWrapper createOrGetResourceLinks(Exchange exchange) {
-        ResourceLinksWrapper resourceLinks = exchange.getIn().getHeader(RESOURCE_LINKS_HEADER, ResourceLinksWrapper.class);
-        if (resourceLinks == null) {
-            Optional<String> emailId = Optional.ofNullable(exchange.getIn().getHeader(EMAIL_ID_HEADER, String.class));
-            if (! emailId.isPresent()) {
-                throw new IllegalArgumentException("Mandatory header not present: EmailId");
-            }
-            resourceLinks = new ResourceLinksWrapper(emailId.get(), new ArrayList<>());
+        ResourceLinksWrapper resourceLinks;
+
+        if (exchange == null || (resourceLinks = exchange.getIn().getHeader(RESOURCE_LINKS_HEADER, ResourceLinksWrapper.class)) == null) {
+            resourceLinks = new ResourceLinksWrapper(new TreeSet<ResourceLink>(Comparator.comparing(ResourceLink::getRank)));
         }
-        exchange.getIn().setHeader(RESOURCE_LINKS_HEADER, resourceLinks);
+
         return resourceLinks;
     }
 

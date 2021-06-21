@@ -7,18 +7,21 @@ import java.util.Objects;
  */
 public class ResourceLink {
 
-    private final String linkId;
+    private final short rank;
     private final String downloadLink;
     private final String description;
 
-    public ResourceLink(String linkId, String downloadLink, String description) {
-        this.linkId = linkId;
+    public ResourceLink(short rank, String downloadLink, String description) {
+        this.rank = rank;
         this.downloadLink = downloadLink;
         this.description = description;
     }
 
-    public String getLinkId() {
-        return linkId;
+    /**
+     * @return rank defining ordering of this link in its group
+     */
+    public short getRank() {
+        return rank;
     }
 
     /**
@@ -35,16 +38,4 @@ public class ResourceLink {
         return description;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ResourceLink that = (ResourceLink) o;
-        return Objects.equals(linkId, that.linkId) && Objects.equals(downloadLink, that.downloadLink) && Objects.equals(description, that.description);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(linkId, downloadLink, description);
-    }
 }

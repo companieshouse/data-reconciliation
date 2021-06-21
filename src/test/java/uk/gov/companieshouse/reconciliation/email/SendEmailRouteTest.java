@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @CamelSpringBootTest
 @SpringBootTest
 @DirtiesContext
-@TestPropertySource(locations = {"classpath:application-stubbed.properties", "classpath:comparison-groups.properties", "classpath:comparison-groups.properties"})
+@TestPropertySource(locations = {"classpath:application-stubbed.properties", "classpath:comparison-groups.properties"})
 @UseAdviceWith
 public class SendEmailRouteTest {
 
@@ -72,14 +72,14 @@ public class SendEmailRouteTest {
         s3Presigner.expectedMessageCount(6);
         s3Presigner.returnReplyBody(ExpressionBuilder.constantExpression("URL"));
 
-        Exchange firstCompanyExchange = buildExchange("Key", 300L, "Company profile", "Compare Count Link", "apple", "company-profile-email", "company-count-link");
-        Exchange secondCompanyExchange = buildExchange("Key", 300L, "Company profile", "Compare Collection Link", "orange", "company-profile-email", "company-number-link");
+        Exchange firstCompanyExchange = buildExchange("Key", 300L, "Company profile", "Compare Count Link", "apple", "company-count-link");
+        Exchange secondCompanyExchange = buildExchange("Key", 300L, "Company profile", "Compare Collection Link", "orange", "company-number-link");
 
-        Exchange firstDsqExchange = buildExchange("Key", 300L, "Disqualified officer", "Disqualified Officer Link 1", "pear", "disqualified-officer-email", "disqualified-officer-link");
-        Exchange secondDsqExchange = buildExchange("Key", 300L, "Disqualified officer", "Disqualified Officer Link 2", "carrot", "disqualified-officer-email", "disqualified-officer-link");
+        Exchange firstDsqExchange = buildExchange("Key", 300L, "Disqualified officer", "Disqualified Officer Link 1", "pear", "disqualified-officer-link1");
+        Exchange secondDsqExchange = buildExchange("Key", 300L, "Disqualified officer", "Disqualified Officer Link 2", "carrot", "disqualified-officer-link2");
 
-        Exchange firstElasticsearchExchange = buildExchange("Key", 300L, "Elasticsearch", "Elasticsearch link 1", "strawberry", "elasticsearch-email", "company-name-alpha-link");
-        Exchange secondElasticsearchExchange = buildExchange("Key", 300L, "Elasticsearch", "Elasticsearch link 2", "raspberry", "elasticsearch-email", "company-name-primary-link");
+        Exchange firstElasticsearchExchange = buildExchange("Key", 300L, "Elasticsearch", "Elasticsearch link 1", "strawberry", "company-name-alpha-link");
+        Exchange secondElasticsearchExchange = buildExchange("Key", 300L, "Elasticsearch", "Elasticsearch link 2", "raspberry", "company-name-primary-link");
 
         kafkaEndpoint.expectedMessageCount(3);
 
@@ -93,7 +93,7 @@ public class SendEmailRouteTest {
         MockEndpoint.assertIsSatisfied(context);
     }
 
-    private Exchange buildExchange(String key, long expirationTime, String group, String linkDescription, String body, String emailId, String linkId) {
+    private Exchange buildExchange(String key, long expirationTime, String group, String linkDescription, String body, String linkId) {
         return ExchangeBuilder.anExchange(context)
                 .withHeader(AWS2S3Constants.KEY, key)
                 .withHeader(AWS2S3Constants.DOWNLOAD_LINK_EXPIRATION_TIME, expirationTime)
@@ -101,7 +101,6 @@ public class SendEmailRouteTest {
                 .withHeader("ResourceLinkDescription", linkDescription)
                 .withHeader("Upload", "mock:s3-uploader")
                 .withHeader("Presign", "mock:s3-presigner")
-                .withHeader("EmailId", emailId)
                 .withHeader("LinkId", linkId)
                 .withBody(body)
                 .build();

@@ -29,7 +29,7 @@ public class EmailPublisherMapperTest {
     void testMapResourceRequestToExchange() {
         //given
         Exchange targetExchange = new DefaultExchange(context);
-        PublisherResourceRequest request = new PublisherResourceRequest("key", 300, "uploader", "presigner", "description", "BODY".getBytes(), "group");
+        PublisherResourceRequest request = new PublisherResourceRequest("key", 300, "uploader", "presigner", "description", "BODY".getBytes(), "group", "linkId");
 
         //when
         emailPublisherMapper.map(request, targetExchange);
@@ -41,6 +41,7 @@ public class EmailPublisherMapperTest {
         assertEquals("presigner", targetExchange.getIn().getHeader("Presign"));
         assertEquals("description", targetExchange.getIn().getHeader("ResourceLinkDescription"));
         assertEquals("group", targetExchange.getIn().getHeader("ComparisonGroup"));
+        assertEquals("linkId", targetExchange.getIn().getHeader("LinkId"));
         assertArrayEquals("BODY".getBytes(), targetExchange.getIn().getBody(byte[].class));
     }
 }
