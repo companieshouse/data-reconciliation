@@ -19,6 +19,7 @@ import uk.gov.companieshouse.reconciliation.function.email.PublisherResourceRequ
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -41,6 +42,9 @@ public class S3EmailPublisherAggregationStrategyTest {
 
     @Mock
     private ComparisonGroupModel comparisonGroupModel;
+
+    @Mock
+    private Map<String, ComparisonGroupModel> comparisonGroupConfigMap;
 
     @BeforeEach
     void setup() {
@@ -100,6 +104,23 @@ public class S3EmailPublisherAggregationStrategyTest {
         assertSame(prev, actual);
         assertNull(actual.getIn().getHeader("Completed"));
         verify(aggregationHandler).getAggregationConfiguration("group");
+    }
+
+    @Test
+    void testIllegalArgumentExceptionIsThrowIfComparisonGroupModelAbsent() {
+        // given
+        //Exchange prev = new DefaultExchange(context);
+        //prev.getIn().setHeader("PublisherResourceRequests", new PublisherResourceRequestWrapper(new ArrayList<>(Collections.singletonList(new PublisherResourceRequest("key", 300L, "uploaderEndpoint", "presignerEndpoint", "resourceLinkDescription", "results".getBytes(), "fakegroup", "linkId")))));
+
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader("ComparisonGroup", "group");
+
+        // when
+        Executable actual = () -> aggregationStrategy.aggregate(null, exchange);
+
+        // then
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, actual);
+        assertEquals("Mandatory configuration not present ComparisonGroupModel: group", exception.getMessage());
     }
 
     @Test

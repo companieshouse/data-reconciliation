@@ -55,7 +55,13 @@ public class S3EmailPublisherAggregationStrategy implements AggregationStrategy 
     }
 
     private int getCompletionSizeForGroup(String group) {
-        return Optional.ofNullable(configuration.getAggregationConfiguration(group)).map(ComparisonGroupModel::getSize)
+        Optional<ComparisonGroupModel> comparisonGroupModel = Optional.ofNullable(configuration.getAggregationConfiguration(group));
+
+        if (! comparisonGroupModel.isPresent()) {
+            throw new IllegalArgumentException("Mandatory configuration not present ComparisonGroupModel: " + group);
+        }
+
+        return comparisonGroupModel.map(ComparisonGroupModel::getSize)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid comparison group specified: " + group));
     }
 }

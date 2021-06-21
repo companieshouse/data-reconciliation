@@ -126,4 +126,67 @@ public class EmailAggregationStrategyTest {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, actual);
         assertEquals("Mandatory header not present: ResourceLinkReference", exception.getMessage());
     }
+
+    @Test
+    void testThrowIllegalArgumentExceptionIfLinkIdAbsent() {
+        //given
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader("ResourceLinkReference", "Link");
+
+        //when
+        Executable actual = () -> emailAggregationStrategy.aggregate(null, exchange);
+
+        //then
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, actual);
+        assertEquals("Mandatory header not present: LinkId", exception.getMessage());
+    }
+
+    @Test
+    void testThrowIllegalArgumentExceptionIfComparisonGroupAbsent() {
+        //given
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader("ResourceLinkReference", "Link");
+        exchange.getIn().setHeader("LinkId", "linkId");
+
+        //when
+        Executable actual = () -> emailAggregationStrategy.aggregate(null, exchange);
+
+        //then
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, actual);
+        assertEquals("Mandatory header not present: ComparisonGroup", exception.getMessage());
+    }
+
+    @Test
+    void testThrowIllegalArgumentExceptionIfComparisonGroupModelAbsent() {
+        //given
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader("ResourceLinkReference", "Link");
+        exchange.getIn().setHeader("LinkId", "linkId");
+        exchange.getIn().setHeader("ComparisonGroup", "Comparison group");
+
+        //when
+        Executable actual = () -> emailAggregationStrategy.aggregate(null, exchange);
+
+        //then
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, actual);
+        assertEquals("Mandatory configuration not present ComparisonGroupModel: Comparison group", exception.getMessage());
+    }
+
+    @Test
+    void testThrowIllegalArgumentExceptionIfEmailLinkModelAbsent() {
+        //given
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader("ResourceLinkReference", "Link");
+        exchange.getIn().setHeader("LinkId", "linkId");
+        exchange.getIn().setHeader("ComparisonGroup", "Comparison group");
+
+        when(aggregationHandler.getAggregationConfiguration(anyString())).thenReturn(comparisonGroupModel);
+
+        //when
+        Executable actual = () -> emailAggregationStrategy.aggregate(null, exchange);
+
+        //then
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, actual);
+        assertEquals("Mandatory configuration not present EmailLinkModel: linkId", exception.getMessage());
+    }
 }

@@ -65,9 +65,14 @@ public class EmailAggregationStrategy implements AggregationStrategy {
             throw new IllegalArgumentException("Mandatory header not present: ComparisonGroup");
         }
 
-        EmailLinkModel emailLinkModel = aggregationHandler.getAggregationConfiguration(comparisonGroup.get()).getEmailLinkModel().get(linkId.get());
+        ComparisonGroupModel comparisonGroupModel = aggregationHandler.getAggregationConfiguration(comparisonGroup.get());
+        if (comparisonGroupModel == null) {
+            throw new IllegalArgumentException("Mandatory configuration not present ComparisonGroupModel: " + comparisonGroup.get());
+        }
+
+        EmailLinkModel emailLinkModel = comparisonGroupModel.getEmailLinkModel().get(linkId.get());
         if (emailLinkModel == null) {
-            throw new IllegalArgumentException("Mandatory configuration present: EmailLinkModel :" + linkId.get());
+            throw new IllegalArgumentException("Mandatory configuration not present EmailLinkModel: " + linkId.get());
         }
 
         downloadLinks.addDownloadLink(emailLinkModel.getRank(), linkReference.get(), header(newExchange, LINK_DESCRIPTION_HEADER).orElse(null));
