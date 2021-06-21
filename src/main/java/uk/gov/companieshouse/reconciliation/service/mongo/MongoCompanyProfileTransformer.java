@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
  * Aggregate company profiles fetched from MongoDB into a {@link Results results object}.
  */
 @Component
-public class MongoAggregationTransformer {
+public class MongoCompanyProfileTransformer {
 
     /**
      * Aggregate company profiles fetched from MongoDB into a {@link Results results object}.

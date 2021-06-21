@@ -1,5 +1,7 @@
 package uk.gov.companieshouse.reconciliation.service.mongo;
 
+import com.mongodb.client.model.Aggregates;
+import com.mongodb.client.model.Projections;
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -49,8 +51,14 @@ public class MongoCompanyNumberMapperTest {
     void testFetchResultsFromMongoAndTransformIntoResourceList() throws InterruptedException {
         Results expectedResults = new Results(Collections.singletonList(new ResultModel("12345678", "ACME LIMITED")));
         mongoEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(expectedResults));
+        mongoEndpoint.expectedHeaderReceived("MongoCacheKey", "mongoCompanyProfile");
+        mongoEndpoint.expectedHeaderReceived("MongoQuery", Collections.singletonList(Aggregates.project(Projections.include("_id", "data.company_name", "data.company_status"))));
+        mongoEndpoint.expectedHeaderReceived("MongoEndpoint", "mock:fruitBasket");
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader("Description", "description");
+        exchange.getIn().setHeader("MongoCacheKey", "mongoCompanyProfile");
+        exchange.getIn().setHeader("MongoQuery", Collections.singletonList(Aggregates.project(Projections.include("_id", "data.company_name", "data.company_status"))));
+        exchange.getIn().setHeader("MongoEndpoint", "mock:fruitBasket");
         Exchange result = producerTemplate.send(exchange);
         ResourceList actual = result.getIn().getBody(ResourceList.class);
         assertEquals("description", actual.getResultDesc());

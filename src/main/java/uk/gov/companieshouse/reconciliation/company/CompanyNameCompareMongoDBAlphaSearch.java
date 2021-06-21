@@ -23,7 +23,7 @@ public class CompanyNameCompareMongoDBAlphaSearch extends RouteBuilder {
                 .setHeader("SrcDescription").constant("MongoDB - Company Profile")
                 .setHeader("MongoCacheKey").constant("{{endpoint.mongodb.company_profile.cache.key}}")
                 .setHeader("MongoQuery").constant(Collections.singletonList(Aggregates.project(Projections.include("_id", "data.company_name", "data.company_status"))))
-                .setHeader("MongoEndpoint").constant("{{endpoint.mongodb.company_profile_count}}")
+                .setHeader("MongoEndpoint").constant("{{endpoint.mongodb.company_profile_collection}}")
                 .setHeader("MongoTransformer").constant("TODO") //TODO: Extract transformer into separate route
                 .setHeader("Target").constant("{{endpoint.elasticsearch.collection}}")
                 .setHeader("TargetDescription").constant("Alpha Index")
