@@ -20,7 +20,7 @@ public class MongoCompanyNumberMapper extends RouteBuilder {
     @Override
     public void configure() throws Exception {
         from("direct:mongo-company_number-mapper")
-                .to("{{endpoint.mongodb.wrapper.company_profile.collection}}")
+                .to("{{endpoint.mongodb.wrapper.aggregation.collection}}")
                 .choice()
                 .when(header("Failed").isNotEqualTo(true))
                     .bean(MongoCompanyNumberTransformer.class)

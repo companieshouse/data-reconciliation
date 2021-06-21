@@ -15,7 +15,7 @@ public class CompanyStatusCompareMongoDBOracle extends RouteBuilder {
     public void configure() throws Exception {
         from("{{endpoint.company_status_mongo_oracle.timer}}")
                 .autoStartup("{{company_status_mongo_oracle_enabled}}")
-                .setHeader("Src").constant("{{endpoint.mongodb.wrapper.company_profile.collection}}")
+                .setHeader("Src").constant("{{endpoint.mongodb.wrapper.aggregation.collection}}")
                 .setHeader("SrcDescription").constant("MongoDB - Company Profile")
                 .setHeader("Target").constant("{{endpoint.oracle.multi}}")
                 .setHeader("TargetDescription").constant("Oracle")

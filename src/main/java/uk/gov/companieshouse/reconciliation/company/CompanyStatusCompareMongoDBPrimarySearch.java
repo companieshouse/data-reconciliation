@@ -11,7 +11,7 @@ public class CompanyStatusCompareMongoDBPrimarySearch extends RouteBuilder {
     public void configure() throws Exception {
         from("{{endpoint.company_status_mongo_primary.timer}}")
                 .autoStartup("{{company_status_mongo_primary_enabled}}")
-                .setHeader("Src").constant("{{endpoint.mongodb.wrapper.company_profile.collection}}")
+                .setHeader("Src").constant("{{endpoint.mongodb.wrapper.aggregation.collection}}")
                 .setHeader("SrcDescription").constant("MongoDB - Company Profile")
                 .setHeader("Target").constant("{{endpoint.elasticsearch.collection}}")
                 .setHeader("TargetDescription").constant("Primary Search Index")
