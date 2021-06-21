@@ -1,6 +1,10 @@
 package uk.gov.companieshouse.reconciliation.model;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * Aggregates {@link ResourceLink download links} to comparison results.

@@ -2,14 +2,15 @@ package uk.gov.companieshouse.reconciliation.function.email.aggregator;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
-import org.springframework.beans.factory.annotation.Autowired;
 import uk.gov.companieshouse.reconciliation.config.AggregationHandler;
 import uk.gov.companieshouse.reconciliation.config.ComparisonGroupModel;
 import uk.gov.companieshouse.reconciliation.config.EmailLinkModel;
 import uk.gov.companieshouse.reconciliation.model.ResourceLink;
 import uk.gov.companieshouse.reconciliation.model.ResourceLinksWrapper;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.Optional;
+import java.util.TreeSet;
 
 /**
  * Aggregates comparison messages into a {@link uk.gov.companieshouse.reconciliation.model.ResourceLinksWrapper collection of links}.
