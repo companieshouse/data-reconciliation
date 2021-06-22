@@ -73,7 +73,7 @@ public class PublisherResourceRequest {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PublisherResourceRequest that = (PublisherResourceRequest) o;
-        return expirationTimeInMillis == that.expirationTimeInMillis && failed == that.failed && Objects.equals(objectKey, that.objectKey) && Objects.equals(uploaderEndpoint, that.uploaderEndpoint) && Objects.equals(presignerEndpoint, that.presignerEndpoint) && Objects.equals(resourceDescription, that.resourceDescription) && Arrays.equals(results, that.results) && Objects.equals(comparisonGroup, that.comparisonGroup) && Objects.equals(linkId, that.linkId);
+        return expirationTimeInMillis == that.expirationTimeInMillis && failed == that.failed && Objects.equals(objectKey, that.objectKey) && Objects.equals(uploaderEndpoint, that.uploaderEndpoint) && Objects.equals(presignerEndpoint, that.presignerEndpoint) && Objects.equals(resourceDescription, that.resourceDescription) && Objects.equals(comparisonGroup, that.comparisonGroup) && Objects.equals(linkId, that.linkId);
     }
 
     @Override
