@@ -28,7 +28,6 @@ public class AggregationHandler {
      * @param groupName of the config to return
      * @return ComparisonGroupConfig with the given groupName, null otherwise
      */
-    @Validated
     public ComparisonGroupModel getAggregationConfiguration(String groupName) {
         return comparisonGroupConfigMap.get(groupName);
     }
