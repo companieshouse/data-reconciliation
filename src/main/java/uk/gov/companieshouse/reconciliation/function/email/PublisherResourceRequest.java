@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Objects;
 
 /**
- *  Request information needed to upload a file to S3
+ * Request information needed to upload a file to S3
  */
 public class PublisherResourceRequest {
 
@@ -16,9 +16,11 @@ public class PublisherResourceRequest {
     private final byte[] results;
     private final String comparisonGroup;
     private final String linkId;
+    private final boolean failed;
 
     public PublisherResourceRequest(String objectKey, long expirationTimeInMillis, String uploaderEndpoint,
-                                    String presignerEndpoint, String resourceDescription, byte[] results, String comparisonGroup, String linkId) {
+                                    String presignerEndpoint, String resourceDescription, byte[] results, String comparisonGroup, String linkId, boolean failed) {
+
         this.objectKey = objectKey;
         this.expirationTimeInMillis = expirationTimeInMillis;
         this.uploaderEndpoint = uploaderEndpoint;
@@ -27,6 +29,7 @@ public class PublisherResourceRequest {
         this.results = results;
         this.comparisonGroup = comparisonGroup;
         this.linkId = linkId;
+        this.failed = failed;
     }
 
     public String getObjectKey() {
@@ -61,17 +64,21 @@ public class PublisherResourceRequest {
         return linkId;
     }
 
+    public boolean isFailed() {
+        return failed;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PublisherResourceRequest that = (PublisherResourceRequest) o;
-        return expirationTimeInMillis == that.expirationTimeInMillis && Objects.equals(objectKey, that.objectKey) && Objects.equals(uploaderEndpoint, that.uploaderEndpoint) && Objects.equals(presignerEndpoint, that.presignerEndpoint) && Objects.equals(resourceDescription, that.resourceDescription) && Arrays.equals(results, that.results) && Objects.equals(comparisonGroup, that.comparisonGroup) && Objects.equals(linkId, that.linkId);
+        return expirationTimeInMillis == that.expirationTimeInMillis && failed == that.failed && Objects.equals(objectKey, that.objectKey) && Objects.equals(uploaderEndpoint, that.uploaderEndpoint) && Objects.equals(presignerEndpoint, that.presignerEndpoint) && Objects.equals(resourceDescription, that.resourceDescription) && Arrays.equals(results, that.results) && Objects.equals(comparisonGroup, that.comparisonGroup) && Objects.equals(linkId, that.linkId);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(objectKey, expirationTimeInMillis, uploaderEndpoint, presignerEndpoint, resourceDescription, comparisonGroup, linkId);
+        int result = Objects.hash(objectKey, expirationTimeInMillis, uploaderEndpoint, presignerEndpoint, resourceDescription, comparisonGroup, linkId, failed);
         result = 31 * result + Arrays.hashCode(results);
         return result;
     }

@@ -1,7 +1,5 @@
 package uk.gov.companieshouse.reconciliation.config;
 
-import org.springframework.validation.annotation.Validated;
-
 import javax.validation.constraints.NotNull;
 import java.util.Map;
 

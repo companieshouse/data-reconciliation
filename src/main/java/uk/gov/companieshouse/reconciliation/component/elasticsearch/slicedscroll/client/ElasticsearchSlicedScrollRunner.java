@@ -47,7 +47,7 @@ public class ElasticsearchSlicedScrollRunner implements Runnable {
                 scrollSearch();
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new ElasticsearchException(e);
         }
     }
 

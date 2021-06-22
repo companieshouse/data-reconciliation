@@ -5,9 +5,7 @@ import org.junit.jupiter.api.Test;
 import uk.gov.companieshouse.reconciliation.function.compare_collection.entity.ResourceList;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -25,11 +23,9 @@ public class MongoDistinctToResourceListTransformerTest {
     void transformDistinctSelectionIntoResourceList() {
         //given
         List<String> results = Arrays.asList("12345678", null, "ABCD1234");
-        Map<String, Object> headers = new HashMap<>();
 
         //when
-        transformer.transform(results, "description", "targetHeader", headers);
-        ResourceList actual = (ResourceList) headers.get("targetHeader");
+        ResourceList actual = transformer.transform(results, "description");
 
         //then
         assertTrue(actual.contains("12345678"));

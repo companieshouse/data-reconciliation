@@ -15,6 +15,7 @@ public class ElasticsearchAlphaIndexRoute extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
+        errorHandler(noErrorHandler());
         from("direct:elasticsearch-alpha")
                 .bean(ElasticsearchAlphaIndexTransformer.class);
     }

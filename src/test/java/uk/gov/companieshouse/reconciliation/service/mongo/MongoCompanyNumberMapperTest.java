@@ -22,6 +22,7 @@ import uk.gov.companieshouse.reconciliation.model.Results;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @CamelSpringBootTest
@@ -49,12 +50,19 @@ public class MongoCompanyNumberMapperTest {
         Results expectedResults = new Results(Collections.singletonList(new ResultModel("12345678", "ACME LIMITED")));
         mongoEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(expectedResults));
         Exchange exchange = new DefaultExchange(context);
-        exchange.getIn().setHeader("MongoDescription", "description");
-        exchange.getIn().setHeader("MongoTargetHeader", "target");
+        exchange.getIn().setHeader("Description", "description");
         Exchange result = producerTemplate.send(exchange);
-        ResourceList actual = result.getIn().getHeader("target", ResourceList.class);
+        ResourceList actual = result.getIn().getBody(ResourceList.class);
         assertEquals("description", actual.getResultDesc());
         assertTrue(actual.contains("12345678"));
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    void testSkipTransformationIfFailureHeaderSet() throws InterruptedException {
+        mongoEndpoint.returnReplyHeader("Failed", ExpressionBuilder.constantExpression(true));
+        Exchange result = producerTemplate.send(new DefaultExchange(context));
+        assertNull(result.getProperty("CamelExceptionCaught"));
         MockEndpoint.assertIsSatisfied(context);
     }
 }

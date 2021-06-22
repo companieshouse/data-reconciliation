@@ -1,7 +1,8 @@
 package uk.gov.companieshouse.reconciliation.service.aws;
 
-import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
+import software.amazon.awssdk.awscore.exception.AwsServiceException;
+import uk.gov.companieshouse.reconciliation.common.RetryableRoute;
 import uk.gov.companieshouse.reconciliation.function.email.PublisherResourceRequest;
 
 /**
@@ -9,13 +10,19 @@ import uk.gov.companieshouse.reconciliation.function.email.PublisherResourceRequ
  * Assigns a pre-signed download link for each request than puts that url into a ResourceLinkReference header.
  */
 @Component
-public class S3PublisherRoute extends RouteBuilder {
+public class S3PublisherRoute extends RetryableRoute {
 
     @Override
-    public void configure() throws Exception {
+    public void configure() {
+        super.configure();
         from("direct:s3-publisher")
+                .onException(AwsServiceException.class)
+                    .handled(true)
+                    .setHeader("Failed").constant(true)
+                .end()
                 .toD("${header.Upload}")
                 .toD("${header.Presign}")
-                .setHeader("ResourceLinkReference", body());
+                .setHeader("ResourceLinkReference", body())
+                .end();
     }
 }

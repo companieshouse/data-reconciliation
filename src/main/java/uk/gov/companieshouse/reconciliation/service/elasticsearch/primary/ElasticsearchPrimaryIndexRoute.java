@@ -15,6 +15,7 @@ public class ElasticsearchPrimaryIndexRoute extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
+        errorHandler(noErrorHandler());
         from("direct:elasticsearch-primary")
                 .bean(ElasticsearchPrimaryIndexTransformer.class);
     }

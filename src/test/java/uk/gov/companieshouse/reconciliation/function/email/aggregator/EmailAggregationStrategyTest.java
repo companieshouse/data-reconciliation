@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -112,7 +113,30 @@ public class EmailAggregationStrategyTest {
     }
 
     @Test
-    void testThrowIllegalArgumentExceptionIfResourceLinkAbsent() {
+    void testCorrectlyUseANullLinkWhenResourceLinkReferenceAbsentButResourceLinkDescriptionIsPresent() {
+        //given
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader("ResourceLinkDescription", "Description");
+        exchange.getIn().setHeader("ComparisonGroup", "any");
+        exchange.getIn().setHeader("LinkId", "any");
+
+        //when
+        when(aggregationHandler.getAggregationConfiguration(anyString())).thenReturn(comparisonGroupModel);
+        when(comparisonGroupModel.getEmailLinkModel()).thenReturn(emailLinkModelMap);
+        when(emailLinkModelMap.get(anyString())).thenReturn(emailLinkModel);
+        when(emailLinkModel.getRank()).thenReturn((short)10);
+
+        Exchange result = emailAggregationStrategy.aggregate(null, exchange);
+        ResourceLink wrapper = result.getIn().getHeader("ResourceLinks", ResourceLinksWrapper.class).getDownloadLinkList().get(0);
+
+        //then
+        assertEquals(exchange, result);
+        assertNull(wrapper.getDownloadLink());
+        assertEquals("Description", wrapper.getDescription());
+    }
+
+    @Test
+    void testThrowIllegalStateExceptionIfLinkReferenceAndDescriptionAbsent() {
         //given
         Exchange exchange = new DefaultExchange(context);
 
@@ -120,8 +144,7 @@ public class EmailAggregationStrategyTest {
         Executable actual = () -> emailAggregationStrategy.aggregate(null, exchange);
 
         //then
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, actual);
-        assertEquals("Mandatory header not present: ResourceLinkReference", exception.getMessage());
+        assertThrows(IllegalStateException.class, actual);
     }
 
     @Test

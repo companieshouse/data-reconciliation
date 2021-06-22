@@ -2,6 +2,8 @@ package uk.gov.companieshouse.reconciliation.function.email.aggregator;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.gov.companieshouse.reconciliation.config.AggregationHandler;
 import uk.gov.companieshouse.reconciliation.config.ComparisonGroupModel;
 import uk.gov.companieshouse.reconciliation.config.EmailLinkModel;
@@ -16,6 +18,8 @@ import java.util.Optional;
  * Aggregates comparison messages into a {@link uk.gov.companieshouse.reconciliation.model.ResourceLinksWrapper collection of links}.
  */
 public class EmailAggregationStrategy implements AggregationStrategy {
+
+    public static final Logger LOGGER = LoggerFactory.getLogger(EmailAggregationStrategy.class);
 
     private static final String RESOURCE_LINKS_HEADER = "ResourceLinks";
     private static final String LINK_REFERENCE_HEADER = "ResourceLinkReference";
@@ -49,11 +53,21 @@ public class EmailAggregationStrategy implements AggregationStrategy {
     @Override
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         Optional<String> linkReference = header(newExchange, LINK_REFERENCE_HEADER);
+        Optional<String> linkDescription = header(newExchange, LINK_DESCRIPTION_HEADER);
+
+        // linkReference can be null if linkDescription has been provided
         if (! linkReference.isPresent()) {
-            throw new IllegalArgumentException("Mandatory header not present: ResourceLinkReference");
-        };
+            if (! linkDescription.isPresent()) {
+                throw new IllegalStateException("Neither a link description nor a link reference are present");
+            }
+
+            LOGGER.warn("ResourceLinkReference is absent");
+        }
+
         //on first invocation, oldExchange will be null as this is the first message that we are aggregating
         ResourceLinksWrapper downloadLinks = createOrGetResourceLinks(oldExchange);
+
+        // Always push ResourceLinksWrapper into newExchange
         newExchange.getIn().setHeader(RESOURCE_LINKS_HEADER, downloadLinks);
 
         Optional<String> linkId = header(newExchange, LINK_ID_HEADER);
@@ -76,7 +90,7 @@ public class EmailAggregationStrategy implements AggregationStrategy {
             throw new IllegalArgumentException("Mandatory configuration not present EmailLinkModel: " + linkId.get());
         }
 
-        downloadLinks.addDownloadLink(emailLinkModel.getRank(), linkReference.get(), header(newExchange, LINK_DESCRIPTION_HEADER).orElse(null));
+        downloadLinks.addDownloadLink(emailLinkModel.getRank(), linkReference.orElse(null), linkDescription.orElse(null));
 
         return newExchange;
     }

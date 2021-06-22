@@ -1,8 +1,10 @@
 package uk.gov.companieshouse.reconciliation.service.elasticsearch;
 
-import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.component.caffeine.CaffeineConstants;
 import org.springframework.stereotype.Component;
+import uk.gov.companieshouse.reconciliation.common.RetryableRoute;
+import uk.gov.companieshouse.reconciliation.component.elasticsearch.slicedscroll.client.ElasticsearchException;
 
 /**
  * Retrieves hits from an Elasticsearch search index.<br>
@@ -18,11 +20,17 @@ import org.springframework.stereotype.Component;
  * Elasticsearch.
  */
 @Component
-public class ElasticsearchCollectionRoute extends RouteBuilder {
+public class ElasticsearchCollectionRoute extends RetryableRoute {
 
     @Override
-    public void configure() throws Exception {
+    public void configure() {
+        super.configure();
         from("direct:elasticsearch-collection")
+                .onException(ElasticsearchException.class)
+                    .handled(true)
+                    .setHeader("Failed").constant(true)
+                    .log(LoggingLevel.ERROR, "Failed to retrieve results from Elasticsearch")
+                .end()
                 .setHeader(CaffeineConstants.ACTION, constant(CaffeineConstants.ACTION_GET))
                 .setHeader(CaffeineConstants.KEY, simple("${header.ElasticsearchCacheKey}"))
                 .to("{{endpoint.cache}}")

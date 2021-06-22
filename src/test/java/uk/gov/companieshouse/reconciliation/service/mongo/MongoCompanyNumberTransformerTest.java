@@ -8,8 +8,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.reconciliation.model.Results;
 import uk.gov.companieshouse.reconciliation.service.transformer.ResultsToCompanyNumberTransformer;
 
-import java.util.Collections;
-
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -27,10 +25,10 @@ public class MongoCompanyNumberTransformerTest {
     @Test
     void testResultsIsTransformedIntoResourceListUsingResultsTransformer() {
         // when
-        mongoCompanyNumberTransformer.transform(results, "description", "header", Collections.emptyMap());
+        mongoCompanyNumberTransformer.transform(results, "description");
 
         // then
-        verify(resultsToCompanyNumberTransformer).transform(results, "description", "header", Collections.emptyMap());
+        verify(resultsToCompanyNumberTransformer).transform(results, "description");
     }
 
 }

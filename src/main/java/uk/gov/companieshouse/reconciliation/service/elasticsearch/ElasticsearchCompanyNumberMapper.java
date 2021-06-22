@@ -9,12 +9,11 @@ import org.springframework.stereotype.Component;
  * <br>
  * IN:<br>
  * <br>
- * header(ElasticsearchDescription): A description of the results produced by this pipeline.<br>
- * header(ElasticsearchTargetHeader): The target header to which results will be mapped.<br>
+ * header(Description): A description of the results produced by this pipeline.<br>
  * <br>
  * OUT:<br>
  * <br>
- * *header(ElasticsearchTargetHeader): Company numbers of company profiles fetched from Elasticsearch.<br>
+ * body(): Company numbers of company profiles fetched from Elasticsearch.<br>
  */
 
 @Component
@@ -24,6 +23,9 @@ public class ElasticsearchCompanyNumberMapper extends RouteBuilder {
     public void configure() throws Exception {
         from("direct:elasticsearch-company_number-mapper")
                 .to("{{endpoint.elasticsearch.collection}}")
-                .bean(ElasticsearchCompanyNumberTransformer.class);
+                .choice()
+                .when(header("Failed").isNotEqualTo(true))
+                    .bean(ElasticsearchCompanyNumberTransformer.class)
+                .end();
     }
 }

@@ -1,7 +1,5 @@
 package uk.gov.companieshouse.reconciliation.model;
 
-import java.util.Objects;
-
 /**
  * A link to a resource and a description of that resource.
  */
