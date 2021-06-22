@@ -1,20 +1,38 @@
 package uk.gov.companieshouse.reconciliation.model;
 
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * Aggregates {@link ResourceLink download links} to comparison results.
  */
 public class ResourceLinksWrapper {
 
-    private final Set<ResourceLink> downloadLinkList;
+    private final List<ResourceLink> downloadLinkList;
+    private Comparator<ResourceLink> comparator;
 
-    public ResourceLinksWrapper(Set<ResourceLink> downloadLinkList) {
+    /**
+     * Creates a new ResourceLinksWrapper.
+     *
+     * @param downloadLinkList of resource links
+     */
+    public ResourceLinksWrapper(List<ResourceLink> downloadLinkList) {
         this.downloadLinkList = downloadLinkList;
+    }
+
+    /**
+     * Creates a new ResourceLinksWrapper.
+     *
+     * <p>The Comparator will be used to sort the links contained in this wrapper.</p>
+     *
+     * @param downloadLinkList of resource links
+     * @param comparator to sort links
+     */
+    public ResourceLinksWrapper(List<ResourceLink> downloadLinkList, Comparator<ResourceLink> comparator) {
+        this.downloadLinkList = downloadLinkList;
+        this.comparator = comparator;
     }
 
     /**
@@ -31,7 +49,10 @@ public class ResourceLinksWrapper {
      * @return A view of all {@link ResourceLink links} that belong to this collection.
      */
     public List<ResourceLink> getDownloadLinkList() {
-        return Collections.unmodifiableList(new ArrayList<>(downloadLinkList));
+        if (comparator != null) {
+            Collections.sort(downloadLinkList, comparator);
+        }
+        return Collections.unmodifiableList(downloadLinkList);
     }
 
     @Override

@@ -16,9 +16,8 @@ import uk.gov.companieshouse.reconciliation.config.EmailLinkModel;
 import uk.gov.companieshouse.reconciliation.model.ResourceLink;
 import uk.gov.companieshouse.reconciliation.model.ResourceLinksWrapper;
 
-import java.util.Comparator;
+import java.util.ArrayList;
 import java.util.Map;
-import java.util.TreeSet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -77,7 +76,7 @@ public class EmailAggregationStrategyTest {
     @Test
     void testCorrectlyAggregateMultipleResourceLinks() {
         //given
-        ResourceLinksWrapper resourceLinksWrapper = new ResourceLinksWrapper(new TreeSet<>(Comparator.comparing(ResourceLink::getRank)));
+        ResourceLinksWrapper resourceLinksWrapper = new ResourceLinksWrapper(new ArrayList<>());
         resourceLinksWrapper.addDownloadLink((short) 10, "Link1", "Description1");
 
         Exchange oldExchange = new DefaultExchange(context);

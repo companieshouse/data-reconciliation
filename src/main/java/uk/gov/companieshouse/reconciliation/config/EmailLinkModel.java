@@ -1,13 +1,17 @@
 package uk.gov.companieshouse.reconciliation.config;
 
-public class EmailLinkModel {
-    private short rank;
+import javax.validation.constraints.NotNull;
 
-    public void setRank(short rank) {
+public class EmailLinkModel {
+
+    @NotNull
+    private Short rank;
+
+    public void setRank(Short rank) {
         this.rank = rank;
     }
 
-    public short getRank() {
+    public Short getRank() {
         return rank;
     }
 }

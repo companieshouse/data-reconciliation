@@ -1,5 +1,8 @@
 package uk.gov.companieshouse.reconciliation.config;
 
+import org.springframework.validation.annotation.Validated;
+
+import javax.validation.constraints.NotNull;
 import java.util.Map;
 
 /**
@@ -7,6 +10,7 @@ import java.util.Map;
  */
 public class AggregationHandler {
 
+    @NotNull
     private Map<String, ComparisonGroupModel> comparisonGroupConfigMap;
 
     /**
@@ -24,6 +28,7 @@ public class AggregationHandler {
      * @param groupName of the config to return
      * @return ComparisonGroupConfig with the given groupName, null otherwise
      */
+    @Validated
     public ComparisonGroupModel getAggregationConfiguration(String groupName) {
         return comparisonGroupConfigMap.get(groupName);
     }
