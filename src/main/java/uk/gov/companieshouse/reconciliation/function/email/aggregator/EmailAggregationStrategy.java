@@ -10,9 +10,9 @@ import uk.gov.companieshouse.reconciliation.config.EmailLinkModel;
 import uk.gov.companieshouse.reconciliation.model.ResourceLink;
 import uk.gov.companieshouse.reconciliation.model.ResourceLinksWrapper;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Optional;
+import java.util.TreeSet;
 
 /**
  * Aggregates comparison messages into a {@link uk.gov.companieshouse.reconciliation.model.ResourceLinksWrapper collection of links}.
@@ -99,7 +99,7 @@ public class EmailAggregationStrategy implements AggregationStrategy {
         ResourceLinksWrapper resourceLinks;
 
         if (exchange == null || (resourceLinks = exchange.getIn().getHeader(RESOURCE_LINKS_HEADER, ResourceLinksWrapper.class)) == null) {
-            resourceLinks = new ResourceLinksWrapper(new ArrayList<>(), Comparator.comparing(ResourceLink::getRank));
+            resourceLinks = new ResourceLinksWrapper(new TreeSet<>(Comparator.comparing(ResourceLink::getRank)));
         }
 
         return resourceLinks;

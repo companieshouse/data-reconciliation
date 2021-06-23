@@ -110,9 +110,6 @@ public class S3EmailPublisherAggregationStrategyTest {
     @Test
     void testIllegalArgumentExceptionIsThrowIfComparisonGroupModelAbsent() {
         // given
-        //Exchange prev = new DefaultExchange(context);
-        //prev.getIn().setHeader("PublisherResourceRequests", new PublisherResourceRequestWrapper(new ArrayList<>(Collections.singletonList(new PublisherResourceRequest("key", 300L, "uploaderEndpoint", "presignerEndpoint", "resourceLinkDescription", "results".getBytes(), "fakegroup", "linkId")))));
-
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader("ComparisonGroup", "group");
 

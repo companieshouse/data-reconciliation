@@ -19,6 +19,8 @@ import uk.gov.companieshouse.reconciliation.model.ResourceLink;
 import uk.gov.companieshouse.reconciliation.model.ResourceLinksWrapper;
 
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.TreeSet;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -51,7 +53,7 @@ public class KafkaRouteTest {
         kafkaEndpoint.expectedMessageCount(1);
         shutdownEndpoint.expectedMessageCount(1);
         Exchange exchange = new DefaultExchange(context);
-        exchange.getIn().setHeader("ResourceLinks", new ResourceLinksWrapper(Collections.singletonList(new ResourceLink((short)1, "link", "description"))));
+        exchange.getIn().setHeader("ResourceLinks", new ResourceLinksWrapper(Collections.unmodifiableSet(new TreeSet<ResourceLink>(Comparator.comparing(ResourceLink::getRank)){{add(new ResourceLink((short)1, "link", "description"));}})));
         exchange.getIn().setHeader("ComparisonGroup", "group");
         Exchange actual = kafkaRouteProducer.send(exchange);
         assertNull(actual.getIn().getHeader("Content-Type"));
@@ -67,7 +69,7 @@ public class KafkaRouteTest {
         kafkaEndpoint.expectedMessageCount(1);
         shutdownEndpoint.expectedMessageCount(1);
         Exchange exchange = new DefaultExchange(context);
-        exchange.getIn().setHeader("ResourceLinks", new ResourceLinksWrapper(Collections.singletonList(new ResourceLink((short)1, "link", "description"))));
+        exchange.getIn().setHeader("ResourceLinks", new ResourceLinksWrapper(Collections.unmodifiableSet(new TreeSet<ResourceLink>(Comparator.comparing(ResourceLink::getRank)){{add(new ResourceLink((short)1, "link", "description"));}})));
         exchange.getIn().setHeader("ComparisonGroup", "group");
         Exchange actual = kafkaRouteProducer.send(exchange);
         assertNull(actual.getIn().getHeader("Content-Type"));

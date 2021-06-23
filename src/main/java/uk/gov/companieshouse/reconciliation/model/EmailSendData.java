@@ -1,6 +1,6 @@
 package uk.gov.companieshouse.reconciliation.model;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * Data used by the CHS notification API to render a template.
@@ -10,9 +10,9 @@ public class EmailSendData {
     private final String to;
     private final String subject;
     private final String date;
-    private final List<ResourceLink> resourceLinks;
+    private final Set<ResourceLink> resourceLinks;
 
-    public EmailSendData(String to, String subject, String date, List<ResourceLink> resourceLinks) {
+    public EmailSendData(String to, String subject, String date, Set<ResourceLink> resourceLinks) {
         this.to = to;
         this.subject = subject;
         this.date = date;
@@ -43,7 +43,7 @@ public class EmailSendData {
     /**
      * @return Tuple of {@link ResourceLink links to results} and a description.
      */
-    public List<ResourceLink> getResourceLinks() {
+    public Set<ResourceLink> getResourceLinks() {
         return resourceLinks;
     }
 
@@ -56,7 +56,7 @@ public class EmailSendData {
         private String to;
         private String subject;
         private String date;
-        private List<ResourceLink> resourceLinkList;
+        private Set<ResourceLink> resourceLinkList;
 
         public Builder withTo(String to) {
             this.to = to;
@@ -73,7 +73,7 @@ public class EmailSendData {
             return this;
         }
 
-        public Builder withResourceLinks(List<ResourceLink> resourceLinkList) {
+        public Builder withResourceLinks(Set<ResourceLink> resourceLinkList) {
             this.resourceLinkList = resourceLinkList;
             return this;
         }

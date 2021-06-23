@@ -16,8 +16,9 @@ import uk.gov.companieshouse.reconciliation.config.EmailLinkModel;
 import uk.gov.companieshouse.reconciliation.model.ResourceLink;
 import uk.gov.companieshouse.reconciliation.model.ResourceLinksWrapper;
 
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Map;
+import java.util.TreeSet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -65,7 +66,7 @@ public class EmailAggregationStrategyTest {
         when(emailLinkModel.getRank()).thenReturn((short)10);
 
         Exchange result = emailAggregationStrategy.aggregate(null, exchange);
-        ResourceLink wrapper = result.getIn().getHeader("ResourceLinks", ResourceLinksWrapper.class).getDownloadLinkList().get(0);
+        ResourceLink wrapper = result.getIn().getHeader("ResourceLinks", ResourceLinksWrapper.class).getDownloadLinkSet().stream().findFirst().get();
 
         //then
         assertEquals(exchange, result);
@@ -77,7 +78,7 @@ public class EmailAggregationStrategyTest {
     @Test
     void testCorrectlyAggregateMultipleResourceLinks() {
         //given
-        ResourceLinksWrapper resourceLinksWrapper = new ResourceLinksWrapper(new ArrayList<>());
+        ResourceLinksWrapper resourceLinksWrapper = new ResourceLinksWrapper(new TreeSet<>(Comparator.comparing(ResourceLink::getRank)));
         resourceLinksWrapper.addDownloadLink((short) 10, "Link1", "Description1");
 
         Exchange oldExchange = new DefaultExchange(context);
@@ -93,23 +94,23 @@ public class EmailAggregationStrategyTest {
         newExchange.getIn().setHeader("ComparisonGroup", "Company Profile");
         newExchange.getIn().setHeader("LinkId", "link-id-2");
 
-        //when
         when(aggregationHandler.getAggregationConfiguration(anyString())).thenReturn(comparisonGroupModel);
         when(comparisonGroupModel.getEmailLinkModel()).thenReturn(emailLinkModelMap);
         when(emailLinkModelMap.get("link-id-2")).thenReturn(emailLinkModel);
         when(emailLinkModel.getRank()).thenReturn((short)20);
 
+        //when
         Exchange result = emailAggregationStrategy.aggregate(oldExchange, newExchange);
         ResourceLinksWrapper wrapper = result.getIn().getHeader("ResourceLinks", ResourceLinksWrapper.class);
 
-        ResourceLink actual = wrapper.getDownloadLinkList().get(1);
+        ResourceLink actual = wrapper.getDownloadLinkSet().stream().filter(resourceLink -> resourceLink.getRank() == 20).findFirst().get();
 
         //then
         assertEquals(newExchange, result);
         assertEquals((short)20, actual.getRank());
         assertEquals("Link2", actual.getDownloadLink());
         assertEquals("Description2", actual.getDescription());
-        assertEquals(2, wrapper.getDownloadLinkList().size());
+        assertEquals(2, wrapper.getDownloadLinkSet().size());
     }
 
     @Test
@@ -120,14 +121,15 @@ public class EmailAggregationStrategyTest {
         exchange.getIn().setHeader("ComparisonGroup", "any");
         exchange.getIn().setHeader("LinkId", "any");
 
-        //when
         when(aggregationHandler.getAggregationConfiguration(anyString())).thenReturn(comparisonGroupModel);
         when(comparisonGroupModel.getEmailLinkModel()).thenReturn(emailLinkModelMap);
         when(emailLinkModelMap.get(anyString())).thenReturn(emailLinkModel);
         when(emailLinkModel.getRank()).thenReturn((short)10);
 
+        //when
         Exchange result = emailAggregationStrategy.aggregate(null, exchange);
-        ResourceLink wrapper = result.getIn().getHeader("ResourceLinks", ResourceLinksWrapper.class).getDownloadLinkList().get(0);
+        ResourceLink wrapper = result.getIn().getHeader("ResourceLinks", ResourceLinksWrapper.class)
+                .getDownloadLinkSet().stream().filter(resourceLink -> resourceLink.getRank() == 10).findFirst().get();
 
         //then
         assertEquals(exchange, result);

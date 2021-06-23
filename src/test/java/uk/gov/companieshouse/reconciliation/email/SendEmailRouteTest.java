@@ -65,7 +65,7 @@ public class SendEmailRouteTest {
                 interceptSendToEndpoint("mock:kafka-endpoint")
                         .process(exchange -> {
                             ResourceLinksWrapper downloadsList = exchange.getIn().getHeader("ResourceLinks", ResourceLinksWrapper.class);
-                            assertEquals(2, downloadsList.getDownloadLinkList().size());
+                            assertEquals(2, downloadsList.getDownloadLinkSet().size());
                         });
             }
         });

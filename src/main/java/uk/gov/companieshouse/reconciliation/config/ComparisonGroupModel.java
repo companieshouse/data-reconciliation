@@ -4,6 +4,11 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.Map;
 
+/**
+ * Model that defines a logical grouping of {@link EmailLinkModel}'s.
+ *
+ * Note that this model also defines a size that represents the number of email link models in this model.
+ */
 public class ComparisonGroupModel {
 
     @NotEmpty
@@ -12,6 +17,11 @@ public class ComparisonGroupModel {
     @NotNull
     private Map<String, EmailLinkModel> emailLinkModel;
 
+    /**
+     * Returns the group name corresponding to the group name of a Comparison group.
+     *
+     * @return group name of this model
+     */
     public String getGroupName() {
         return groupName;
     }
@@ -20,10 +30,18 @@ public class ComparisonGroupModel {
         this.groupName = groupName;
     }
 
+    /**
+     * @return size representing the number email link models in a comparison group
+     */
     public int getSize() {
         return emailLinkModel.size();
     }
 
+    /**
+     * Returns Map of {@link EmailLinkModel}'s indexed by emailId.
+     *
+     * @return map
+     */
     public Map<String, EmailLinkModel> getEmailLinkModel() {
         return emailLinkModel;
     }

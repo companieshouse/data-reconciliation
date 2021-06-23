@@ -71,7 +71,7 @@ public class KafkaRoute extends RetryableRoute {
                                     .withTo(emailRecipientList)
                                     .withSubject(exchange.getIn().getHeader("EmailSubject", String.class))
                                     .withResourceLinks(exchange.getIn()
-                                            .getHeader("ResourceLinks", ResourceLinksWrapper.class).getDownloadLinkList())
+                                            .getHeader("ResourceLinks", ResourceLinksWrapper.class).getDownloadLinkSet())
                                     .withDate(exchange.getIn().getHeader("CompletionDate", String.class))
                                     .build()
                     )
