@@ -4,9 +4,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
 
-public class InsolvencyResults {
+public class InsolvencyResults implements ResultAggregatable<InsolvencyResultModel>{
 
-    private Collection<InsolvencyResultModel> insolvencyResultModels;
+    private final Collection<InsolvencyResultModel> insolvencyResultModels;
 
     public InsolvencyResults(Collection<InsolvencyResultModel> insolvencyResultModels) {
         this.insolvencyResultModels = insolvencyResultModels;
@@ -16,7 +16,7 @@ public class InsolvencyResults {
         insolvencyResultModels.add(insolvencyResultModel);
     }
 
-    public Collection<InsolvencyResultModel> getInsolvencyResultModels() {
+    public Collection<InsolvencyResultModel> getResultModels() {
         return Collections.unmodifiableCollection(insolvencyResultModels);
     }
 

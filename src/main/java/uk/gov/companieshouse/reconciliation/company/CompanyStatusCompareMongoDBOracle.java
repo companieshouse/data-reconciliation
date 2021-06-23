@@ -24,7 +24,7 @@ public class CompanyStatusCompareMongoDBOracle extends RouteBuilder {
                 .setHeader("MongoCacheKey").constant("{{endpoint.mongodb.company_profile.cache.key}}")
                 .setHeader("MongoQuery").constant(Collections.singletonList(Aggregates.project(Projections.include("_id", "data.company_name", "data.company_status"))))
                 .setHeader("MongoEndpoint").constant("{{endpoint.mongodb.company_profile_collection}}")
-                .setHeader("MongoTransformer").constant("TODO") //TODO: Extract transformer into separate route
+                .setHeader("MongoTransformer").constant("{{transformer.mongo.company_profile}}")
                 .setHeader("Target").constant("{{endpoint.oracle.multi}}")
                 .setHeader("TargetDescription").constant("Oracle")
                 .setHeader("OracleQuery").constant("{{queries.oracle.company_status}}")

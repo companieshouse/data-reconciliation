@@ -2,7 +2,7 @@ package uk.gov.companieshouse.reconciliation.function.compare_results.transforme
 
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.reconciliation.function.compare_results.mapper.CompanyResultsMappable;
-import uk.gov.companieshouse.reconciliation.model.Results;
+import uk.gov.companieshouse.reconciliation.model.ResultAggregatable;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -10,34 +10,36 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Compare two {@link Results results objects} and record any differences for each result with a
+ * Compare two {@link ResultAggregatable results objects} and record any differences for each result with a
  * matching ID.
  */
 @Component
 public class CompareFieldsResultsTransformer {
 
     /**
-     * Compare two {@link Results results objects} and record any differences for each result with a
+     * Compare two {@link ResultAggregatable results objects} and record any differences for each result with a
      * matching ID.
      *
-     * @param srcResults        A {@link Results results object} containing data retrieved from one
+     * @param srcResults        A {@link ResultAggregatable results object} containing data retrieved from one
      *                          endpoint.
-     * @param srcDescription    A description of the first endpoint from which {@link Results
+     * @param srcDescription    A description of the first endpoint from which {@link ResultAggregatable
      *                          results} have been retrieved.
-     * @param targetResults     A {@link Results results object} containing data retrieved from
+     * @param targetResults     A {@link ResultAggregatable results object} containing data retrieved from
      *                          another endpoint.
-     * @param targetDescription A description of the second endpoint from which {@link Results
+     * @param targetDescription A description of the second endpoint from which {@link ResultAggregatable
      *                          results} have been retrieved.
      * @param recordKey         A description of the type of data being compared.
+     * @param mapper            A {@link CompanyResultsMappable mapper} used to transform each object into a data
+     *                          structure on which the intersection will be performed and comparisons will be made.
      * @return A {@link List list} containing {@link Map company number and data name-value
      * pairings}.
      */
-    public List<Map<String, Object>> transform(Results srcResults,
+    public <T> List<Map<String, Object>> transform(ResultAggregatable<T> srcResults,
                                                String srcDescription,
-                                               Results targetResults,
+                                               ResultAggregatable<T> targetResults,
                                                String targetDescription,
                                                String recordKey,
-                                               CompanyResultsMappable mapper) {
+                                               CompanyResultsMappable<T> mapper) {
 
         // Calculate intersection of both Results objects.
         // Remap Results objects to maps of company number and company name pairings.

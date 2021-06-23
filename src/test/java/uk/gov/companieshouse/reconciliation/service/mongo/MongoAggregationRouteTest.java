@@ -121,13 +121,16 @@ public class MongoAggregationRouteTest {
     void testSetFailedHeaderIfMongoExceptionThrown() throws InterruptedException {
         //given
         cache.expectedHeaderValuesReceivedInAnyOrder(CaffeineConstants.ACTION, CaffeineConstants.ACTION_GET);
-        cache.expectedHeaderValuesReceivedInAnyOrder(CaffeineConstants.KEY, "mongoCompanyProfile");
+        cache.expectedHeaderValuesReceivedInAnyOrder(CaffeineConstants.KEY, "mongoCacheKey");
         cache.returnReplyHeader(CaffeineConstants.ACTION_HAS_RESULT, ExpressionBuilder.constantExpression(false));
         mongoEndpoint.whenAnyExchangeReceived(exchange -> {
             throw new MongoException("Error");
         });
         mongoEndpoint.expectedBodyReceived().constant(Collections.singletonList(Aggregates.project(Projections.include("_id", "data.company_name", "data.company_status"))));
         Exchange exchange = new DefaultExchange(camelContext);
+        exchange.getIn().setHeader("MongoCacheKey", "mongoCacheKey");
+        exchange.getIn().setHeader("MongoEndpoint", "mock:myMongoEndpoint");
+        exchange.getIn().setHeader("MongoQuery", Collections.singletonList(Aggregates.project(Projections.include("_id", "data.company_name", "data.company_status"))));
 
         //when
         Exchange result = template.send(exchange);

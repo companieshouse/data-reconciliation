@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
 
-public class Results {
+public class Results implements ResultAggregatable<ResultModel> {
 
     private final Collection<ResultModel> resultModels;
 
