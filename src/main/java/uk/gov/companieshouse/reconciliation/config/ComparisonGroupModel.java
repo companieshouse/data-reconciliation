@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * Model that defines a logical grouping of {@link EmailLinkModel}'s.
+ * Model that defines a logical grouping of {@link EmailLinkModel}.
  *
  * Note that this model also defines a size that represents the number of email link models in this model.
  */
@@ -19,7 +19,7 @@ public class ComparisonGroupModel {
     private Map<String, EmailLinkModel> emailLinkModel;
 
     /**
-     * Returns the group name corresponding to the group name of a Comparison group.
+     * Returns the group name corresponding to the group name of a comparison group.
      *
      * @return group name of this model
      */
@@ -42,7 +42,7 @@ public class ComparisonGroupModel {
     }
 
     /**
-     * Returns Map of {@link EmailLinkModel}'s indexed by emailId.
+     * Returns Map of {@link EmailLinkModel} indexed by emailId.
      *
      * @return map
      */

@@ -5,7 +5,7 @@ import uk.gov.companieshouse.reconciliation.model.ResourceLink;
 import javax.validation.constraints.NotNull;
 
 /**
- * Email link model that defines a rank that can be used to order {@link ResourceLink}'s.
+ * Email link model that defines a rank that can be used to order {@link ResourceLink}.
  */
 public class EmailLinkModel {
 
