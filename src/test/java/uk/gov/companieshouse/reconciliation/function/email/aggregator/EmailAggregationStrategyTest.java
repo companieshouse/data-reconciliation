@@ -65,14 +65,20 @@ public class EmailAggregationStrategyTest {
         when(emailLinkModelMap.get(anyString())).thenReturn(emailLinkModel);
         when(emailLinkModel.getRank()).thenReturn((short)10);
 
+
         Exchange result = emailAggregationStrategy.aggregate(null, exchange);
-        ResourceLink wrapper = result.getIn().getHeader("ResourceLinks", ResourceLinksWrapper.class).getDownloadLinkSet().stream().findFirst().get();
+        ResourceLinksWrapper wrapper = result.getIn().getHeader("ResourceLinks", ResourceLinksWrapper.class);
+
+        ResourceLink actual = wrapper.getDownloadLinkSet().stream()
+                .filter(resourceLink -> resourceLink.getRank() == 10)
+                .findFirst()
+                .get();
 
         //then
         assertEquals(exchange, result);
-        assertEquals((short)10, wrapper.getRank());
-        assertEquals("Link", wrapper.getDownloadLink());
-        assertEquals("Description", wrapper.getDescription());
+        assertEquals((short)10, actual.getRank());
+        assertEquals("Link", actual.getDownloadLink());
+        assertEquals("Description", actual.getDescription());
     }
 
     @Test
@@ -103,7 +109,10 @@ public class EmailAggregationStrategyTest {
         Exchange result = emailAggregationStrategy.aggregate(oldExchange, newExchange);
         ResourceLinksWrapper wrapper = result.getIn().getHeader("ResourceLinks", ResourceLinksWrapper.class);
 
-        ResourceLink actual = wrapper.getDownloadLinkSet().stream().filter(resourceLink -> resourceLink.getRank() == 20).findFirst().get();
+        ResourceLink actual = wrapper.getDownloadLinkSet().stream()
+                .filter(resourceLink -> resourceLink.getRank() == 20)
+                .findFirst()
+                .get();
 
         //then
         assertEquals(newExchange, result);
@@ -128,13 +137,17 @@ public class EmailAggregationStrategyTest {
 
         //when
         Exchange result = emailAggregationStrategy.aggregate(null, exchange);
-        ResourceLink wrapper = result.getIn().getHeader("ResourceLinks", ResourceLinksWrapper.class)
-                .getDownloadLinkSet().stream().filter(resourceLink -> resourceLink.getRank() == 10).findFirst().get();
+        ResourceLinksWrapper wrapper = result.getIn().getHeader("ResourceLinks", ResourceLinksWrapper.class);
+
+        ResourceLink actual = wrapper.getDownloadLinkSet().stream()
+                .filter(resourceLink -> resourceLink.getRank() == 10)
+                .findFirst()
+                .get();
 
         //then
         assertEquals(exchange, result);
-        assertNull(wrapper.getDownloadLink());
-        assertEquals("Description", wrapper.getDescription());
+        assertNull(actual.getDownloadLink());
+        assertEquals("Description", actual.getDescription());
     }
 
     @Test
