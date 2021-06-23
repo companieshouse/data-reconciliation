@@ -3,6 +3,7 @@ package uk.gov.companieshouse.reconciliation.config;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Model that defines a logical grouping of {@link EmailLinkModel}'s.
@@ -34,7 +35,10 @@ public class ComparisonGroupModel {
      * @return size representing the number email link models in a comparison group
      */
     public int getSize() {
-        return emailLinkModel.size();
+        return emailLinkModel.values().stream()
+                .filter(emailLinkModel -> emailLinkModel.isEnabled())
+                .collect(Collectors.toSet())
+                .size();
     }
 
     /**

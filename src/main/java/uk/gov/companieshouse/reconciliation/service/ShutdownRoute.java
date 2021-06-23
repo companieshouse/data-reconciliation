@@ -6,6 +6,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Component;
+import uk.gov.companieshouse.reconciliation.config.AggregationHandler;
 
 /**
  * Shuts down the application after all comparisons have been performed.
@@ -16,13 +17,16 @@ public class ShutdownRoute extends RouteBuilder {
     @Autowired
     private ConfigurableApplicationContext context;
 
+    @Autowired
+    private AggregationHandler aggregationHandler;
+
     @Override
     public void configure() throws Exception {
         from("direct:shutdown")
                 .aggregate()
                 .constant(true)
                 .aggregationStrategy(AggregationStrategies.useLatest())
-                .completionSize(3)
+                .completionSize(aggregationHandler.getNumberOfComparisonGroups())
                 .log(LoggingLevel.INFO, "Triggering application shutdown...")
                 .process(exchange -> new Thread(() -> {
                     context.close();

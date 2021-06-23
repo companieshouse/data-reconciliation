@@ -12,11 +12,22 @@ public class EmailLinkModel {
     @NotNull
     private Short rank;
 
+    @NotNull
+    private Boolean enabled;
+
     public void setRank(Short rank) {
         this.rank = rank;
     }
 
     public Short getRank() {
         return rank;
+    }
+
+    public Boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
     }
 }

@@ -2,6 +2,7 @@ package uk.gov.companieshouse.reconciliation.config;
 
 import javax.validation.constraints.NotNull;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Supplies {@link ComparisonGroupModel}'s for given comparison group names.
@@ -28,5 +29,12 @@ public class AggregationHandler {
      */
     public ComparisonGroupModel getAggregationConfiguration(String groupName) {
         return comparisonGroupConfigMap.get(groupName);
+    }
+
+    public int getNumberOfComparisonGroups() {
+        return comparisonGroupConfigMap.values().stream()
+                .filter(comparisonGroupModel -> comparisonGroupModel.getSize() > 0)
+                .collect(Collectors.toSet())
+                .size();
     }
 }
