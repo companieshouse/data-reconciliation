@@ -13,7 +13,7 @@ public class InsolvencyCaseCompare extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("{{endpoint.company_status_mongo_oracle.timer}}")
+        from("{{endpoint.insolvency.case.timer}}")
                 .setHeader("Src").constant("{{endpoint.mongodb.wrapper.aggregation.collection}}")
                 .setHeader("SrcDescription").constant("MongoDB - Company Insolvency")
                 .setHeader("MongoCacheKey").constant("{{endpoint.mongodb.company_profile.cache.key}}")
