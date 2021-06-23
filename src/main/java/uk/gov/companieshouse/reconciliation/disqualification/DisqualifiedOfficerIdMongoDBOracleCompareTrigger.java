@@ -17,6 +17,7 @@ public class DisqualifiedOfficerIdMongoDBOracleCompareTrigger extends RouteBuild
                 .autoStartup("{{dsq_officer_id_mongo_oracle_enabled}}")
                 .setHeader("OracleQuery", constant("{{query.oracle.dsq_officer_collection}}"))
                 .setHeader("OracleEndpoint", constant("{{endpoint.oracle.dsq_officer_collection}}"))
+                .setHeader("OracleTransformer", constant("{{transformer.oracle.single_column}}"))
                 .setHeader("SrcDescription", constant("Oracle"))
                 .setHeader("Src", constant("{{endpoint.oracle.collection}}"))
                 .setHeader("TargetDescription", constant("MongoDB"))

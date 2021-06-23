@@ -24,6 +24,7 @@ public class InsolvencyCaseCompare extends RouteBuilder {
                 .setHeader("TargetDescription").constant("Oracle")
                 .setHeader("OracleQuery").constant("{{query.oracle.insolvency_cases}}")
                 .setHeader("OracleEndpoint").constant("{{endpoint.oracle.list}}")
+                .setHeader("OracleTransformer").constant("{{transformer.oracle.insolvency_cases}}")
                 .setHeader("RecordKey").constant("Company Number")
                 .setHeader("Comparison").constant("company insolvency cases")
                 .setHeader("ComparisonGroup").constant("Company insolvency")

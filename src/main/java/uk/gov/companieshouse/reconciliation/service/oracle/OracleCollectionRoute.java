@@ -29,6 +29,6 @@ public class OracleCollectionRoute extends RetryableRoute {
                 .end()
                 .setBody(header("OracleQuery"))
                 .toD("${header.OracleEndpoint}")
-                .bean(OracleResultCollectionTransformer.class);
+                .toD("${header.OracleTransformer}");
     }
 }
