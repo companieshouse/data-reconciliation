@@ -3,8 +3,8 @@ package uk.gov.companieshouse.reconciliation.service.elasticsearch;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.component.caffeine.CaffeineConstants;
 import org.springframework.stereotype.Component;
-import uk.gov.companieshouse.reconciliation.component.elasticsearch.slicedscroll.client.ElasticsearchException;
 import uk.gov.companieshouse.reconciliation.common.RetryableRoute;
+import uk.gov.companieshouse.reconciliation.component.elasticsearch.slicedscroll.client.ElasticsearchException;
 
 /**
  * Retrieves hits from an Elasticsearch search index.<br>

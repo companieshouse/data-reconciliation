@@ -5,12 +5,21 @@ package uk.gov.companieshouse.reconciliation.model;
  */
 public class ResourceLink {
 
+    private final short rank;
     private final String downloadLink;
     private final String description;
 
-    public ResourceLink(String downloadLink, String description) {
+    public ResourceLink(short rank, String downloadLink, String description) {
+        this.rank = rank;
         this.downloadLink = downloadLink;
         this.description = description;
+    }
+
+    /**
+     * @return rank defining ordering of this link in its group
+     */
+    public short getRank() {
+        return rank;
     }
 
     /**
@@ -26,4 +35,5 @@ public class ResourceLink {
     public String getDescription() {
         return description;
     }
+
 }

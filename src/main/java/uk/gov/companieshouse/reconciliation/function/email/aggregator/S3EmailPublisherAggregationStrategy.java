@@ -48,15 +48,21 @@ public class S3EmailPublisherAggregationStrategy implements AggregationStrategy 
                 curr.getIn().getHeader("Upload", String.class),
                 curr.getIn().getHeader("Presign", String.class),
                 curr.getIn().getHeader("ResourceLinkDescription", String.class),
-                curr.getIn().getBody(byte[].class),
-                comparisonGroup,
+                curr.getIn().getBody(byte[].class), comparisonGroup,
+                curr.getIn().getHeader("LinkId", String.class),
                 curr.getIn().getHeader("Failed", boolean.class)));
         targetExchange.getIn().setHeader("PublisherResourceRequests", resourceRequests);
         return targetExchange;
     }
 
     private int getCompletionSizeForGroup(String group) {
-        return Optional.ofNullable(configuration.getAggregationConfiguration(group)).map(ComparisonGroupModel::getSize)
+        Optional<ComparisonGroupModel> comparisonGroupModel = Optional.ofNullable(configuration.getAggregationConfiguration(group));
+
+        if (! comparisonGroupModel.isPresent()) {
+            throw new IllegalArgumentException("Mandatory configuration not present ComparisonGroupModel: " + group);
+        }
+
+        return comparisonGroupModel.map(ComparisonGroupModel::getSize)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid comparison group specified: " + group));
     }
 }

@@ -1,13 +1,13 @@
 package uk.gov.companieshouse.reconciliation.function.compare_results.transformer;
 
-import java.util.List;
-import java.util.Map;
-
 import org.apache.camel.Header;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.reconciliation.function.compare_results.mapper.CompareCompanyNameResultMapper;
 import uk.gov.companieshouse.reconciliation.model.Results;
+
+import java.util.List;
+import java.util.Map;
 
 @Component
 public class CompareCompanyNameTransformer {

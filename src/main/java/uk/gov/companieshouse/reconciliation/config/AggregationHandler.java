@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.reconciliation.config;
 
+import javax.validation.constraints.NotNull;
 import java.util.Map;
 
 /**
@@ -7,6 +8,7 @@ import java.util.Map;
  */
 public class AggregationHandler {
 
+    @NotNull
     private Map<String, ComparisonGroupModel> comparisonGroupConfigMap;
 
     /**

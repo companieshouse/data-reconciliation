@@ -24,7 +24,9 @@ import uk.gov.companieshouse.reconciliation.model.Results;
 import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @CamelSpringBootTest
 @SpringBootTest

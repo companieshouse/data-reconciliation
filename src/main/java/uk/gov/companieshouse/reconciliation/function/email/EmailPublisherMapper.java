@@ -17,6 +17,7 @@ public class EmailPublisherMapper {
         headers.put("Presign", request.getPresignerEndpoint());
         headers.put("ResourceLinkDescription", request.getResourceDescription());
         headers.put("ComparisonGroup", request.getDescription());
+        headers.put("LinkId", request.getLinkId());
         headers.put("Failed", request.isFailed());
         return request.getResults();
     }

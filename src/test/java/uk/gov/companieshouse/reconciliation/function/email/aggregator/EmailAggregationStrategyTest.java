@@ -8,13 +8,23 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.companieshouse.reconciliation.config.AggregationHandler;
+import uk.gov.companieshouse.reconciliation.config.ComparisonGroupModel;
+import uk.gov.companieshouse.reconciliation.config.EmailLinkModel;
 import uk.gov.companieshouse.reconciliation.model.ResourceLink;
 import uk.gov.companieshouse.reconciliation.model.ResourceLinksWrapper;
+
+import java.util.Comparator;
+import java.util.Map;
+import java.util.TreeSet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class EmailAggregationStrategyTest {
@@ -22,9 +32,21 @@ public class EmailAggregationStrategyTest {
     private EmailAggregationStrategy emailAggregationStrategy;
     private CamelContext context;
 
+    @Mock
+    private ComparisonGroupModel comparisonGroupModel;
+
+    @Mock
+    private AggregationHandler aggregationHandler;
+
+    @Mock
+    private Map<String, EmailLinkModel> emailLinkModelMap;
+
+    @Mock
+    private EmailLinkModel emailLinkModel;
+
     @BeforeEach
     void setUp() {
-        emailAggregationStrategy = new EmailAggregationStrategy();
+        emailAggregationStrategy = new EmailAggregationStrategy(aggregationHandler);
         context = new DefaultCamelContext();
     }
 
@@ -32,33 +54,100 @@ public class EmailAggregationStrategyTest {
     void testAddResourceLink() {
         //given
         Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader("LinkId", "LinkId");
         exchange.getIn().setHeader("ResourceLinkReference", "Link");
         exchange.getIn().setHeader("ResourceLinkDescription", "Description");
+        exchange.getIn().setHeader("ComparisonGroup", "Company Profile");
 
         //when
+        when(aggregationHandler.getAggregationConfiguration(anyString())).thenReturn(comparisonGroupModel);
+        when(comparisonGroupModel.getEmailLinkModel()).thenReturn(emailLinkModelMap);
+        when(emailLinkModelMap.get(anyString())).thenReturn(emailLinkModel);
+        when(emailLinkModel.getRank()).thenReturn((short)10);
+
+
         Exchange result = emailAggregationStrategy.aggregate(null, exchange);
-        ResourceLink wrapper = result.getIn().getHeader("ResourceLinks", ResourceLinksWrapper.class).getDownloadLinkList().get(0);
+        ResourceLinksWrapper wrapper = result.getIn().getHeader("ResourceLinks", ResourceLinksWrapper.class);
+
+        ResourceLink actual = wrapper.getDownloadLinkSet().stream()
+                .filter(resourceLink -> resourceLink.getRank() == 10)
+                .findFirst()
+                .get();
 
         //then
         assertEquals(exchange, result);
-        assertEquals("Link", wrapper.getDownloadLink());
-        assertEquals("Description", wrapper.getDescription());
+        assertEquals((short)10, actual.getRank());
+        assertEquals("Link", actual.getDownloadLink());
+        assertEquals("Description", actual.getDescription());
     }
 
     @Test
-    void testLinkReferenceAbsent() {
+    void testCorrectlyAggregateMultipleResourceLinks() {
+        //given
+        ResourceLinksWrapper resourceLinksWrapper = new ResourceLinksWrapper(new TreeSet<>(Comparator.comparing(ResourceLink::getRank)));
+        resourceLinksWrapper.addDownloadLink((short) 10, "Link1", "Description1");
+
+        Exchange oldExchange = new DefaultExchange(context);
+        oldExchange.getIn().setHeader("ResourceLinkReference", "Link1");
+        oldExchange.getIn().setHeader("ResourceLinkDescription", "Description1");
+        oldExchange.getIn().setHeader("ComparisonGroup", "Company Profile");
+        oldExchange.getIn().setHeader("ResourceLinks", resourceLinksWrapper);
+        oldExchange.getIn().setHeader("LinkId", "link-id-1");
+
+        Exchange newExchange = new DefaultExchange(context);
+        newExchange.getIn().setHeader("ResourceLinkReference", "Link2");
+        newExchange.getIn().setHeader("ResourceLinkDescription", "Description2");
+        newExchange.getIn().setHeader("ComparisonGroup", "Company Profile");
+        newExchange.getIn().setHeader("LinkId", "link-id-2");
+
+        when(aggregationHandler.getAggregationConfiguration(anyString())).thenReturn(comparisonGroupModel);
+        when(comparisonGroupModel.getEmailLinkModel()).thenReturn(emailLinkModelMap);
+        when(emailLinkModelMap.get("link-id-2")).thenReturn(emailLinkModel);
+        when(emailLinkModel.getRank()).thenReturn((short)20);
+
+        //when
+        Exchange result = emailAggregationStrategy.aggregate(oldExchange, newExchange);
+        ResourceLinksWrapper wrapper = result.getIn().getHeader("ResourceLinks", ResourceLinksWrapper.class);
+
+        ResourceLink actual = wrapper.getDownloadLinkSet().stream()
+                .filter(resourceLink -> resourceLink.getRank() == 20)
+                .findFirst()
+                .get();
+
+        //then
+        assertEquals(newExchange, result);
+        assertEquals((short)20, actual.getRank());
+        assertEquals("Link2", actual.getDownloadLink());
+        assertEquals("Description2", actual.getDescription());
+        assertEquals(2, wrapper.getDownloadLinkSet().size());
+    }
+
+    @Test
+    void testCorrectlyUseANullLinkWhenResourceLinkReferenceAbsentButResourceLinkDescriptionIsPresent() {
         //given
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader("ResourceLinkDescription", "Description");
+        exchange.getIn().setHeader("ComparisonGroup", "any");
+        exchange.getIn().setHeader("LinkId", "any");
+
+        when(aggregationHandler.getAggregationConfiguration(anyString())).thenReturn(comparisonGroupModel);
+        when(comparisonGroupModel.getEmailLinkModel()).thenReturn(emailLinkModelMap);
+        when(emailLinkModelMap.get(anyString())).thenReturn(emailLinkModel);
+        when(emailLinkModel.getRank()).thenReturn((short)10);
 
         //when
         Exchange result = emailAggregationStrategy.aggregate(null, exchange);
-        ResourceLink wrapper = result.getIn().getHeader("ResourceLinks", ResourceLinksWrapper.class).getDownloadLinkList().get(0);
+        ResourceLinksWrapper wrapper = result.getIn().getHeader("ResourceLinks", ResourceLinksWrapper.class);
+
+        ResourceLink actual = wrapper.getDownloadLinkSet().stream()
+                .filter(resourceLink -> resourceLink.getRank() == 10)
+                .findFirst()
+                .get();
 
         //then
         assertEquals(exchange, result);
-        assertNull(wrapper.getDownloadLink());
-        assertEquals("Description", wrapper.getDescription());
+        assertNull(actual.getDownloadLink());
+        assertEquals("Description", actual.getDescription());
     }
 
     @Test
@@ -71,5 +160,68 @@ public class EmailAggregationStrategyTest {
 
         //then
         assertThrows(IllegalStateException.class, actual);
+    }
+
+    @Test
+    void testThrowIllegalArgumentExceptionIfLinkIdAbsent() {
+        //given
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader("ResourceLinkReference", "Link");
+
+        //when
+        Executable actual = () -> emailAggregationStrategy.aggregate(null, exchange);
+
+        //then
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, actual);
+        assertEquals("Mandatory header not present: LinkId", exception.getMessage());
+    }
+
+    @Test
+    void testThrowIllegalArgumentExceptionIfComparisonGroupAbsent() {
+        //given
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader("ResourceLinkReference", "Link");
+        exchange.getIn().setHeader("LinkId", "linkId");
+
+        //when
+        Executable actual = () -> emailAggregationStrategy.aggregate(null, exchange);
+
+        //then
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, actual);
+        assertEquals("Mandatory header not present: ComparisonGroup", exception.getMessage());
+    }
+
+    @Test
+    void testThrowIllegalArgumentExceptionIfComparisonGroupModelAbsent() {
+        //given
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader("ResourceLinkReference", "Link");
+        exchange.getIn().setHeader("LinkId", "linkId");
+        exchange.getIn().setHeader("ComparisonGroup", "Comparison group");
+
+        //when
+        Executable actual = () -> emailAggregationStrategy.aggregate(null, exchange);
+
+        //then
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, actual);
+        assertEquals("Mandatory configuration not present ComparisonGroupModel: Comparison group", exception.getMessage());
+    }
+
+    @Test
+    void testThrowIllegalArgumentExceptionIfEmailLinkModelAbsent() {
+        //given
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader("ResourceLinkReference", "Link");
+        exchange.getIn().setHeader("LinkId", "linkId");
+        exchange.getIn().setHeader("ComparisonGroup", "Comparison group");
+
+        when(aggregationHandler.getAggregationConfiguration(anyString())).thenReturn(comparisonGroupModel);
+
+        //when
+        Executable actual = () -> emailAggregationStrategy.aggregate(null, exchange);
+
+        //then
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, actual);
+        assertEquals("Mandatory configuration not present EmailLinkModel: linkId", exception.getMessage());
     }
 }

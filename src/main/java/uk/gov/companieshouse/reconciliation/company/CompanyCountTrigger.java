@@ -29,6 +29,7 @@ public class CompanyCountTrigger extends RouteBuilder {
                 .setHeader("Destination", constant("{{endpoint.output}}"))
                 .setHeader("Upload", constant("{{endpoint.s3.upload}}"))
                 .setHeader("Presign", constant("{{endpoint.s3presigner.download}}"))
+                .setHeader("LinkId", constant("company-count-link"))
                 .setHeader(AWS2S3Constants.KEY, simple("company/count_${date:now:yyyyMMdd}T${date:now:hhmmss}.csv"))
                 .setHeader(AWS2S3Constants.DOWNLOAD_LINK_EXPIRATION_TIME, constant("{{aws.expiry}}"))
                 .to("{{function.name.compare_count}}");
