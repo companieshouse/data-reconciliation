@@ -8,7 +8,7 @@ public class MongoInsolvencyTransformerRoute extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("direct:insolvency-transformer")
+        from("direct:mongo-insolvency_cases-transformer")
                 .bean(MongoInsolvencyTransformer.class);
     }
 }
