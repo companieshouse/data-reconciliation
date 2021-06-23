@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.reconciliation.service.aws;
 
+import org.apache.camel.LoggingLevel;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import uk.gov.companieshouse.reconciliation.common.RetryableRoute;
@@ -18,6 +19,7 @@ public class S3PublisherRoute extends RetryableRoute {
         from("direct:s3-publisher")
                 .onException(AwsServiceException.class)
                     .handled(true)
+                    .log(LoggingLevel.ERROR, "Failed to publish results to S3.")
                     .setHeader("Failed").constant(true)
                 .end()
                 .toD("${header.Upload}")
