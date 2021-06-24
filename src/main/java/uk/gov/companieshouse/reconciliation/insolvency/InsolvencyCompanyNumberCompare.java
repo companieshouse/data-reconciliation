@@ -21,7 +21,7 @@ public class InsolvencyCompanyNumberCompare extends RouteBuilder {
                 .setHeader("TargetDescription", constant("MongoDB"))
                 .setHeader("Target", constant("{{endpoint.mongodb.wrapper.distinct.collection}}"))
                 .setHeader(MongoDbConstants.DISTINCT_QUERY_FIELD, constant("_id"))
-                .setHeader(MongoDbConstants.CRITERIA, constant(Filters.exists("data.cases.number", true)))
+                .setHeader("MongoQuery", constant(Filters.exists("data.cases.number", true)))
                 .setHeader("MongoDistinctEndpoint", constant("{{endpoint.mongodb.insolvency_collection}}"))
                 .setHeader("MongoDistinctCacheKey", constant("{{endpoint.mongodb.insolvency.cache.key}}"))
                 .setHeader("Comparison", constant("company insolvency cases"))

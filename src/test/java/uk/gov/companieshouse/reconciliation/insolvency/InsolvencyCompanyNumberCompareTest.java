@@ -39,9 +39,9 @@ public class InsolvencyCompanyNumberCompareTest {
         compareCollection.expectedHeaderReceived("TargetDescription", "MongoDB");
         compareCollection.expectedHeaderReceived("Target", "mock:mongoDistinctCollection");
         compareCollection.expectedHeaderReceived(MongoDbConstants.DISTINCT_QUERY_FIELD, "_id");
-        compareCollection.expectedHeaderReceived(MongoDbConstants.CRITERIA, Filters.exists("data.cases.number", true));
         compareCollection.expectedHeaderReceived("MongoDistinctEndpoint", "mock:insolvency_target");
         compareCollection.expectedHeaderReceived("MongoDistinctCacheKey", "mongoInsolvencies");
+        compareCollection.expectedHeaderReceived("MongoQuery", Filters.exists("data.cases.number", true));
         compareCollection.expectedHeaderReceived("Comparison", "company insolvency cases");
         compareCollection.expectedHeaderReceived("ComparisonGroup", "Company insolvency");
         compareCollection.expectedHeaderReceived("RecordType", "Company Number");

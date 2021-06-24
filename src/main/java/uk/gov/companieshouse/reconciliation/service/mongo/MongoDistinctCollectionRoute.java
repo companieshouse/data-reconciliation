@@ -34,6 +34,7 @@ public class MongoDistinctCollectionRoute extends RouteBuilder {
                 .to("{{endpoint.cache}}")
                 .choice()
                 .when(header(CaffeineConstants.ACTION_HAS_RESULT).isEqualTo(false))
+                    .setBody(header("MongoQuery"))
                     .toD("${header.MongoDistinctEndpoint}")
                     .log("${body.size()} items have been fetched from mongodb.")
                     .setHeader(CaffeineConstants.ACTION).constant(CaffeineConstants.ACTION_PUT)
