@@ -54,4 +54,3 @@ public class AggregationGroupModel {
         this.aggregationGroupModel = aggregationGroupModel;
     }
 }
-src/main/java/uk/gov/companieshouse/reconciliation/config/AggregationGroupModel.java
