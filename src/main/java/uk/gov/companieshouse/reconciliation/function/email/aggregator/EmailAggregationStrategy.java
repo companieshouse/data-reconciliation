@@ -25,7 +25,7 @@ public class EmailAggregationStrategy implements AggregationStrategy {
     private static final String LINK_REFERENCE_HEADER = "ResourceLinkReference";
     private static final String LINK_DESCRIPTION_HEADER = "ResourceLinkDescription";
     private static final String COMPARISON_GROUP_HEADER = "ComparisonGroup";
-    private static final String LINK_ID_HEADER = "LinkId";
+    private static final String AGGREGATION_MODEL_ID_HEADER = "AggregationModelId";
 
     private AggregationHandler aggregationHandler;
 
@@ -70,9 +70,9 @@ public class EmailAggregationStrategy implements AggregationStrategy {
         // Always push ResourceLinksWrapper into newExchange
         newExchange.getIn().setHeader(RESOURCE_LINKS_HEADER, downloadLinks);
 
-        Optional<String> linkId = header(newExchange, LINK_ID_HEADER);
-        if (! linkId.isPresent()) {
-            throw new IllegalArgumentException("Mandatory header not present: LinkId");
+        Optional<String> aggregationModelId = header(newExchange, AGGREGATION_MODEL_ID_HEADER);
+        if (! aggregationModelId.isPresent()) {
+            throw new IllegalArgumentException("Mandatory header not present: AggregationModelId");
         }
 
         Optional<String> comparisonGroup = header(newExchange, COMPARISON_GROUP_HEADER);
@@ -82,12 +82,12 @@ public class EmailAggregationStrategy implements AggregationStrategy {
 
         AggregationGroupModel aggregationGroupModel = aggregationHandler.getAggregationConfiguration(comparisonGroup.get());
         if (aggregationGroupModel == null) {
-            throw new IllegalArgumentException("Mandatory configuration not present ComparisonGroupModel: " + comparisonGroup.get());
+            throw new IllegalArgumentException("Mandatory AggregationGroupModel configuration not present: " + comparisonGroup.get());
         }
 
-        AggregationModel aggregationModel = aggregationGroupModel.getAggregationGroupModel().get(linkId.get());
+        AggregationModel aggregationModel = aggregationGroupModel.getAggregationModels().get(aggregationModelId.get());
         if (aggregationModel == null) {
-            throw new IllegalArgumentException("Mandatory configuration not present EmailLinkModel: " + linkId.get());
+            throw new IllegalArgumentException("Mandatory AggregationModel configuration not present: " + aggregationModelId.get());
         }
 
         downloadLinks.addDownloadLink(aggregationModel.getLinkRank(), linkReference.orElse(null), linkDescription.orElse(null));

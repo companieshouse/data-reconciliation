@@ -10,30 +10,30 @@ import java.util.stream.Collectors;
 public class AggregationHandler {
 
     @NotNull
-    private Map<String, AggregationGroupModel> comparisonGroupConfigMap;
+    private Map<String, AggregationGroupModel> aggregationGroupModel;
 
     /**
      * Constructs an AggregationHandler from a Map.
      *
      * <p>Note: the Map key must contain the groupName of each value.</p>
      *
-     * @param comparisonGroupConfigMap
+     * @param aggregationGroupModel
      */
-    public AggregationHandler(Map<String, AggregationGroupModel> comparisonGroupConfigMap) {
-        this.comparisonGroupConfigMap = comparisonGroupConfigMap;
+    public AggregationHandler(Map<String, AggregationGroupModel> aggregationGroupModel) {
+        this.aggregationGroupModel = aggregationGroupModel;
     }
 
     /**
      * @param groupName of the config to return
-     * @return ComparisonGroupConfig with the given groupName, null otherwise
+     * @return AggregationGroupMode with the given groupName, null otherwise
      */
     public AggregationGroupModel getAggregationConfiguration(String groupName) {
-        return comparisonGroupConfigMap.get(groupName);
+        return aggregationGroupModel.get(groupName);
     }
 
     public int getNumberOfComparisonGroups() {
-        return comparisonGroupConfigMap.values().stream()
-                .filter(comparisonGroupModel -> comparisonGroupModel.getSize() > 0)
+        return aggregationGroupModel.values().stream()
+                .filter(aggregationGroupModel -> aggregationGroupModel.getSize() > 0)
                 .collect(Collectors.toSet())
                 .size();
     }
