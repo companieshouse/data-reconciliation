@@ -29,6 +29,7 @@ public class DisqualifiedOfficerCompareTrigger extends RouteBuilder {
                 .setHeader("Destination", constant("{{endpoint.output}}"))
                 .setHeader("Upload", constant("{{endpoint.s3.upload}}"))
                 .setHeader("Presign", constant("{{endpoint.s3presigner.download}}"))
+                .setHeader("LinkId", constant("disqualified-officer-link"))
                 .setHeader(AWS2S3Constants.KEY, simple("dsq_officer/collection_${date:now:yyyyMMdd}-${date:now:hhmmss}.csv"))
                 .setHeader(AWS2S3Constants.DOWNLOAD_LINK_EXPIRATION_TIME, constant("{{aws.expiry}}"))
                 .to("{{function.name.compare_collection}}");

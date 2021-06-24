@@ -1,6 +1,5 @@
 package uk.gov.companieshouse.reconciliation.function.compare_results.mapper;
 
-import org.elasticsearch.search.SearchHit;
 import uk.gov.companieshouse.reconciliation.model.ResultModel;
 
 import java.util.Collection;

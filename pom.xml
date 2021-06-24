@@ -37,6 +37,11 @@
             <version>${apache.camel.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+            <version>${spring.boot.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.camel.springboot</groupId>
             <artifactId>camel-mongodb-starter</artifactId>
             <version>${apache.camel.version}</version>

@@ -4,6 +4,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,6 +29,7 @@ aggregation.completion.&lt;key2&gt;.size = n2
      * @return map
      */
     @Bean
+    @Validated
     @ConfigurationProperties(prefix = "aggregation.completion")
     public Map<String, ComparisonGroupModel> comparisonGroupConfigMap() {
         return new HashMap<>();

@@ -3,6 +3,7 @@ package uk.gov.companieshouse.reconciliation.function.email;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.companieshouse.reconciliation.config.AggregationHandler;
 import uk.gov.companieshouse.reconciliation.function.email.aggregator.EmailAggregationStrategy;
 import uk.gov.companieshouse.reconciliation.function.email.aggregator.S3EmailPublisherAggregationStrategy;
 
@@ -15,13 +16,16 @@ public class SendEmailRoute extends RouteBuilder {
     @Autowired
     private S3EmailPublisherAggregationStrategy s3EmailPublisherAggregationStrategy;
 
+    @Autowired
+    private AggregationHandler aggregationHandler;
+
     @Override
     public void configure() throws Exception {
 
         from("direct:send-email")
                 .aggregate(header("ComparisonGroup"), s3EmailPublisherAggregationStrategy)
                 .completion(header("Completed").isEqualTo(true))
-                .split(method(EmailPublisherSplitter.class), new EmailAggregationStrategy())
+                .split(method(EmailPublisherSplitter.class), new EmailAggregationStrategy(aggregationHandler))
                     .bean(EmailPublisherMapper.class)
                     .choice()
                     .when(header("Failed").isNotEqualTo(true))
