@@ -14,7 +14,8 @@ public class CompanyNumberCompareMongoDBPrimarySearch extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("{{endpoint.company_collection_mongo_primary.timer}}")
+        from("{{endpoint.company_number_mongo_primary.timer}}")
+                .autoStartup("{{company_number_mongo_primary_enabled}}")
                 .setHeader("SrcDescription", constant("MongoDB"))
                 .setHeader(MongoDbConstants.DISTINCT_QUERY_FIELD, constant("_id"))
                 .setHeader("Src", simple("{{endpoint.mongodb.mapper.collection.company_number}}"))

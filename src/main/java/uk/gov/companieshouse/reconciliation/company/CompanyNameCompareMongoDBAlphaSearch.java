@@ -14,6 +14,7 @@ public class CompanyNameCompareMongoDBAlphaSearch extends RouteBuilder {
     @Override
     public void configure() throws Exception {
         from("{{endpoint.company_name_mongo_alpha.timer}}")
+                .autoStartup("{{company_name_mongo_alpha_enabled}}")
                 .setHeader("Src").constant("{{endpoint.mongodb.wrapper.company_profile.collection}}")
                 .setHeader("SrcDescription").constant("MongoDB - Company Profile")
                 .setHeader("Target").constant("{{endpoint.elasticsearch.collection}}")

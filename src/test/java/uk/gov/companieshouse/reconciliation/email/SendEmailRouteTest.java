@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @CamelSpringBootTest
 @SpringBootTest
 @DirtiesContext
-@TestPropertySource(locations = {"classpath:application-stubbed.properties", "classpath:comparison-groups.properties"})
+@TestPropertySource(locations = {"classpath:application-stubbed.properties", "classpath:aggregation-groups.properties"})
 @UseAdviceWith
 public class SendEmailRouteTest {
 
@@ -74,14 +74,14 @@ public class SendEmailRouteTest {
         s3Presigner.expectedMessageCount(5);
         s3Presigner.returnReplyBody(ExpressionBuilder.constantExpression("URL"));
 
-        Exchange firstCompanyExchange = buildExchange("Key", 300L, "Company profile", "Compare Count Link", "apple", "company-count-link", true);
-        Exchange secondCompanyExchange = buildExchange("Key", 300L, "Company profile", "Compare Collection Link", "orange", "company-number-link", false);
+        Exchange firstCompanyExchange = buildExchange("Key", 300L, "Company profile", "Compare Count Link", "apple", "company-count", true);
+        Exchange secondCompanyExchange = buildExchange("Key", 300L, "Company profile", "Compare Collection Link", "orange", "company-number", false);
 
-        Exchange firstDsqExchange = buildExchange("Key", 300L, "Disqualified officer", "Disqualified Officer Link 1", "pear", "disqualified-officer-link1", false);
-        Exchange secondDsqExchange = buildExchange("Key", 300L, "Disqualified officer", "Disqualified Officer Link 2", "carrot", "disqualified-officer-link2", false);
+        Exchange firstDsqExchange = buildExchange("Key", 300L, "Disqualified officer", "Disqualified Officer Link 1", "pear", "disqualified-officer1", false);
+        Exchange secondDsqExchange = buildExchange("Key", 300L, "Disqualified officer", "Disqualified Officer Link 2", "carrot", "disqualified-officer2", false);
 
-        Exchange firstElasticsearchExchange = buildExchange("Key", 300L, "Elasticsearch", "Elasticsearch link 1", "strawberry", "company-name-alpha-link", false);
-        Exchange secondElasticsearchExchange = buildExchange("Key", 300L, "Elasticsearch", "Elasticsearch link 2", "raspberry", "company-name-primary-link", false);
+        Exchange firstElasticsearchExchange = buildExchange("Key", 300L, "Elasticsearch", "Elasticsearch link 1", "strawberry", "company-name-alpha", false);
+        Exchange secondElasticsearchExchange = buildExchange("Key", 300L, "Elasticsearch", "Elasticsearch link 2", "raspberry", "company-name-primary", false);
 
         kafkaEndpoint.expectedMessageCount(3);
 

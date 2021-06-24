@@ -5,8 +5,8 @@ import org.apache.camel.Exchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.gov.companieshouse.reconciliation.config.AggregationHandler;
-import uk.gov.companieshouse.reconciliation.config.ComparisonGroupModel;
-import uk.gov.companieshouse.reconciliation.config.EmailLinkModel;
+import uk.gov.companieshouse.reconciliation.config.AggregationGroupModel;
+import uk.gov.companieshouse.reconciliation.config.AggregationModel;
 import uk.gov.companieshouse.reconciliation.model.ResourceLink;
 import uk.gov.companieshouse.reconciliation.model.ResourceLinksWrapper;
 
@@ -80,17 +80,17 @@ public class EmailAggregationStrategy implements AggregationStrategy {
             throw new IllegalArgumentException("Mandatory header not present: ComparisonGroup");
         }
 
-        ComparisonGroupModel comparisonGroupModel = aggregationHandler.getAggregationConfiguration(comparisonGroup.get());
-        if (comparisonGroupModel == null) {
+        AggregationGroupModel aggregationGroupModel = aggregationHandler.getAggregationConfiguration(comparisonGroup.get());
+        if (aggregationGroupModel == null) {
             throw new IllegalArgumentException("Mandatory configuration not present ComparisonGroupModel: " + comparisonGroup.get());
         }
 
-        EmailLinkModel emailLinkModel = comparisonGroupModel.getEmailLinkModel().get(linkId.get());
-        if (emailLinkModel == null) {
+        AggregationModel aggregationModel = aggregationGroupModel.getAggregationGroupModel().get(linkId.get());
+        if (aggregationModel == null) {
             throw new IllegalArgumentException("Mandatory configuration not present EmailLinkModel: " + linkId.get());
         }
 
-        downloadLinks.addDownloadLink(emailLinkModel.getRank(), linkReference.orElse(null), linkDescription.orElse(null));
+        downloadLinks.addDownloadLink(aggregationModel.getLinkRank(), linkReference.orElse(null), linkDescription.orElse(null));
 
         return newExchange;
     }

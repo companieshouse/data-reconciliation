@@ -7,20 +7,20 @@ import javax.validation.constraints.NotNull;
 /**
  * Email link model that defines a rank that can be used to order {@link ResourceLink}'s.
  */
-public class EmailLinkModel {
+public class AggregationModel {
 
     @NotNull
-    private Short rank;
+    private Short linkRank;
 
     @NotNull
     private Boolean enabled;
 
-    public void setRank(Short rank) {
-        this.rank = rank;
+    public void setLinkRank(Short linkRank) {
+        this.linkRank = linkRank;
     }
 
-    public Short getRank() {
-        return rank;
+    public Short getLinkRank() {
+        return linkRank;
     }
 
     public Boolean isEnabled() {
