@@ -14,10 +14,10 @@ public class DisqualifiedOfficerCompareTrigger extends RouteBuilder {
     @Override
     public void configure() throws Exception {
         from("{{endpoint.dsq_officer_collection.timer}}")
-                .setHeader("OracleQuery", simple("{{query.oracle.dsq_officer_collection}}"))
-                .setHeader("OracleEndpoint", simple("{{endpoint.oracle.dsq_officer_collection}}"))
+                .setHeader("OracleQuery", constant("{{query.oracle.dsq_officer_collection}}"))
+                .setHeader("OracleEndpoint", constant("{{endpoint.oracle.dsq_officer_collection}}"))
                 .setHeader("SrcDescription", constant("Oracle"))
-                .setHeader("Src", simple("{{endpoint.oracle.collection}}"))
+                .setHeader("Src", constant("{{endpoint.oracle.collection}}"))
                 .setHeader("TargetDescription", constant("MongoDB"))
                 .setHeader(MongoDbConstants.DISTINCT_QUERY_FIELD, constant("officer_id_raw"))
                 .setHeader("Target", constant("{{endpoint.mongodb.wrapper.distinct.collection}}"))
