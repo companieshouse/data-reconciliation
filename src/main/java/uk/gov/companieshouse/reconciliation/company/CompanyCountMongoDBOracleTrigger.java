@@ -14,12 +14,12 @@ import org.springframework.stereotype.Component;
  *
  */
 @Component
-public class CompanyCountTrigger extends RouteBuilder {
+public class CompanyCountMongoDBOracleTrigger extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("{{endpoint.company_count.timer}}")
-                .autoStartup("{{company_count_enabled}}")
+        from("{{endpoint.company_count_mongo_oracle.timer}}")
+                .autoStartup("{{company_count_mongo_oracle_enabled}}")
                 .setBody(constant("{{query.oracle.corporate_body_count}}"))
                 .setHeader("Src", constant("{{endpoint.oracle.corporate_body_count}}"))
                 .setHeader("SrcName", constant("Oracle"))

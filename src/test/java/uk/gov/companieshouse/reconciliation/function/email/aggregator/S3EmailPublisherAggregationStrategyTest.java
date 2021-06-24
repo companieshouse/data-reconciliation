@@ -12,7 +12,7 @@ import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.reconciliation.config.AggregationHandler;
-import uk.gov.companieshouse.reconciliation.config.ComparisonGroupModel;
+import uk.gov.companieshouse.reconciliation.config.AggregationGroupModel;
 import uk.gov.companieshouse.reconciliation.function.email.PublisherResourceRequest;
 import uk.gov.companieshouse.reconciliation.function.email.PublisherResourceRequestWrapper;
 
@@ -41,10 +41,10 @@ public class S3EmailPublisherAggregationStrategyTest {
     private AggregationHandler aggregationHandler;
 
     @Mock
-    private ComparisonGroupModel comparisonGroupModel;
+    private AggregationGroupModel aggregationGroupModel;
 
     @Mock
-    private Map<String, ComparisonGroupModel> comparisonGroupConfigMap;
+    private Map<String, AggregationGroupModel> comparisonGroupConfigMap;
 
     @BeforeEach
     void setup() {
@@ -65,8 +65,8 @@ public class S3EmailPublisherAggregationStrategyTest {
         curr.getIn().setHeader("LinkId", "linkId");
         curr.getIn().setBody("results".getBytes());
 
-        when(aggregationHandler.getAggregationConfiguration(anyString())).thenReturn(comparisonGroupModel);
-        when(comparisonGroupModel.getSize()).thenReturn(1);
+        when(aggregationHandler.getAggregationConfiguration(anyString())).thenReturn(aggregationGroupModel);
+        when(aggregationGroupModel.getSize()).thenReturn(1);
 
         // when
         Exchange actual = aggregationStrategy.aggregate(null, curr);
@@ -94,8 +94,8 @@ public class S3EmailPublisherAggregationStrategyTest {
         curr.getIn().setHeader("Failed", true);
         curr.getIn().setBody("results2".getBytes());
 
-        when(aggregationHandler.getAggregationConfiguration(anyString())).thenReturn(comparisonGroupModel);
-        when(comparisonGroupModel.getSize()).thenReturn(2);
+        when(aggregationHandler.getAggregationConfiguration(anyString())).thenReturn(aggregationGroupModel);
+        when(aggregationGroupModel.getSize()).thenReturn(2);
 
         // when
         Exchange actual = aggregationStrategy.aggregate(prev, curr);

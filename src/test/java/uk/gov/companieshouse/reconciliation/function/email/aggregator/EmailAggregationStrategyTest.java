@@ -11,8 +11,8 @@ import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.reconciliation.config.AggregationHandler;
-import uk.gov.companieshouse.reconciliation.config.ComparisonGroupModel;
-import uk.gov.companieshouse.reconciliation.config.EmailLinkModel;
+import uk.gov.companieshouse.reconciliation.config.AggregationGroupModel;
+import uk.gov.companieshouse.reconciliation.config.AggregationModel;
 import uk.gov.companieshouse.reconciliation.model.ResourceLink;
 import uk.gov.companieshouse.reconciliation.model.ResourceLinksWrapper;
 
@@ -33,16 +33,16 @@ public class EmailAggregationStrategyTest {
     private CamelContext context;
 
     @Mock
-    private ComparisonGroupModel comparisonGroupModel;
+    private AggregationGroupModel aggregationGroupModel;
 
     @Mock
     private AggregationHandler aggregationHandler;
 
     @Mock
-    private Map<String, EmailLinkModel> emailLinkModelMap;
+    private Map<String, AggregationModel> emailLinkModelMap;
 
     @Mock
-    private EmailLinkModel emailLinkModel;
+    private AggregationModel aggregationModel;
 
     @BeforeEach
     void setUp() {
@@ -60,10 +60,10 @@ public class EmailAggregationStrategyTest {
         exchange.getIn().setHeader("ComparisonGroup", "Company Profile");
 
         //when
-        when(aggregationHandler.getAggregationConfiguration(anyString())).thenReturn(comparisonGroupModel);
-        when(comparisonGroupModel.getEmailLinkModel()).thenReturn(emailLinkModelMap);
-        when(emailLinkModelMap.get(anyString())).thenReturn(emailLinkModel);
-        when(emailLinkModel.getRank()).thenReturn((short)10);
+        when(aggregationHandler.getAggregationConfiguration(anyString())).thenReturn(aggregationGroupModel);
+        when(aggregationGroupModel.getAggregationGroupModel()).thenReturn(emailLinkModelMap);
+        when(emailLinkModelMap.get(anyString())).thenReturn(aggregationModel);
+        when(aggregationModel.getLinkRank()).thenReturn((short)10);
 
 
         Exchange result = emailAggregationStrategy.aggregate(null, exchange);
@@ -100,10 +100,10 @@ public class EmailAggregationStrategyTest {
         newExchange.getIn().setHeader("ComparisonGroup", "Company Profile");
         newExchange.getIn().setHeader("LinkId", "link-id-2");
 
-        when(aggregationHandler.getAggregationConfiguration(anyString())).thenReturn(comparisonGroupModel);
-        when(comparisonGroupModel.getEmailLinkModel()).thenReturn(emailLinkModelMap);
-        when(emailLinkModelMap.get("link-id-2")).thenReturn(emailLinkModel);
-        when(emailLinkModel.getRank()).thenReturn((short)20);
+        when(aggregationHandler.getAggregationConfiguration(anyString())).thenReturn(aggregationGroupModel);
+        when(aggregationGroupModel.getAggregationGroupModel()).thenReturn(emailLinkModelMap);
+        when(emailLinkModelMap.get("link-id-2")).thenReturn(aggregationModel);
+        when(aggregationModel.getLinkRank()).thenReturn((short)20);
 
         //when
         Exchange result = emailAggregationStrategy.aggregate(oldExchange, newExchange);
@@ -130,10 +130,10 @@ public class EmailAggregationStrategyTest {
         exchange.getIn().setHeader("ComparisonGroup", "any");
         exchange.getIn().setHeader("LinkId", "any");
 
-        when(aggregationHandler.getAggregationConfiguration(anyString())).thenReturn(comparisonGroupModel);
-        when(comparisonGroupModel.getEmailLinkModel()).thenReturn(emailLinkModelMap);
-        when(emailLinkModelMap.get(anyString())).thenReturn(emailLinkModel);
-        when(emailLinkModel.getRank()).thenReturn((short)10);
+        when(aggregationHandler.getAggregationConfiguration(anyString())).thenReturn(aggregationGroupModel);
+        when(aggregationGroupModel.getAggregationGroupModel()).thenReturn(emailLinkModelMap);
+        when(emailLinkModelMap.get(anyString())).thenReturn(aggregationModel);
+        when(aggregationModel.getLinkRank()).thenReturn((short)10);
 
         //when
         Exchange result = emailAggregationStrategy.aggregate(null, exchange);
@@ -215,7 +215,7 @@ public class EmailAggregationStrategyTest {
         exchange.getIn().setHeader("LinkId", "linkId");
         exchange.getIn().setHeader("ComparisonGroup", "Comparison group");
 
-        when(aggregationHandler.getAggregationConfiguration(anyString())).thenReturn(comparisonGroupModel);
+        when(aggregationHandler.getAggregationConfiguration(anyString())).thenReturn(aggregationGroupModel);
 
         //when
         Executable actual = () -> emailAggregationStrategy.aggregate(null, exchange);

@@ -5,12 +5,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * Supplies {@link ComparisonGroupModel}'s for given comparison group names.
+ * Supplies {@link AggregationGroupModel}'s for given comparison group names.
  */
 public class AggregationHandler {
 
     @NotNull
-    private Map<String, ComparisonGroupModel> comparisonGroupConfigMap;
+    private Map<String, AggregationGroupModel> comparisonGroupConfigMap;
 
     /**
      * Constructs an AggregationHandler from a Map.
@@ -19,7 +19,7 @@ public class AggregationHandler {
      *
      * @param comparisonGroupConfigMap
      */
-    public AggregationHandler(Map<String, ComparisonGroupModel> comparisonGroupConfigMap) {
+    public AggregationHandler(Map<String, AggregationGroupModel> comparisonGroupConfigMap) {
         this.comparisonGroupConfigMap = comparisonGroupConfigMap;
     }
 
@@ -27,7 +27,7 @@ public class AggregationHandler {
      * @param groupName of the config to return
      * @return ComparisonGroupConfig with the given groupName, null otherwise
      */
-    public ComparisonGroupModel getAggregationConfiguration(String groupName) {
+    public AggregationGroupModel getAggregationConfiguration(String groupName) {
         return comparisonGroupConfigMap.get(groupName);
     }
 

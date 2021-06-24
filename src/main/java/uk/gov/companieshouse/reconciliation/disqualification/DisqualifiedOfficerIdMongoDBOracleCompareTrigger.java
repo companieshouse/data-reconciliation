@@ -9,11 +9,12 @@ import org.springframework.stereotype.Component;
  * Trigger a comparison between disqualified officers on Oracle with disqualifications on MongoDB.
  */
 @Component
-public class DisqualifiedOfficerCompareTrigger extends RouteBuilder {
+public class DisqualifiedOfficerIdMongoDBOracleCompareTrigger extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("{{endpoint.dsq_officer_collection.timer}}")
+        from("{{endpoint.dsq_officer_id_mongo_oracle.timer}}")
+                .autoStartup("{{dsq_officer_id_mongo_oracle_enabled}}")
                 .setHeader("OracleQuery", simple("{{query.oracle.dsq_officer_collection}}"))
                 .setHeader("OracleEndpoint", simple("{{endpoint.oracle.dsq_officer_collection}}"))
                 .setHeader("SrcDescription", constant("Oracle"))
