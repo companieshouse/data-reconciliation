@@ -10,21 +10,36 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ *
+ * Configures the spring bean required for the {@link AggregationHandler}
+ *
+ */
 @Configuration
 @ComponentScan("uk.gov.companieshouse.reconciliation.config")
 public class AggregationHandlerConfiguration {
 
-    private Map<String, AggregationGroupModel> comparisonGroupConfigMap;
+    private Map<String, AggregationGroupModel> aggregationGroupModels;
 
+    /**
+     *
+     * Returns a map of the {@link AggregationGroupModel}
+     *
+     * @param aggregationGroupModels
+     */
     @Autowired
-    public AggregationHandlerConfiguration(Map<String, AggregationGroupModel> comparisonGroupConfigMap) {
-        this.comparisonGroupConfigMap = comparisonGroupConfigMap;
+    public AggregationHandlerConfiguration(Map<String, AggregationGroupModel> aggregationGroupModels) {
+        this.aggregationGroupModels = aggregationGroupModels;
     }
 
+    /**
+     *
+     * @return values defined in aggregation-group.properties that represents valid comparison groups.
+     */
     @Bean
     @Validated
     public AggregationHandler aggregationHandler() {
-        return new AggregationHandler(comparisonGroupConfigMap.values()
+        return new AggregationHandler(aggregationGroupModels.values()
                 .stream()
                 .collect(Collectors.toMap(AggregationGroupModel::getGroupName, Function.identity())));
     }

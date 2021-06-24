@@ -15,11 +15,11 @@ public class PublisherResourceRequest {
     private final String resourceDescription;
     private final byte[] results;
     private final String comparisonGroup;
-    private final String linkId;
+    private final String aggregationModelId;
     private final boolean failed;
 
     public PublisherResourceRequest(String objectKey, long expirationTimeInMillis, String uploaderEndpoint,
-                                    String presignerEndpoint, String resourceDescription, byte[] results, String comparisonGroup, String linkId, boolean failed) {
+                                    String presignerEndpoint, String resourceDescription, byte[] results, String comparisonGroup, String aggregationModelId, boolean failed) {
 
         this.objectKey = objectKey;
         this.expirationTimeInMillis = expirationTimeInMillis;
@@ -28,7 +28,7 @@ public class PublisherResourceRequest {
         this.resourceDescription = resourceDescription;
         this.results = results;
         this.comparisonGroup = comparisonGroup;
-        this.linkId = linkId;
+        this.aggregationModelId = aggregationModelId;
         this.failed = failed;
     }
 
@@ -60,8 +60,8 @@ public class PublisherResourceRequest {
         return comparisonGroup;
     }
 
-    public String getLinkId() {
-        return linkId;
+    public String getAggregationModelId() {
+        return aggregationModelId;
     }
 
     public boolean isFailed() {
@@ -73,12 +73,12 @@ public class PublisherResourceRequest {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PublisherResourceRequest that = (PublisherResourceRequest) o;
-        return expirationTimeInMillis == that.expirationTimeInMillis && failed == that.failed && Objects.equals(objectKey, that.objectKey) && Objects.equals(uploaderEndpoint, that.uploaderEndpoint) && Objects.equals(presignerEndpoint, that.presignerEndpoint) && Objects.equals(resourceDescription, that.resourceDescription) && Objects.equals(comparisonGroup, that.comparisonGroup) && Objects.equals(linkId, that.linkId);
+        return expirationTimeInMillis == that.expirationTimeInMillis && failed == that.failed && Objects.equals(objectKey, that.objectKey) && Objects.equals(uploaderEndpoint, that.uploaderEndpoint) && Objects.equals(presignerEndpoint, that.presignerEndpoint) && Objects.equals(resourceDescription, that.resourceDescription) && Objects.equals(comparisonGroup, that.comparisonGroup) && Objects.equals(aggregationModelId, that.aggregationModelId);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(objectKey, expirationTimeInMillis, uploaderEndpoint, presignerEndpoint, resourceDescription, comparisonGroup, linkId, failed);
+        int result = Objects.hash(objectKey, expirationTimeInMillis, uploaderEndpoint, presignerEndpoint, resourceDescription, comparisonGroup, aggregationModelId, failed);
         result = 31 * result + Arrays.hashCode(results);
         return result;
     }

@@ -32,7 +32,7 @@ public class EmailPublisherMapperTest {
     void testMapResourceRequestToExchange() {
         //given
         Map<String, Object> headers = new HashMap<>();
-        PublisherResourceRequest request = new PublisherResourceRequest("key", 300, "uploader", "presigner", "description", "BODY".getBytes(), "group", "linkId", true);
+        PublisherResourceRequest request = new PublisherResourceRequest("key", 300, "uploader", "presigner", "description", "BODY".getBytes(), "group", "AggregationModelId", true);
 
         //when
         Object actual = emailPublisherMapper.map(request, headers);
@@ -51,7 +51,7 @@ public class EmailPublisherMapperTest {
     void testMapResourceRequestToExchangeSkipFailedIfFalse() {
         //given
         Map<String, Object> headers = new HashMap<>();
-        PublisherResourceRequest request = new PublisherResourceRequest("key", 300, "uploader", "presigner", "description", "BODY".getBytes(), "group", "linkId", false);
+        PublisherResourceRequest request = new PublisherResourceRequest("key", 300, "uploader", "presigner", "description", "BODY".getBytes(), "group", "AggregationModelId", false);
 
         //when
         Object actual = emailPublisherMapper.map(request, headers);
@@ -63,7 +63,7 @@ public class EmailPublisherMapperTest {
         assertEquals("presigner", headers.get("Presign"));
         assertEquals("description", headers.get("ResourceLinkDescription"));
         assertEquals("group", headers.get("ComparisonGroup"));
-        assertEquals("linkId", headers.get("LinkId"));
+        assertEquals("AggregationModelId", headers.get("AggregationModelId"));
         assertArrayEquals("BODY".getBytes(), (byte[])actual);
         assertFalse((boolean)headers.get("Failed"));
     }

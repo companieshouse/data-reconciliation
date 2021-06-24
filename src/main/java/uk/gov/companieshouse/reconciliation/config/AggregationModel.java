@@ -5,7 +5,8 @@ import uk.gov.companieshouse.reconciliation.model.ResourceLink;
 import javax.validation.constraints.NotNull;
 
 /**
- * Email link model that defines a rank that can be used to order {@link ResourceLink}.
+ * Aggregation model that defines a rank that can be used to order {@link ResourceLink}.
+ * Also contains a boolean field to represent whether the model is enabled or not.
  */
 public class AggregationModel {
 
