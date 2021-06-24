@@ -30,6 +30,7 @@ public class EmailPublisherMapperTest {
 
     @Test
     void testMapResourceRequestToExchange() {
+
         //given
         Map<String, Object> headers = new HashMap<>();
         PublisherResourceRequest request = new PublisherResourceRequest("key", 300, "uploader", "presigner", "description", "BODY".getBytes(), "group", "linkId", true);

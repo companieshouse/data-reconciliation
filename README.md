@@ -105,19 +105,40 @@
 |-----------------------|------------------------------------------------------------------|-------|
 |CACHE_EXPIRY_IN_SECONDS|The duration in seconds after which cached results will be evicted|300    |
 
-## Crontabs
+## Trigger Route Toggles
+### Description
+The toggles to configure which comparators will run.
 
-|Variable                                |Description                                                                      |Example                |
-|----------------------------------------|---------------------------------------------------------------------------------|-----------------------|
-|COMPANY_COUNT_CRONTAB                   |The interval of the MongoDB-Oracle company count comparator                      |* 0/30 9-17 * * MON-FRI|
-|COMPANY_COLLECTION_CRONTAB              |The interval of the MongoDB-Oracle company number comparator                     |* 0/30 9-17 * * MON-FRI|
-|COMPANY_COLLECTION_MONGO_PRIMARY_CRONTAB|The interval of the MongoDB-Elasticsearch primary index company number comparator|* 0/30 9-17 * * MON-FRI|
-|COMPANY_COLLECTION_MONGO_ALPHA_CRONTAB  |The interval of the MongoDB-Elasticsearch alpha index company number comparator  |* 0/30 9-17 * * MON-FRI|
-|DSQ_OFFICER_COLLECTION_CRONTAB          |The interval of the MongoDB-Oracle disqualified officer comparator               |* 0/30 9-17 * * MON-FRI|
-|COMPANY_NAME_MONGO_PRIMARY_CRONTAB      |The interval of the MongoDB-Elasticsearch primary index company name comparator  |* 0/30 9-17 * * MON-FRI|
-|COMPANY_NAME_MONGO_ALPHA_CRONTAB        |The interval of the MongoDB-Elasticsearch alpha index company name comparator    |* 0/30 9-17 * * MON-FRI|
-|COMPANY_STATUS_MONGO_PRIMARY_CRONTAB    |The interval of the MongoDB-Elasticsearch primary index company status comparator|* 0/30 9-17 * * MON-FRI|
-|COMPANY_STATUS_MONGO_ALPHA_CRONTAB      |The interval of the MongoDB-Elasticsearch primary index company status comparator|* 0/30 9-17 * * MON-FRI|
+|Variable                                |Description                                                  |Example            |
+|----------------------------------------|-------------------------------------------------------------|-------------------|
+|COMPANY_COUNT_MONGO_ORACLE_ENABLED      |MongoDB-Oracle company count comparator                      | "true" / "false"  |
+|COMPANY_NUMBER_MONGO_ORACLE_ENABLED     |MongoDB-Oracle company number comparator                     | "true" / "false"  |
+|COMPANY_NUMBER_MONGO_PRIMARY_ENABLED    |MongoDB-Elasticsearch primary index company number comparator| "true" / "false"  |
+|COMPANY_NUMBER_MONGO_ALPHA_ENABLED      |MongoDB-Elasticsearch alpha index company number comparator  | "true" / "false"  |
+|DSQ_OFFICER_ID_MONGO_ORACLE_ENABLED     |MongoDB-Oracle disqualified officer comparator               | "true" / "false"  |
+|COMPANY_NAME_MONGO_PRIMARY_ENABLED      |MongoDB-Elasticsearch primary index company name comparator  | "true" / "false"  |
+|COMPANY_NAME_MONGO_ALPHA_ENABLED        |MongoDB-Elasticsearch alpha index company name comparator    | "true" / "false"  |
+|COMPANY_STATUS_MONGO_PRIMARY_ENABLED    |MongoDB-Elasticsearch primary index company status comparator| "true" / "false"  |
+|COMPANY_STATUS_MONGO_ALPHA_ENABLED      |MongoDB-Elasticsearch primary index company status comparator| "true" / "false"  |
+|COMPANY_STATUS_MONGO_ORACLE_ENABLED     |MongoDN-Oracle company status comparator                     | "true" / "false"  |
+
+## Trigger Route Timers
+### Description
+The time delays before each comparator runs (after application startup).
+
+|Variable                                |Description                                                  |Example  |
+|----------------------------------------|-------------------------------------------------------------|---------|
+|COMPANY_COUNT_MONGO_ORACLE_DELAY        |MongoDB-Oracle company count comparator                      |"30s"    |
+|COMPANY_NUMBER_MONGO_ORACLE_DELAY       |MongoDB-Oracle company number comparator                     |"1m30s"  |
+|COMPANY_NUMBER_MONGO_PRIMARY_DELAY      |MongoDB-Elasticsearch primary index company number comparator|"2m30s"  |
+|COMPANY_NUMBER_MONGO_ALPHA_DELAY        |MongoDB-Elasticsearch alpha index company number comparator  |"3m30s"  |
+|DSQ_OFFICER_ID_MONGO_ORACLE_DELAY       |MongoDB-Oracle disqualified officer comparator               |"4m30s"  |
+|COMPANY_NAME_MONGO_PRIMARY_DELAY        |MongoDB-Elasticsearch primary index company name comparator  |"5m30s"  |
+|COMPANY_NAME_MONGO_ALPHA_DELAY          |MongoDB-Elasticsearch alpha index company name comparator    |"6m30s"  |
+|COMPANY_STATUS_MONGO_PRIMARY_DELAY      |MongoDB-Elasticsearch primary index company status comparator|"7m30s"  |
+|COMPANY_STATUS_MONGO_ALPHA_DELAY        |MongoDB-Elasticsearch primary index company status comparator|"8m30s"  |
+|COMPANY_STATUS_MONGO_ORACLE_DELAY       |MongoDN-Oracle company status comparator                     |"9m30s"  |
+
 
 ## Output aggregation configuration
 
