@@ -38,6 +38,7 @@ public class InsolvencyCaseCompare extends RouteBuilder {
                 .setHeader("ResultsTransformer").constant("{{function.mapper.insolvency_cases}}")
                 .setHeader("Upload", constant("{{endpoint.s3.upload}}"))
                 .setHeader("Presign", constant("{{endpoint.s3presigner.download}}"))
+                .setHeader("LinkId", constant("insolvency-case-count-link"))
                 .setHeader(AWS2S3Constants.KEY, simple("company/insolvency_cases_${date:now:yyyyMMdd}T${date:now:hhmmss}.csv"))
                 .setHeader(AWS2S3Constants.DOWNLOAD_LINK_EXPIRATION_TIME, constant("{{aws.expiry}}"))
                 .to("{{function.name.compare_results}}");
