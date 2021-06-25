@@ -10,12 +10,15 @@ import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 
+/**
+ * Trigger a comparison between counts of company insolvency cases on MongoDB and Oracle.
+ */
 @Component
 public class InsolvencyCaseCountCompareMongoDBOracle extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("{{endpoint.insolvency.case_count.mongo_oracle.timer}}")
+        from("{{endpoint.insolvency.case_count_mongo_oracle.timer}}")
                 .autoStartup("{{insolvency_case_count_mongo_oracle_enabled}}")
                 .setHeader("Src").constant("{{endpoint.mongodb.wrapper.aggregation.collection}}")
                 .setHeader("SrcDescription").constant("MongoDB - Number of cases")

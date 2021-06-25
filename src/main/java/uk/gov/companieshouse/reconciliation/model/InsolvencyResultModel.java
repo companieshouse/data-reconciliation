@@ -2,6 +2,9 @@ package uk.gov.companieshouse.reconciliation.model;
 
 import java.util.Objects;
 
+/**
+ * Contains insolvency details for a single company.
+ */
 public class InsolvencyResultModel {
 
     private final String companyNumber;
@@ -12,10 +15,16 @@ public class InsolvencyResultModel {
         this.insolvencyCases = insolvencyCases;
     }
 
+    /**
+     * @return The company number against which insolvency details are held.
+     */
     public String getCompanyNumber() {
         return companyNumber;
     }
 
+    /**
+     * @return The number of insolvency cases against the company.
+     */
     public int getInsolvencyCases() {
         return insolvencyCases;
     }
