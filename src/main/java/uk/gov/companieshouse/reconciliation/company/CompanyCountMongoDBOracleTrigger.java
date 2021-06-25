@@ -14,11 +14,12 @@ import org.springframework.stereotype.Component;
  *
  */
 @Component
-public class CompanyCountTrigger extends RouteBuilder {
+public class CompanyCountMongoDBOracleTrigger extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("{{endpoint.company_count.timer}}")
+        from("{{endpoint.company_count_mongo_oracle.timer}}")
+                .autoStartup("{{company_count_mongo_oracle_enabled}}")
                 .setBody(constant("{{query.oracle.corporate_body_count}}"))
                 .setHeader("Src", constant("{{endpoint.oracle.corporate_body_count}}"))
                 .setHeader("SrcName", constant("Oracle"))
@@ -29,7 +30,7 @@ public class CompanyCountTrigger extends RouteBuilder {
                 .setHeader("Destination", constant("{{endpoint.output}}"))
                 .setHeader("Upload", constant("{{endpoint.s3.upload}}"))
                 .setHeader("Presign", constant("{{endpoint.s3presigner.download}}"))
-                .setHeader("LinkId", constant("company-count-link"))
+                .setHeader("AggregationModelId", constant("company-count-mongo-oracle"))
                 .setHeader(AWS2S3Constants.KEY, simple("company/count_${date:now:yyyyMMdd}T${date:now:hhmmss}.csv"))
                 .setHeader(AWS2S3Constants.DOWNLOAD_LINK_EXPIRATION_TIME, constant("{{aws.expiry}}"))
                 .to("{{function.name.compare_count}}");

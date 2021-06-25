@@ -10,19 +10,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-@PropertySource("classpath:comparison-groups.properties")
-public class ComparisonGroupConfiguration {
+@PropertySource("classpath:aggregation-groups.properties")
+public class AggregationGroupConfiguration {
 
     /**
-     * Builds a map from aggregation.completion configuration properties.
+     * Builds a map from aggregation-group configuration properties.
      *
      * <p>Note: the Map key for each entry corresponds to the property key e.g.</p>
      *
      * <pre>
-aggregation.completion.&lt;key1&gt;.groupName = ABC
-aggregation.completion.&lt;key1&gt;.size = n1
-aggregation.completion.&lt;key2&gt;.groupName = XYZ
-aggregation.completion.&lt;key2&gt;.size = n2
+aggregation-group.&lt;key1&gt;.groupName = ABC
+aggregation-group.&lt;key1&gt;.size = n1
+aggregation-group.&lt;key2&gt;.groupName = XYZ
+aggregation-group.&lt;key2&gt;.size = n2
 ...
      * </pre>
      *
@@ -30,8 +30,8 @@ aggregation.completion.&lt;key2&gt;.size = n2
      */
     @Bean
     @Validated
-    @ConfigurationProperties(prefix = "aggregation.completion")
-    public Map<String, ComparisonGroupModel> comparisonGroupConfigMap() {
+    @ConfigurationProperties(prefix = "aggregation-group")
+    public Map<String, AggregationGroupModel> aggregationGroupModelMap() {
         return new HashMap<>();
     }
 }

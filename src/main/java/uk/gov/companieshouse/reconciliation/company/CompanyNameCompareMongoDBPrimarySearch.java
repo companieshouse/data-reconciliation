@@ -14,6 +14,7 @@ public class CompanyNameCompareMongoDBPrimarySearch extends RouteBuilder {
     @Override
     public void configure() throws Exception {
         from("{{endpoint.company_name_mongo_primary.timer}}")
+                .autoStartup("{{company_name_mongo_primary_enabled}}")
                 .setHeader("Src").constant("{{endpoint.mongodb.wrapper.company_profile.collection}}")
                 .setHeader("SrcDescription").constant("MongoDB - Company Profile")
                 .setHeader("Target").constant("{{endpoint.elasticsearch.collection}}")
@@ -29,7 +30,7 @@ public class CompanyNameCompareMongoDBPrimarySearch extends RouteBuilder {
                 .setHeader("ResultsTransformer").constant("{{function.mapper.company_name}}")
                 .setHeader("Upload", constant("{{endpoint.s3.upload}}"))
                 .setHeader("Presign", constant("{{endpoint.s3presigner.download}}"))
-                .setHeader("LinkId", constant("company-name-primary-link"))
+                .setHeader("AggregationModelId", constant("company-name-mongo-primary"))
                 .setHeader(AWS2S3Constants.KEY, simple("company/results_name_primary_mongo_${date:now:yyyyMMdd}T${date:now:hhmmss}.csv"))
                 .setHeader(AWS2S3Constants.DOWNLOAD_LINK_EXPIRATION_TIME, constant("{{aws.expiry}}"))
                 .to("{{function.name.compare_results}}");
