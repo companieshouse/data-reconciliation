@@ -19,7 +19,6 @@ import uk.gov.companieshouse.reconciliation.function.email.PublisherResourceRequ
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -63,7 +62,7 @@ public class S3EmailPublisherAggregationStrategyTest {
         curr.getIn().setBody("results".getBytes());
 
         when(aggregationHandler.getAggregationConfiguration(anyString())).thenReturn(aggregationGroupModel);
-        when(aggregationGroupModel.getSize()).thenReturn(1);
+        when(aggregationGroupModel.getEnabledAggregationModelsSize()).thenReturn(1);
 
         // when
         Exchange actual = aggregationStrategy.aggregate(null, curr);
@@ -92,7 +91,7 @@ public class S3EmailPublisherAggregationStrategyTest {
         curr.getIn().setBody("results2".getBytes());
 
         when(aggregationHandler.getAggregationConfiguration(anyString())).thenReturn(aggregationGroupModel);
-        when(aggregationGroupModel.getSize()).thenReturn(2);
+        when(aggregationGroupModel.getEnabledAggregationModelsSize()).thenReturn(2);
 
         // when
         Exchange actual = aggregationStrategy.aggregate(prev, curr);

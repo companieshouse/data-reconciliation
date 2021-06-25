@@ -31,9 +31,16 @@ public class AggregationHandler {
         return aggregationGroupModel.get(groupName);
     }
 
-    public int getNumberOfComparisonGroups() {
+    /**
+     * Return the number of enabled aggregation group models.
+     *
+     * <p>Note that an enabled {@link AggregationGroupModel} is one that has at least one enabled {@link AggregationModel}.</p>
+     *
+     * @return size representing the number of enabled aggregation group models
+     */
+    public int getEnabledAggregationGroupModelsSize() {
         return aggregationGroupModel.values().stream()
-                .filter(aggregationGroupModel -> aggregationGroupModel.getSize() > 0)
+                .filter(aggregationGroupModel -> aggregationGroupModel.getEnabledAggregationModelsSize() > 0)
                 .collect(Collectors.toSet())
                 .size();
     }

@@ -32,9 +32,9 @@ public class AggregationGroupModel {
     }
 
     /**
-     * @return size representing the number of aggregation models in a comparison group
+     * @return size representing the number of enabled aggregation models in a comparison group
      */
-    public int getSize() {
+    public int getEnabledAggregationModelsSize() {
         return aggregationModels.values().stream()
                 .filter(aggregationModel -> aggregationModel.isEnabled())
                 .collect(Collectors.toSet())

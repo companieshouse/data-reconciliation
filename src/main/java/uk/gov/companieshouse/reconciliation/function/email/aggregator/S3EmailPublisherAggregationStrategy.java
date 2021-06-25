@@ -62,7 +62,7 @@ public class S3EmailPublisherAggregationStrategy implements AggregationStrategy 
             throw new IllegalArgumentException("Mandatory configuration not present AggregationGroupModel: " + group);
         }
 
-        return aggregationGroupModel.map(AggregationGroupModel::getSize)
+        return aggregationGroupModel.map(AggregationGroupModel::getEnabledAggregationModelsSize)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid comparison group specified: " + group));
     }
 }
