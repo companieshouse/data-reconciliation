@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 public class InsolvencyCompanyNumberCompareMongoDBOracle extends RouteBuilder {
     @Override
     public void configure() throws Exception {
-        from("{{endpoint.insolvency.company_number.mongo_oracle.timer}}")
+        from("{{endpoint.insolvency.company_number_mongo_oracle.timer}}")
                 .autoStartup("{{insolvency_company_number_mongo_oracle_enabled}}")
                 .setHeader("SrcDescription", constant("MongoDB"))
                 .setHeader("Src", constant("{{endpoint.mongodb.wrapper.distinct.collection}}"))
