@@ -61,6 +61,8 @@
 |ENDPOINT_MONGODB_READ_PREFERENCE                |Determines how the MongoDB client routes read operations to members of a replica set|PRIMARY                  |
 |ENDPOINT_MONGODB_DSQ_OFFICER_DB_NAME            |The name of the MongoDB database used to store disqualified officers                |db_name                  |
 |ENDPOINT_MONGODB_DSQ_OFFICER_COLLECTION_NAME    |The name of the MongoDB collection used to store disqualified officers              |collection_name          |
+|ENDPOINT_MONGODB_INSOLVENCY_DB_NAME             |The name of the MongoDB database used to store company insolvency data              |db_name                  |
+|ENDPOINT_MONGODB_INSOLVENCY_COLLECTION_NAME     |The name of the MongoDB collection used to store company insolvency data            |collection_name          |
 
 ### Elasticsearch
 
@@ -109,35 +111,37 @@
 ### Description
 The toggles to configure which comparators will run.
 
-|Variable                                |Description                                                  |Example            |
-|----------------------------------------|-------------------------------------------------------------|-------------------|
-|COMPANY_COUNT_MONGO_ORACLE_ENABLED      |MongoDB-Oracle company count comparator                      | "true" / "false"  |
-|COMPANY_NUMBER_MONGO_ORACLE_ENABLED     |MongoDB-Oracle company number comparator                     | "true" / "false"  |
-|COMPANY_NUMBER_MONGO_PRIMARY_ENABLED    |MongoDB-Elasticsearch primary index company number comparator| "true" / "false"  |
-|COMPANY_NUMBER_MONGO_ALPHA_ENABLED      |MongoDB-Elasticsearch alpha index company number comparator  | "true" / "false"  |
-|DSQ_OFFICER_ID_MONGO_ORACLE_ENABLED     |MongoDB-Oracle disqualified officer comparator               | "true" / "false"  |
-|COMPANY_NAME_MONGO_PRIMARY_ENABLED      |MongoDB-Elasticsearch primary index company name comparator  | "true" / "false"  |
-|COMPANY_NAME_MONGO_ALPHA_ENABLED        |MongoDB-Elasticsearch alpha index company name comparator    | "true" / "false"  |
-|COMPANY_STATUS_MONGO_PRIMARY_ENABLED    |MongoDB-Elasticsearch primary index company status comparator| "true" / "false"  |
-|COMPANY_STATUS_MONGO_ALPHA_ENABLED      |MongoDB-Elasticsearch primary index company status comparator| "true" / "false"  |
-|COMPANY_STATUS_MONGO_ORACLE_ENABLED     |MongoDB-Oracle company status comparator                     | "true" / "false"  |
+|Variable                                      |Description                                                  |Example            |
+|----------------------------------------------|-------------------------------------------------------------|-------------------|
+|COMPANY_COUNT_MONGO_ORACLE_ENABLED            |MongoDB-Oracle company count comparator                      | "true" / "false"  |
+|COMPANY_NUMBER_MONGO_ORACLE_ENABLED           |MongoDB-Oracle company number comparator                     | "true" / "false"  |
+|COMPANY_NUMBER_MONGO_PRIMARY_ENABLED          |MongoDB-Elasticsearch primary index company number comparator| "true" / "false"  |
+|COMPANY_NUMBER_MONGO_ALPHA_ENABLED            |MongoDB-Elasticsearch alpha index company number comparator  | "true" / "false"  |
+|DSQ_OFFICER_ID_MONGO_ORACLE_ENABLED           |MongoDB-Oracle disqualified officer comparator               | "true" / "false"  |
+|COMPANY_NAME_MONGO_PRIMARY_ENABLED            |MongoDB-Elasticsearch primary index company name comparator  | "true" / "false"  |
+|COMPANY_NAME_MONGO_ALPHA_ENABLED              |MongoDB-Elasticsearch alpha index company name comparator    | "true" / "false"  |
+|COMPANY_STATUS_MONGO_PRIMARY_ENABLED          |MongoDB-Elasticsearch primary index company status comparator| "true" / "false"  |
+|COMPANY_STATUS_MONGO_ALPHA_ENABLED            |MongoDB-Elasticsearch primary index company status comparator| "true" / "false"  |
+|COMPANY_STATUS_MONGO_ORACLE_ENABLED           |MongoDB-Oracle company status comparator                     | "true" / "false"  |
+|INSOLVENCY_COMPANY_NUMBER_MONGO_ORACLE_ENABLED|MongoDB-Oracle insolvency company number comparator          | "true" / "false"  |
 
 ## Trigger Route Timers
 ### Description
 The time delays before each comparator runs (after application startup).
 
-|Variable                                |Description                                                  |Example   |
-|----------------------------------------|-------------------------------------------------------------|----------|
-|COMPANY_COUNT_MONGO_ORACLE_DELAY        |MongoDB-Oracle company count comparator                      | "30s"    |
-|COMPANY_NUMBER_MONGO_ORACLE_DELAY       |MongoDB-Oracle company number comparator                     | "1m30s"  |
-|COMPANY_NUMBER_MONGO_PRIMARY_DELAY      |MongoDB-Elasticsearch primary index company number comparator| "2m30s"  |
-|COMPANY_NUMBER_MONGO_ALPHA_DELAY        |MongoDB-Elasticsearch alpha index company number comparator  | "3m30s"  |
-|DSQ_OFFICER_ID_MONGO_ORACLE_DELAY       |MongoDB-Oracle disqualified officer comparator               | "4m30s"  |
-|COMPANY_NAME_MONGO_PRIMARY_DELAY        |MongoDB-Elasticsearch primary index company name comparator  | "5m30s"  |
-|COMPANY_NAME_MONGO_ALPHA_DELAY          |MongoDB-Elasticsearch alpha index company name comparator    | "6m30s"  |
-|COMPANY_STATUS_MONGO_PRIMARY_DELAY      |MongoDB-Elasticsearch primary index company status comparator| "7m30s"  |
-|COMPANY_STATUS_MONGO_ALPHA_DELAY        |MongoDB-Elasticsearch primary index company status comparator| "8m30s"  |
-|COMPANY_STATUS_MONGO_ORACLE_DELAY       |MongoDB-Oracle company status comparator                     | "9m30s"  |
+|Variable                                    |Description                                                  |Example   |
+|--------------------------------------------|-------------------------------------------------------------|----------|
+|COMPANY_COUNT_MONGO_ORACLE_DELAY            |MongoDB-Oracle company count comparator                      | "30s"    |
+|COMPANY_NUMBER_MONGO_ORACLE_DELAY           |MongoDB-Oracle company number comparator                     | "1m30s"  |
+|COMPANY_NUMBER_MONGO_PRIMARY_DELAY          |MongoDB-Elasticsearch primary index company number comparator| "2m30s"  |
+|COMPANY_NUMBER_MONGO_ALPHA_DELAY            |MongoDB-Elasticsearch alpha index company number comparator  | "3m30s"  |
+|DSQ_OFFICER_ID_MONGO_ORACLE_DELAY           |MongoDB-Oracle disqualified officer comparator               | "4m30s"  |
+|COMPANY_NAME_MONGO_PRIMARY_DELAY            |MongoDB-Elasticsearch primary index company name comparator  | "5m30s"  |
+|COMPANY_NAME_MONGO_ALPHA_DELAY              |MongoDB-Elasticsearch alpha index company name comparator    | "6m30s"  |
+|COMPANY_STATUS_MONGO_PRIMARY_DELAY          |MongoDB-Elasticsearch primary index company status comparator| "7m30s"  |
+|COMPANY_STATUS_MONGO_ALPHA_DELAY            |MongoDB-Elasticsearch primary index company status comparator| "8m30s"  |
+|COMPANY_STATUS_MONGO_ORACLE_DELAY           |MongoDB-Oracle company status comparator                     | "9m30s"  |
+|INSOLVENCY_COMPANY_NUMBER_MONGO_ORACLE_DELAY|MongoDB-Oracle insolvency company number comparator          | "10m30s" |
 
 
 ## Output aggregation configuration

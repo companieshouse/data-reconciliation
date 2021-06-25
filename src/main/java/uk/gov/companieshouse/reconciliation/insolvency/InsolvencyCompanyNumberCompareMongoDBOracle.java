@@ -7,24 +7,24 @@ import org.apache.camel.component.mongodb.MongoDbConstants;
 import org.springframework.stereotype.Component;
 
 /**
- * Trigger a comparison between companies with insolvency cases on Oracle and MongoDB.
+ * Trigger a comparison between companies with insolvency cases on MongoDB and Oracle.
  */
 @Component
-public class InsolvencyCompanyNumberCompare extends RouteBuilder {
+public class InsolvencyCompanyNumberCompareMongoDBOracle extends RouteBuilder {
     @Override
     public void configure() throws Exception {
-        from("{{endpoint.insolvency.company_number.timer}}")
+        from("{{endpoint.insolvency.company_number.mongo_oracle.timer}}")
                 .autoStartup("{{insolvency_company_number_mongo_oracle_enabled}}")
-                .setHeader("OracleQuery", constant("{{query.oracle.insolvency_company_number}}"))
-                .setHeader("OracleEndpoint", constant("{{endpoint.oracle.list}}"))
-                .setHeader("SrcDescription", constant("Oracle"))
-                .setHeader("Src", constant("{{endpoint.oracle.collection}}"))
-                .setHeader("TargetDescription", constant("MongoDB"))
-                .setHeader("Target", constant("{{endpoint.mongodb.wrapper.distinct.collection}}"))
+                .setHeader("SrcDescription", constant("MongoDB"))
+                .setHeader("Src", constant("{{endpoint.mongodb.wrapper.distinct.collection}}"))
                 .setHeader(MongoDbConstants.DISTINCT_QUERY_FIELD, constant("_id"))
                 .setHeader("MongoQuery", constant(Filters.exists("data.cases.number", true)))
                 .setHeader("MongoDistinctEndpoint", constant("{{endpoint.mongodb.insolvency_collection}}"))
                 .setHeader("MongoDistinctCacheKey", constant("{{endpoint.mongodb.insolvency.cache.key}}"))
+                .setHeader("TargetDescription", constant("Oracle"))
+                .setHeader("Target", constant("{{endpoint.oracle.collection}}"))
+                .setHeader("OracleQuery", constant("{{query.oracle.insolvency_company_number}}"))
+                .setHeader("OracleEndpoint", constant("{{endpoint.oracle.list}}"))
                 .setHeader("Comparison", constant("company insolvency cases"))
                 .setHeader("ComparisonGroup", constant("Company insolvency"))
                 .setHeader("RecordType", constant("Company Number"))
