@@ -16,12 +16,12 @@ import org.springframework.test.context.TestPropertySource;
 @SpringBootTest
 @DirtiesContext
 @TestPropertySource("classpath:application-stubbed.properties")
-public class InsolvencyCaseCompareTest {
+public class InsolvencyCaseCountCompareMongoDBOracleTest {
 
     @Autowired
     private CamelContext context;
 
-    @Produce("direct:insolvency_case_trigger")
+    @Produce("direct:insolvency_case_count_mongo_oracle_trigger")
     private ProducerTemplate producerTemplate;
 
     @EndpointInject("mock:compare_results")
@@ -29,16 +29,16 @@ public class InsolvencyCaseCompareTest {
 
     @Test
     void testTriggerCompanyStatusComparisonBetweenMongoAndOracle() throws InterruptedException {
-        mockEndpoint.expectedHeaderReceived("Src", "direct:oracle-collection");
-        mockEndpoint.expectedHeaderReceived("SrcDescription", "Oracle");
-        mockEndpoint.expectedHeaderReceived("OracleQuery", "SELECT '12345678', 42 FROM DUAL");
-        mockEndpoint.expectedHeaderReceived("OracleEndpoint", "mock:fruitTree");
-        mockEndpoint.expectedHeaderReceived("OracleTransformer", "direct:oracle-insolvency-cases");
-        mockEndpoint.expectedHeaderReceived("Target", "mock:mongoCompanyProfileCollection");
-        mockEndpoint.expectedHeaderReceived("TargetDescription", "MongoDB - Company Insolvency");
+        mockEndpoint.expectedHeaderReceived("Src", "mock:mongoCompanyProfileCollection");
+        mockEndpoint.expectedHeaderReceived("SrcDescription", "MongoDB - Number of cases");
         mockEndpoint.expectedHeaderReceived("MongoCacheKey", "mongoInsolvencyCases");
         mockEndpoint.expectedHeaderReceived("MongoEndpoint", "mock:insolvency_cases");
         mockEndpoint.expectedHeaderReceived("MongoTransformer", "direct:mongo-insolvency_cases-transformer");
+        mockEndpoint.expectedHeaderReceived("Target", "direct:oracle-collection");
+        mockEndpoint.expectedHeaderReceived("TargetDescription", "Oracle DB - Number of cases");
+        mockEndpoint.expectedHeaderReceived("OracleQuery", "SELECT '12345678', 42 FROM DUAL");
+        mockEndpoint.expectedHeaderReceived("OracleEndpoint", "mock:fruitTree");
+        mockEndpoint.expectedHeaderReceived("OracleTransformer", "direct:oracle-insolvency-cases");
         producerTemplate.sendBody(0);
         MockEndpoint.assertIsSatisfied(context);
     }

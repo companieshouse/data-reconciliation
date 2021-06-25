@@ -124,6 +124,7 @@ The toggles to configure which comparators will run.
 |COMPANY_STATUS_MONGO_ALPHA_ENABLED            |MongoDB-Elasticsearch primary index company status comparator| "true" / "false"  |
 |COMPANY_STATUS_MONGO_ORACLE_ENABLED           |MongoDB-Oracle company status comparator                     | "true" / "false"  |
 |INSOLVENCY_COMPANY_NUMBER_MONGO_ORACLE_ENABLED|MongoDB-Oracle insolvency company number comparator          | "true" / "false"  |
+|INSOLVENCY_CASE_COUNT_MONGO_ORACLE_ENABLED    |MongoDB-Oracle insolvency case count comparator              | "true" / "false"  |
 
 ## Trigger Route Timers
 ### Description
@@ -142,6 +143,7 @@ The time delays before each comparator runs (after application startup).
 |COMPANY_STATUS_MONGO_ALPHA_DELAY            |MongoDB-Elasticsearch primary index company status comparator| "8m30s"  |
 |COMPANY_STATUS_MONGO_ORACLE_DELAY           |MongoDB-Oracle company status comparator                     | "9m30s"  |
 |INSOLVENCY_COMPANY_NUMBER_MONGO_ORACLE_DELAY|MongoDB-Oracle insolvency company number comparator          | "10m30s" |
+|INSOLVENCY_CASE_COUNT_MONGO_ORACLE_DELAY    |MongoDB-Oracle insolvency company number comparator          | "11m30s" |
 
 
 ## Output aggregation configuration

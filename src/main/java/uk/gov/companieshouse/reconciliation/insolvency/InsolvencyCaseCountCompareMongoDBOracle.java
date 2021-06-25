@@ -11,18 +11,14 @@ import org.springframework.stereotype.Component;
 import java.util.Arrays;
 
 @Component
-public class InsolvencyCaseCompare extends RouteBuilder {
+public class InsolvencyCaseCountCompareMongoDBOracle extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("{{endpoint.insolvency.case.timer}}")
-                .setHeader("Src").constant("{{endpoint.oracle.collection}}")
-                .setHeader("SrcDescription").constant("Oracle")
-                .setHeader("OracleQuery").constant("{{query.oracle.insolvency_cases}}")
-                .setHeader("OracleEndpoint").constant("{{endpoint.oracle.list}}")
-                .setHeader("OracleTransformer").constant("{{transformer.oracle.insolvency_cases}}")
-                .setHeader("Target").constant("{{endpoint.mongodb.wrapper.aggregation.collection}}")
-                .setHeader("TargetDescription").constant("MongoDB - Company Insolvency")
+        from("{{endpoint.insolvency.case_count.mongo_oracle.timer}}")
+                .autoStartup("{{insolvency_case_count_mongo_oracle_enabled}}")
+                .setHeader("Src").constant("{{endpoint.mongodb.wrapper.aggregation.collection}}")
+                .setHeader("SrcDescription").constant("MongoDB - Number of cases")
                 .setHeader("MongoCacheKey").constant("{{endpoint.mongodb.insolvency_cases.cache.key}}")
                 .setHeader("MongoQuery").constant(Arrays.asList(
                         Aggregates.match(Filters.exists("data.cases.number")),
@@ -31,6 +27,11 @@ public class InsolvencyCaseCompare extends RouteBuilder {
                                 Projections.computed("cases", new Document("$size", "$data.cases.number"))))))
                 .setHeader("MongoEndpoint").constant("{{endpoint.mongodb.insolvency_aggregation_collection}}")
                 .setHeader("MongoTransformer").constant("{{transformer.mongo.insolvency_cases}}")
+                .setHeader("Target").constant("{{endpoint.oracle.collection}}")
+                .setHeader("TargetDescription").constant("Oracle DB - Number of cases")
+                .setHeader("OracleQuery").constant("{{query.oracle.insolvency_cases}}")
+                .setHeader("OracleEndpoint").constant("{{endpoint.oracle.list}}")
+                .setHeader("OracleTransformer").constant("{{transformer.oracle.insolvency_cases}}")
                 .setHeader("RecordKey").constant("Company Number")
                 .setHeader("Comparison").constant("company insolvency case counts")
                 .setHeader("ComparisonGroup").constant("Company insolvency")
@@ -38,7 +39,7 @@ public class InsolvencyCaseCompare extends RouteBuilder {
                 .setHeader("ResultsTransformer").constant("{{function.mapper.insolvency_cases}}")
                 .setHeader("Upload", constant("{{endpoint.s3.upload}}"))
                 .setHeader("Presign", constant("{{endpoint.s3presigner.download}}"))
-                .setHeader("LinkId", constant("insolvency-case-count-link"))
+                .setHeader("AggregationModelId", constant("insolvency-case-count-mongo-oracle"))
                 .setHeader(AWS2S3Constants.KEY, simple("company/insolvency_cases_${date:now:yyyyMMdd}T${date:now:hhmmss}.csv"))
                 .setHeader(AWS2S3Constants.DOWNLOAD_LINK_EXPIRATION_TIME, constant("{{aws.expiry}}"))
                 .to("{{function.name.compare_results}}");
