@@ -9,6 +9,13 @@ import uk.gov.companieshouse.reconciliation.common.RetryableRoute;
 /**
  * Retrieves and aggregates company profiles from MongoDB.<br>
  * <br>
+ * IN:<br>
+ * header(MongoQuery): The query that will be sent to MongoDB.<br>
+ * header(MongoCacheKey): The cache key underneath which results will be stored.<br>
+ * header(MongoEndpoint): The MongoDB endpoint that will be used to fetch data from MongoDB.<br>
+ * header(MongoTransformer): The transformer that will be used to transform data fetched from MongoDB into an appropriate
+ * data structure.<br>
+ * <br>
  * OUT:<br>
  * <br>
  * body(): results fetched from the collection.<br>
