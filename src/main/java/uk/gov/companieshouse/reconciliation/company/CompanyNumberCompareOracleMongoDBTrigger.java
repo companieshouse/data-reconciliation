@@ -20,7 +20,8 @@ public class CompanyNumberCompareOracleMongoDBTrigger extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("{{endpoint.company_collection.timer}}")
+        from("{{endpoint.company_number_mongo_oracle.timer}}")
+                .autoStartup("{{company_number_mongo_oracle_enabled}}")
                 .setHeader("OracleQuery", constant("{{query.oracle.corporate_body_collection}}"))
                 .setHeader("OracleEndpoint", constant("{{endpoint.oracle.list}}"))
                 .setHeader("SrcDescription", constant("Oracle"))
@@ -28,14 +29,14 @@ public class CompanyNumberCompareOracleMongoDBTrigger extends RouteBuilder {
                 .setHeader("MongoEndpoint", constant("{{endpoint.mongodb.company_profile_collection}}"))
                 .setHeader("TargetDescription", constant("MongoDB"))
                 .setHeader(MongoDbConstants.DISTINCT_QUERY_FIELD, constant("_id"))
-                .setHeader("Target", simple("{{endpoint.mongodb.mapper.collection.company_number}}"))
+                .setHeader("Target", constant("{{endpoint.mongodb.mapper.collection.company_number}}"))
                 .setHeader("Comparison", constant("company numbers"))
                 .setHeader("ComparisonGroup", constant("Company profile"))
                 .setHeader("RecordType", constant("Company Number"))
                 .setHeader("Destination", constant("{{endpoint.output}}"))
                 .setHeader("Upload", constant("{{endpoint.s3.upload}}"))
                 .setHeader("Presign", constant("{{endpoint.s3presigner.download}}"))
-                .setHeader("LinkId", constant("company-number-link"))
+                .setHeader("AggregationModelId", constant("company-number-mongo-oracle"))
                 .setHeader(AWS2S3Constants.KEY, simple("company/collection_${date:now:yyyyMMdd}T${date:now:hhmmss}.csv"))
                 .setHeader(AWS2S3Constants.DOWNLOAD_LINK_EXPIRATION_TIME, constant("{{aws.expiry}}"))
                 .to("{{function.name.compare_collection}}");

@@ -6,7 +6,7 @@ import org.apache.camel.component.aws2.s3.AWS2S3Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.reconciliation.config.AggregationHandler;
-import uk.gov.companieshouse.reconciliation.config.ComparisonGroupModel;
+import uk.gov.companieshouse.reconciliation.config.AggregationGroupModel;
 import uk.gov.companieshouse.reconciliation.function.email.PublisherResourceRequest;
 import uk.gov.companieshouse.reconciliation.function.email.PublisherResourceRequestWrapper;
 
@@ -49,20 +49,20 @@ public class S3EmailPublisherAggregationStrategy implements AggregationStrategy 
                 curr.getIn().getHeader("Presign", String.class),
                 curr.getIn().getHeader("ResourceLinkDescription", String.class),
                 curr.getIn().getBody(byte[].class), comparisonGroup,
-                curr.getIn().getHeader("LinkId", String.class),
+                curr.getIn().getHeader("AggregationModelId", String.class),
                 curr.getIn().getHeader("Failed", boolean.class)));
         targetExchange.getIn().setHeader("PublisherResourceRequests", resourceRequests);
         return targetExchange;
     }
 
     private int getCompletionSizeForGroup(String group) {
-        Optional<ComparisonGroupModel> comparisonGroupModel = Optional.ofNullable(configuration.getAggregationConfiguration(group));
+        Optional<AggregationGroupModel> aggregationGroupModel = Optional.ofNullable(configuration.getAggregationConfiguration(group));
 
-        if (! comparisonGroupModel.isPresent()) {
-            throw new IllegalArgumentException("Mandatory configuration not present ComparisonGroupModel: " + group);
+        if (! aggregationGroupModel.isPresent()) {
+            throw new IllegalArgumentException("Mandatory configuration not present AggregationGroupModel: " + group);
         }
 
-        return comparisonGroupModel.map(ComparisonGroupModel::getSize)
+        return aggregationGroupModel.map(AggregationGroupModel::getEnabledAggregationModelsSize)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid comparison group specified: " + group));
     }
 }

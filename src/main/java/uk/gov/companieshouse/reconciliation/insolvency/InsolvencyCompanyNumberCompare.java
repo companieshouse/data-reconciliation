@@ -14,6 +14,7 @@ public class InsolvencyCompanyNumberCompare extends RouteBuilder {
     @Override
     public void configure() throws Exception {
         from("{{endpoint.insolvency.company_number.timer}}")
+                .autoStartup("{{insolvency_company_number_mongo_oracle_enabled}}")
                 .setHeader("OracleQuery", constant("{{query.oracle.insolvency_company_number}}"))
                 .setHeader("OracleEndpoint", constant("{{endpoint.oracle.list}}"))
                 .setHeader("SrcDescription", constant("Oracle"))
@@ -30,7 +31,7 @@ public class InsolvencyCompanyNumberCompare extends RouteBuilder {
                 .setHeader("Destination", constant("{{endpoint.output}}"))
                 .setHeader("Upload", constant("{{endpoint.s3.upload}}"))
                 .setHeader("Presign", constant("{{endpoint.s3presigner.download}}"))
-                .setHeader("LinkId", constant("insolvency-company-number-link"))
+                .setHeader("AggregationModelId", constant("insolvency-company-number-mongo-oracle"))
                 .setHeader(AWS2S3Constants.KEY, simple("insolvency/insolvency_company_number_${date:now:yyyyMMdd}T${date:now:hhmmss}.csv"))
                 .setHeader(AWS2S3Constants.DOWNLOAD_LINK_EXPIRATION_TIME, constant("{{aws.expiry}}"))
                 .to("{{function.name.compare_collection}}");

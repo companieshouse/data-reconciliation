@@ -5,8 +5,8 @@ import org.apache.camel.Exchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.gov.companieshouse.reconciliation.config.AggregationHandler;
-import uk.gov.companieshouse.reconciliation.config.ComparisonGroupModel;
-import uk.gov.companieshouse.reconciliation.config.EmailLinkModel;
+import uk.gov.companieshouse.reconciliation.config.AggregationGroupModel;
+import uk.gov.companieshouse.reconciliation.config.AggregationModel;
 import uk.gov.companieshouse.reconciliation.model.ResourceLink;
 import uk.gov.companieshouse.reconciliation.model.ResourceLinksWrapper;
 
@@ -25,7 +25,7 @@ public class EmailAggregationStrategy implements AggregationStrategy {
     private static final String LINK_REFERENCE_HEADER = "ResourceLinkReference";
     private static final String LINK_DESCRIPTION_HEADER = "ResourceLinkDescription";
     private static final String COMPARISON_GROUP_HEADER = "ComparisonGroup";
-    private static final String LINK_ID_HEADER = "LinkId";
+    private static final String AGGREGATION_MODEL_ID_HEADER = "AggregationModelId";
 
     private AggregationHandler aggregationHandler;
 
@@ -70,9 +70,9 @@ public class EmailAggregationStrategy implements AggregationStrategy {
         // Always push ResourceLinksWrapper into newExchange
         newExchange.getIn().setHeader(RESOURCE_LINKS_HEADER, downloadLinks);
 
-        Optional<String> linkId = header(newExchange, LINK_ID_HEADER);
-        if (! linkId.isPresent()) {
-            throw new IllegalArgumentException("Mandatory header not present: LinkId");
+        Optional<String> aggregationModelId = header(newExchange, AGGREGATION_MODEL_ID_HEADER);
+        if (! aggregationModelId.isPresent()) {
+            throw new IllegalArgumentException("Mandatory header not present: AggregationModelId");
         }
 
         Optional<String> comparisonGroup = header(newExchange, COMPARISON_GROUP_HEADER);
@@ -80,17 +80,17 @@ public class EmailAggregationStrategy implements AggregationStrategy {
             throw new IllegalArgumentException("Mandatory header not present: ComparisonGroup");
         }
 
-        ComparisonGroupModel comparisonGroupModel = aggregationHandler.getAggregationConfiguration(comparisonGroup.get());
-        if (comparisonGroupModel == null) {
-            throw new IllegalArgumentException("Mandatory configuration not present ComparisonGroupModel: " + comparisonGroup.get());
+        AggregationGroupModel aggregationGroupModel = aggregationHandler.getAggregationConfiguration(comparisonGroup.get());
+        if (aggregationGroupModel == null) {
+            throw new IllegalArgumentException("Mandatory AggregationGroupModel configuration not present: " + comparisonGroup.get());
         }
 
-        EmailLinkModel emailLinkModel = comparisonGroupModel.getEmailLinkModel().get(linkId.get());
-        if (emailLinkModel == null) {
-            throw new IllegalArgumentException("Mandatory configuration not present EmailLinkModel: " + linkId.get());
+        AggregationModel aggregationModel = aggregationGroupModel.getAggregationModels().get(aggregationModelId.get());
+        if (aggregationModel == null) {
+            throw new IllegalArgumentException("Mandatory AggregationModel configuration not present: " + aggregationModelId.get());
         }
 
-        downloadLinks.addDownloadLink(emailLinkModel.getRank(), linkReference.orElse(null), linkDescription.orElse(null));
+        downloadLinks.addDownloadLink(aggregationModel.getLinkRank(), linkReference.orElse(null), linkDescription.orElse(null));
 
         return newExchange;
     }

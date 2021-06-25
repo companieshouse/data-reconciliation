@@ -18,7 +18,7 @@ import org.springframework.test.context.TestPropertySource;
 @SpringBootTest
 @DirtiesContext
 @TestPropertySource(locations = "classpath:application-stubbed.properties")
-public class CompanyCountTriggerTest {
+public class CompanyCountMongoDBOracleTriggerTest {
 
     @Autowired
     private CamelContext context;
