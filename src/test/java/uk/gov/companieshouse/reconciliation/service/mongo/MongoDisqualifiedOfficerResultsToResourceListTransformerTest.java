@@ -1,6 +1,5 @@
 package uk.gov.companieshouse.reconciliation.service.mongo;
 
-import org.bson.Document;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.gov.companieshouse.reconciliation.function.compare_collection.entity.ResourceList;
@@ -9,7 +8,8 @@ import uk.gov.companieshouse.reconciliation.model.DisqualificationResults;
 
 import java.util.Collections;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MongoDisqualifiedOfficerResultsToResourceListTransformerTest {
 

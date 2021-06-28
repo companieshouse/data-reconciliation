@@ -25,7 +25,7 @@ public class InsolvencyCaseCountCompareMongoDBOracle extends RouteBuilder {
                 .setHeader("SrcDescription").constant("MongoDB - Number of cases")
                 .setHeader("MongoCacheKey").constant("{{endpoint.mongodb.insolvency_cases.cache.key}}")
                 .setHeader("MongoQuery").constant(insolvencyAggregationQuery)
-                .setHeader("MongoEndpoint").constant("{{endpoint.mongodb.insolvency_aggregation_collection}}")
+                .setHeader("MongoEndpoint").constant("{{endpoint.mongodb.insolvency_collection}}")
                 .setHeader("MongoTransformer").constant("{{transformer.mongo.insolvency_cases}}")
                 .setHeader("Target").constant("{{endpoint.oracle.collection}}")
                 .setHeader("TargetDescription").constant("Oracle DB - Number of cases")

@@ -2,7 +2,6 @@ package uk.gov.companieshouse.reconciliation.company;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.s3.AWS2S3Constants;
-import org.apache.camel.component.mongodb.MongoDbConstants;
 import org.springframework.stereotype.Component;
 
 /**
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Component;
  *
  * AWS2S3Constants.KEY: The key (name) which should be appended to CSV files.
  * AWS2S3Constants.DOWNLOAD_LINK_EXPIRATION_TIME: The time which can be configured to expire download links.
- * MongoDbConstants.DISTINCT_QUERY_FIELD: The unique field used as an identifier for MongoDB
  */
 @Component
 public class CompanyNumberCompareOracleMongoDBTrigger extends RouteBuilder {
@@ -29,7 +27,6 @@ public class CompanyNumberCompareOracleMongoDBTrigger extends RouteBuilder {
                 .setHeader("Src", constant("{{endpoint.oracle.collection}}"))
                 .setHeader("MongoEndpoint", constant("{{endpoint.mongodb.company_profile_collection}}"))
                 .setHeader("TargetDescription", constant("MongoDB"))
-                .setHeader(MongoDbConstants.DISTINCT_QUERY_FIELD, constant("_id"))
                 .setHeader("Target", constant("{{endpoint.mongodb.mapper.collection.company_number}}"))
                 .setHeader("Comparison", constant("company numbers"))
                 .setHeader("ComparisonGroup", constant("Company profile"))

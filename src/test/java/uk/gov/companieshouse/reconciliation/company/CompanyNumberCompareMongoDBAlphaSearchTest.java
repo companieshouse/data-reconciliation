@@ -5,7 +5,6 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.mongodb.MongoDbConstants;
 import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -48,7 +47,6 @@ public class CompanyNumberCompareMongoDBAlphaSearchTest {
         compareCollection.expectedHeaderReceived("RecordType", "Company Number");
         compareCollection.expectedHeaderReceived("Upload", "mock:s3_bucket_destination");
         compareCollection.expectedHeaderReceived("Presign", "mock:s3_download_link");
-        compareCollection.expectedHeaderReceived(MongoDbConstants.DISTINCT_QUERY_FIELD, "_id");
         producerTemplate.sendBody(0);
         MockEndpoint.assertIsSatisfied(context);
     }
