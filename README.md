@@ -161,6 +161,8 @@ and timer delays (after application startup for each comparator).
 |----------------------------------------------|-------------------------------------------------------------|-------------------|
 |INSOLVENCY_COMPANY_NUMBER_MONGO_ORACLE_ENABLED|Insolvency company number comparator toggle                  | "true" / "false"  |
 |INSOLVENCY_COMPANY_NUMBER_MONGO_ORACLE_DELAY  |Insolvency company number comparator delay                   | "10m30s"          |
+|INSOLVENCY_CASE_COUNT_MONGO_ORACLE_ENABLED    |Insolvency case count comparator toggle                      | "true" / "false"  |
+|INSOLVENCY_CASE_COUNT_MONGO_ORACLE_DELAY      |Insolvency case count comparator delay                       | "11m30s"          |
 
 ## Output aggregation configuration
 

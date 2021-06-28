@@ -24,6 +24,7 @@ public class CompanyNumberCompareOracleMongoDBTrigger extends RouteBuilder {
                 .autoStartup("{{company_number_mongo_oracle_enabled}}")
                 .setHeader("OracleQuery", constant("{{query.oracle.corporate_body_collection}}"))
                 .setHeader("OracleEndpoint", constant("{{endpoint.oracle.list}}"))
+                .setHeader("OracleTransformer", constant("{{transformer.oracle.single_column}}"))
                 .setHeader("SrcDescription", constant("Oracle"))
                 .setHeader("Src", constant("{{endpoint.oracle.collection}}"))
                 .setHeader("MongoEndpoint", constant("{{endpoint.mongodb.company_profile_collection}}"))

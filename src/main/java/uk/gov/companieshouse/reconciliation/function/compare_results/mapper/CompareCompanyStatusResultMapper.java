@@ -9,7 +9,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
-public class CompareCompanyStatusResultMapper implements CompanyResultsMappable {
+public class CompareCompanyStatusResultMapper implements CompanyResultsMappable<ResultModel> {
 
     @Override
     public Map<String, String> generateMappings(Collection<ResultModel> resultModels) {

@@ -13,6 +13,8 @@ import java.sql.SQLException;
  * IN:<br>
  * header(OracleQuery): The query that will be run against the Oracle database.<br>
  * header(OracleEndpoint): The endpoint representing the Oracle database that will be connected to.<br>
+ * header(OracleTransformer): The transformer that will be used to convert the ResultSet into an appropriate data
+ * structure.<br>
  * header(Description): A description of the {@link ResourceList resource list} that will be aggregated.<br>
  */
 @Component
@@ -29,6 +31,6 @@ public class OracleCollectionRoute extends RetryableRoute {
                 .end()
                 .setBody(header("OracleQuery"))
                 .toD("${header.OracleEndpoint}")
-                .bean(OracleResultCollectionTransformer.class);
+                .toD("${header.OracleTransformer}");
     }
 }

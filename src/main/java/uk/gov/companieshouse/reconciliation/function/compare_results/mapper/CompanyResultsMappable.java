@@ -1,20 +1,18 @@
 package uk.gov.companieshouse.reconciliation.function.compare_results.mapper;
 
-import uk.gov.companieshouse.reconciliation.model.ResultModel;
-
 import java.util.Collection;
 import java.util.Map;
 
 /**
- * Maps fields from {@link Collection<ResultModel> resultModels} to a
- * {@link Map<String, String>} representing pairings of company ID and company properties.
+ * Maps fields from a {@link Collection collection of objects} to a
+ * {@link Map map of strings} representing pairings of IDs and required properties.
  */
-public interface CompanyResultsMappable {
+public interface CompanyResultsMappable<T> {
     /**
-     * Map ID and company properties of a {@link Collection<ResultModel>} to a {@link Map<String, String>}.
+     * Map ID and company properties of a {@link Collection collection of objects} to a {@link Map map of strings}.
      *
-     * @param resultModels {@link Collection<ResultModel> resultModels}
-     * @return A {@link Map<String, String>} mapped from the {@link Collection<ResultModel> collection}.
+     * @param resultModels {@link Collection resultModels}
+     * @return A {@link Map map of strings} mapped from the {@link Collection collection of objects}.
      */
-    Map<String, String> generateMappings(Collection<ResultModel> resultModels);
+    Map<String, String> generateMappings(Collection<T> resultModels);
 }

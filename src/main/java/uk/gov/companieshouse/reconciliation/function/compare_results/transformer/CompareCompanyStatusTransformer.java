@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class CompareCompanyStatusTransformer {
+public class CompareCompanyStatusTransformer implements ResultTransformable<Results> {
 
     private final CompareFieldsResultsTransformer transformer;
     private final CompareCompanyStatusResultMapper mapper;

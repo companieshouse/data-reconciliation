@@ -1,8 +1,12 @@
 package uk.gov.companieshouse.reconciliation.company;
 
+import com.mongodb.client.model.Aggregates;
+import com.mongodb.client.model.Projections;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.s3.AWS2S3Constants;
 import org.springframework.stereotype.Component;
+
+import java.util.Collections;
 
 /**
  * Triggers a comparison between company status in MongoDB and Oracle; any differences will be
@@ -15,8 +19,12 @@ public class CompanyStatusCompareMongoDBOracle extends RouteBuilder {
     public void configure() throws Exception {
         from("{{endpoint.company_status_mongo_oracle.timer}}")
                 .autoStartup("{{company_status_mongo_oracle_enabled}}")
-                .setHeader("Src").constant("{{endpoint.mongodb.wrapper.company_profile.collection}}")
+                .setHeader("Src").constant("{{endpoint.mongodb.wrapper.aggregation.collection}}")
                 .setHeader("SrcDescription").constant("MongoDB - Company Profile")
+                .setHeader("MongoCacheKey").constant("{{endpoint.mongodb.company_profile.cache.key}}")
+                .setHeader("MongoQuery").constant(Collections.singletonList(Aggregates.project(Projections.include("_id", "data.company_name", "data.company_status"))))
+                .setHeader("MongoEndpoint").constant("{{endpoint.mongodb.company_profile_collection}}")
+                .setHeader("MongoTransformer").constant("{{transformer.mongo.company_profile}}")
                 .setHeader("Target").constant("{{endpoint.oracle.multi}}")
                 .setHeader("TargetDescription").constant("Oracle")
                 .setHeader("OracleQuery").constant("{{queries.oracle.company_status}}")

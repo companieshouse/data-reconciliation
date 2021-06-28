@@ -11,13 +11,13 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MongoAggregationTransformerTest {
+public class MongoCompanyProfileTransformerTest {
 
-    private MongoAggregationTransformer transformer;
+    private MongoCompanyProfileTransformer transformer;
 
     @BeforeEach
     void setUp() {
-        transformer = new MongoAggregationTransformer();
+        transformer = new MongoCompanyProfileTransformer();
     }
 
     @Test

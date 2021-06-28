@@ -25,6 +25,7 @@ public class InsolvencyCompanyNumberCompareMongoDBOracle extends RouteBuilder {
                 .setHeader("Target", constant("{{endpoint.oracle.collection}}"))
                 .setHeader("OracleQuery", constant("{{query.oracle.insolvency_company_number}}"))
                 .setHeader("OracleEndpoint", constant("{{endpoint.oracle.list}}"))
+                .setHeader("OracleTransformer", constant("{{transformer.oracle.single_column}}"))
                 .setHeader("Comparison", constant("company insolvency cases"))
                 .setHeader("ComparisonGroup", constant("Company insolvency"))
                 .setHeader("RecordType", constant("Company Number"))

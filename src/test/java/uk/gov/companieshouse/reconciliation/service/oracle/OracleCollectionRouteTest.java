@@ -5,6 +5,7 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
@@ -19,8 +20,10 @@ import uk.gov.companieshouse.reconciliation.function.compare_collection.entity.R
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @CamelSpringBootTest
@@ -35,6 +38,9 @@ public class OracleCollectionRouteTest {
     @EndpointInject("mock:oracleEndpoint")
     private MockEndpoint oracleEndpoint;
 
+    @EndpointInject("mock:oracleTransformer")
+    private MockEndpoint oracleTransformer;
+
     @Produce("direct:oracle-collection")
     private ProducerTemplate template;
 
@@ -46,16 +52,23 @@ public class OracleCollectionRouteTest {
     @Test
     void testRetrieveAndAggregateResultSet() throws InterruptedException {
         //given
+        ResourceList expectedResourceList = new ResourceList(Arrays.asList("12345678", "ABCD1234"), "description");
+        List<Map<String, Object>> expectedOracleResponse = Arrays.asList(
+                Collections.singletonMap("RESULT", "12345678"),
+                Collections.singletonMap("RESULT", "ABCD1234")
+        );
         oracleEndpoint.whenAnyExchangeReceived(exchange ->
-            exchange.getIn().setBody(Arrays.asList(
-                    Collections.singletonMap("RESULT", "12345678"),
-                    Collections.singletonMap("RESULT", "ABCD1234")
-            ))
+            exchange.getIn().setBody(expectedOracleResponse)
         );
         oracleEndpoint.expectedBodiesReceived("SELECT '12345678' FROM DUAL");
+        oracleTransformer.returnReplyBody(ExpressionBuilder.constantExpression(expectedResourceList));
+        oracleTransformer.expectedBodyReceived().constant(expectedOracleResponse);
+        oracleTransformer.expectedHeaderReceived("Description", "description");
+
         Exchange exchange = new DefaultExchange(camelContext);
         exchange.getIn().setHeader("OracleQuery", "SELECT '12345678' FROM DUAL");
         exchange.getIn().setHeader("OracleEndpoint", "mock:oracleEndpoint");
+        exchange.getIn().setHeader("OracleTransformer", "mock:oracleTransformer");
         exchange.getIn().setHeader("Description", "description");
 
         //when
@@ -63,9 +76,7 @@ public class OracleCollectionRouteTest {
         ResourceList resourceList = result.getIn().getBody(ResourceList.class);
 
         //then
-        assertEquals("description", resourceList.getResultDesc());
-        assertTrue(resourceList.getResultList().contains("12345678"));
-        assertTrue(resourceList.getResultList().contains("ABCD1234"));
+        assertSame(expectedResourceList, resourceList);
         MockEndpoint.assertIsSatisfied(camelContext);
     }
 
