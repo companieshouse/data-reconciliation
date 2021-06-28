@@ -2,8 +2,11 @@
 
 ## Summary
 
-* The data reconciliation app verifies consistency across different data sets used by Companies House including Oracle, MongoDB and Elasticsearch.
-* Groups of comparators are responsible for comparing data sets, aggregating results and then publishing a message to a Kafka topic.
+* The data reconciliation app verifies consistency across different data sets used by Companies House including Oracle,
+  MongoDB and Elasticsearch.
+* Groups of comparators are responsible for comparing data sets, aggregating results and then publishing a message to a
+  Kafka topic.
+* Configuration of the comparators that run is achieved using environment variables [see below](#comparison-groups).
 
 ## System requirements
 
@@ -38,7 +41,8 @@
 
 ## Maintenance
 
-* Queries used to [retrieve data from Oracle](src/main/resources/sql) and [retrieve search hits from Elasticsearch](src/main/resources/elasticsearch) are located on the classpath.
+* Queries used to [retrieve data from Oracle](src/main/resources/sql)
+  and [retrieve search hits from Elasticsearch](src/main/resources/elasticsearch) are located on the classpath.
 
 ## Environment variables
 
@@ -107,42 +111,51 @@
 |-----------------------|------------------------------------------------------------------|-------|
 |CACHE_EXPIRY_IN_SECONDS|The duration in seconds after which cached results will be evicted|300    |
 
-## Trigger Route Toggles
+## Comparison Groups
+
 ### Description
-The toggles to configure which comparators will run.
+
+The following tables contain toggles (for enabling/disabling each comparison) and timer delays (after application startup for each comparison) for their corresponding comparison groups.
+
+### Company Profile Comparisons - MongoDB-Oracle
 
 |Variable                                      |Description                                                  |Example            |
 |----------------------------------------------|-------------------------------------------------------------|-------------------|
-|COMPANY_COUNT_MONGO_ORACLE_ENABLED            |MongoDB-Oracle company count comparator                      | "true" / "false"  |
-|COMPANY_NUMBER_MONGO_ORACLE_ENABLED           |MongoDB-Oracle company number comparator                     | "true" / "false"  |
-|COMPANY_NUMBER_MONGO_PRIMARY_ENABLED          |MongoDB-Elasticsearch primary index company number comparator| "true" / "false"  |
-|COMPANY_NUMBER_MONGO_ALPHA_ENABLED            |MongoDB-Elasticsearch alpha index company number comparator  | "true" / "false"  |
-|DSQ_OFFICER_ID_MONGO_ORACLE_ENABLED           |MongoDB-Oracle disqualified officer comparator               | "true" / "false"  |
-|COMPANY_NAME_MONGO_PRIMARY_ENABLED            |MongoDB-Elasticsearch primary index company name comparator  | "true" / "false"  |
-|COMPANY_NAME_MONGO_ALPHA_ENABLED              |MongoDB-Elasticsearch alpha index company name comparator    | "true" / "false"  |
-|COMPANY_STATUS_MONGO_PRIMARY_ENABLED          |MongoDB-Elasticsearch primary index company status comparator| "true" / "false"  |
-|COMPANY_STATUS_MONGO_ALPHA_ENABLED            |MongoDB-Elasticsearch primary index company status comparator| "true" / "false"  |
-|COMPANY_STATUS_MONGO_ORACLE_ENABLED           |MongoDB-Oracle company status comparator                     | "true" / "false"  |
-|INSOLVENCY_COMPANY_NUMBER_MONGO_ORACLE_ENABLED|MongoDB-Oracle insolvency company number comparator          | "true" / "false"  |
+|COMPANY_COUNT_MONGO_ORACLE_ENABLED            |Company count comparator toggle                              | "true" / "false"  |
+|COMPANY_COUNT_MONGO_ORACLE_DELAY              |Company count comparator delay                               | "30s"             |
+|COMPANY_NUMBER_MONGO_ORACLE_ENABLED           |Company number comparator toggle                             | "true" / "false"  |
+|COMPANY_NUMBER_MONGO_ORACLE_DELAY             |Company number comparator delay                              | "1m30s"           |
+|COMPANY_STATUS_MONGO_ORACLE_ENABLED           |Company status comparator toggle                             | "true" / "false"  |
+|COMPANY_STATUS_MONGO_ORACLE_DELAY             |Company status comparator delay                              | "9m30s"           |
 
-## Trigger Route Timers
-### Description
-The time delays before each comparator runs (after application startup).
+### Disqualified Officer Comparisons - MongoDB-Oracle
 
-|Variable                                    |Description                                                  |Example   |
-|--------------------------------------------|-------------------------------------------------------------|----------|
-|COMPANY_COUNT_MONGO_ORACLE_DELAY            |MongoDB-Oracle company count comparator                      | "30s"    |
-|COMPANY_NUMBER_MONGO_ORACLE_DELAY           |MongoDB-Oracle company number comparator                     | "1m30s"  |
-|COMPANY_NUMBER_MONGO_PRIMARY_DELAY          |MongoDB-Elasticsearch primary index company number comparator| "2m30s"  |
-|COMPANY_NUMBER_MONGO_ALPHA_DELAY            |MongoDB-Elasticsearch alpha index company number comparator  | "3m30s"  |
-|DSQ_OFFICER_ID_MONGO_ORACLE_DELAY           |MongoDB-Oracle disqualified officer comparator               | "4m30s"  |
-|COMPANY_NAME_MONGO_PRIMARY_DELAY            |MongoDB-Elasticsearch primary index company name comparator  | "5m30s"  |
-|COMPANY_NAME_MONGO_ALPHA_DELAY              |MongoDB-Elasticsearch alpha index company name comparator    | "6m30s"  |
-|COMPANY_STATUS_MONGO_PRIMARY_DELAY          |MongoDB-Elasticsearch primary index company status comparator| "7m30s"  |
-|COMPANY_STATUS_MONGO_ALPHA_DELAY            |MongoDB-Elasticsearch primary index company status comparator| "8m30s"  |
-|COMPANY_STATUS_MONGO_ORACLE_DELAY           |MongoDB-Oracle company status comparator                     | "9m30s"  |
-|INSOLVENCY_COMPANY_NUMBER_MONGO_ORACLE_DELAY|MongoDB-Oracle insolvency company number comparator          | "10m30s" |
+|Variable                                      |Description                                                  |Example            |
+|----------------------------------------------|-------------------------------------------------------------|-------------------|
+|DSQ_OFFICER_ID_MONGO_ORACLE_ENABLED           |Disqualified officer comparator toggle                       | "true" / "false"  |
+|DSQ_OFFICER_ID_MONGO_ORACLE_DELAY             |Disqualified officer comparator delay                        | "4m30s"           |
 
+### Elasticsearch Comparisons - MongoDB-Elasticsearch
+|Variable                                      |Description                                                  |Example            |
+|----------------------------------------------|-------------------------------------------------------------|-------------------|
+|COMPANY_NUMBER_MONGO_PRIMARY_ENABLED          |Primary index company number comparator toggle               | "true" / "false"  |
+|COMPANY_NUMBER_MONGO_PRIMARY_DELAY            |Primary index company number comparator delay                | "2m30s"           |
+|COMPANY_NUMBER_MONGO_ALPHA_ENABLED            |Alpha index company number comparator toggle                 | "true" / "false"  |
+|COMPANY_NUMBER_MONGO_ALPHA_DELAY              |Alpha index company number comparator delay                  | "3m30s"           |
+|COMPANY_NAME_MONGO_PRIMARY_ENABLED            |Primary index company name comparator toggle                 | "true" / "false"  |
+|COMPANY_NAME_MONGO_PRIMARY_DELAY              |Primary index company name comparator delay                  | "5m30s"           |
+|COMPANY_NAME_MONGO_ALPHA_ENABLED              |Alpha index company name comparator toggle                   | "true" / "false"  |
+|COMPANY_NAME_MONGO_ALPHA_DELAY                |Alpha index company name comparator delay                    | "6m30s"           |
+|COMPANY_STATUS_MONGO_PRIMARY_ENABLED          |Primary index company status comparator toggle               | "true" / "false"  |
+|COMPANY_STATUS_MONGO_PRIMARY_DELAY            |Primary index company status comparator delay                | "7m30s"           |
+|COMPANY_STATUS_MONGO_ALPHA_ENABLED            |Primary index company status comparator toggle               | "true" / "false"  |
+|COMPANY_STATUS_MONGO_ALPHA_DELAY              |Primary index company status comparator delay                | "8m30s"           |
+
+### Company Insolvency Comparisons
+|Variable                                      |Description                                                  |Example            |
+|----------------------------------------------|-------------------------------------------------------------|-------------------|
+|INSOLVENCY_COMPANY_NUMBER_MONGO_ORACLE_ENABLED|Insolvency company number comparator toggle                  | "true" / "false"  |
+|INSOLVENCY_COMPANY_NUMBER_MONGO_ORACLE_DELAY  |Insolvency company number comparator delay                   | "10m30s"          |
 
 ## Output aggregation configuration
 
@@ -160,13 +173,14 @@ The time delays before each comparator runs (after application startup).
 |--------------------------|---------------------------------------------------------------|-------|
 |RESULTS_INITIAL_CAPACITY  |Used to optimise collections for the number of expected results|1000000|
 
-## Building the docker image 
+## Building the docker image
 
     mvn compile jib:dockerBuild -Dimage=169942020521.dkr.ecr.eu-west-1.amazonaws.com/local/data-reconciliation
 
 ## Running Locally using Docker
 
-1. Clone [Docker CHS Development](https://github.com/companieshouse/docker-chs-development) and follow the steps in the README.
+1. Clone [Docker CHS Development](https://github.com/companieshouse/docker-chs-development) and follow the steps in the
+   README.
 
 1. Enable the `data-reconciliation` module
 
@@ -174,8 +188,10 @@ The time delays before each comparator runs (after application startup).
 
 ### To make local changes
 
-Development mode is available for this service in [Docker CHS Development](https://github.com/companieshouse/docker-chs-development).
+Development mode is available for this service
+in [Docker CHS Development](https://github.com/companieshouse/docker-chs-development).
 
     ./bin/chs-dev development enable data-reconciliation
 
-This will clone the data reconciliation app into the repositories folder. Any changes to the code, or resources will automatically trigger a rebuild and reluanch.
+This will clone the data reconciliation app into the repositories folder. Any changes to the code, or resources will
+automatically trigger a rebuild and reluanch.
