@@ -40,7 +40,7 @@ public class CompanyNameCompareMongoDBAlphaSearchTest {
 
     @Test
     void testSetHeadersAndProduceMessage() throws InterruptedException {
-        target.expectedHeaderReceived("Src", "mock:mongoCompanyProfileCollection");
+        target.expectedHeaderReceived("Src", "mock:mongoAggregation");
         target.expectedHeaderReceived("SrcDescription", "MongoDB - Company Profile");
         target.expectedHeaderReceived("MongoCacheKey", "mongoCompanyProfile");
         target.expectedHeaderReceived("MongoQuery", Collections.singletonList(Aggregates.project(Projections.include("_id", "data.company_name", "data.company_status"))));

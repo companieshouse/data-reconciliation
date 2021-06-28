@@ -39,7 +39,7 @@ public class MongoCompanyNumberMapperTest {
     @Produce("direct:mongo-company_number-mapper")
     private ProducerTemplate producerTemplate;
 
-    @EndpointInject("mock:mongoCompanyProfileCollection")
+    @EndpointInject("mock:mongoAggregation")
     private MockEndpoint mongoEndpoint;
 
     @AfterEach

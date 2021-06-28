@@ -2,14 +2,20 @@ package uk.gov.companieshouse.reconciliation.disqualification;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.s3.AWS2S3Constants;
-import org.apache.camel.component.mongodb.MongoDbConstants;
+import org.bson.conversions.Bson;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * Trigger a comparison between disqualified officers on Oracle with disqualifications on MongoDB.
  */
 @Component
 public class DisqualifiedOfficerIdMongoDBOracleCompareTrigger extends RouteBuilder {
+
+    @Autowired
+    private List<Bson> disqualifiedOfficerAggregationQuery;
 
     @Override
     public void configure() throws Exception {
@@ -21,10 +27,7 @@ public class DisqualifiedOfficerIdMongoDBOracleCompareTrigger extends RouteBuild
                 .setHeader("SrcDescription", constant("Oracle"))
                 .setHeader("Src", constant("{{endpoint.oracle.collection}}"))
                 .setHeader("TargetDescription", constant("MongoDB"))
-                .setHeader(MongoDbConstants.DISTINCT_QUERY_FIELD, constant("officer_id_raw"))
-                .setHeader("Target", constant("{{endpoint.mongodb.wrapper.distinct.collection}}"))
-                .setHeader("MongoDistinctEndpoint", constant("{{endpoint.mongodb.disqualifications_collection}}"))
-                .setHeader("MongoDistinctCacheKey", constant("{{endpoint.mongodb.disqualifications.cache.key}}"))
+                .setHeader("Target", constant("{{endpoint.mongodb.mapper.collection.dsq_officer}}"))
                 .setHeader("Comparison", constant("disqualified officers"))
                 .setHeader("ComparisonGroup", constant("Disqualified officer"))
                 .setHeader("RecordType", constant("Disqualified Officer"))
