@@ -6,7 +6,7 @@
   MongoDB and Elasticsearch.
 * Groups of comparators are responsible for comparing data sets, aggregating results and then publishing a message to a
   Kafka topic.
-* Configuration of the comparators that run is achieved using environment variables [see below](#comparison-groups).
+* Comparators are configured using [environment variables](#comparison-groups).
 
 ## System requirements
 
