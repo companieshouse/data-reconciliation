@@ -21,7 +21,7 @@ public class CompanyCountMongoDBOracleTrigger extends RouteBuilder {
         from("{{endpoint.company_count_mongo_oracle.timer}}")
                 .autoStartup("{{company_count_mongo_oracle_enabled}}")
                 .setBody(constant("{{query.oracle.corporate_body_count}}"))
-                .setHeader("Src", constant("{{endpoint.oracle.corporate_body_count}}"))
+                .setHeader("Src", constant("{{endpoint.oracle.single}}"))
                 .setHeader("SrcName", constant("Oracle"))
                 .setHeader("Target", constant("{{endpoint.mongodb.company_profile_count}}"))
                 .setHeader("TargetName", constant("MongoDB"))

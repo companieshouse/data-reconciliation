@@ -70,8 +70,8 @@ public class SendEmailRouteTest {
             }
         });
         context.start();
-        s3Uploader.expectedMessageCount(5);
-        s3Presigner.expectedMessageCount(5);
+        s3Uploader.expectedMessageCount(7);
+        s3Presigner.expectedMessageCount(7);
         s3Presigner.returnReplyBody(ExpressionBuilder.constantExpression("URL"));
 
         Exchange firstCompanyExchange = buildExchange("Key", 300L, "Company profile", "Compare Count Link", "apple", "company-count-mongo-oracle", true);
@@ -83,7 +83,10 @@ public class SendEmailRouteTest {
         Exchange firstElasticsearchExchange = buildExchange("Key", 300L, "Elasticsearch", "Elasticsearch link 1", "strawberry", "company-name-mongo-alpha", false);
         Exchange secondElasticsearchExchange = buildExchange("Key", 300L, "Elasticsearch", "Elasticsearch link 2", "raspberry", "company-name-mongo-primary", false);
 
-        kafkaEndpoint.expectedMessageCount(3);
+        Exchange firstInsolvencyExchange = buildExchange("Key", 300L, "Company insolvency", "Insolvency link 1", "avocado", "insolvency-company-number-mongo-oracle", false);
+        Exchange secondInsolvencyExchange = buildExchange("Key", 300L, "Company insolvency", "Insolvency link 2", "kale", "insolvency-link2", false);
+
+        kafkaEndpoint.expectedMessageCount(4);
 
         producerTemplate.send(firstCompanyExchange);
         producerTemplate.send(secondCompanyExchange);
@@ -91,6 +94,8 @@ public class SendEmailRouteTest {
         producerTemplate.send(secondDsqExchange);
         producerTemplate.send(firstElasticsearchExchange);
         producerTemplate.send(secondElasticsearchExchange);
+        producerTemplate.send(firstInsolvencyExchange);
+        producerTemplate.send(secondInsolvencyExchange);
 
         MockEndpoint.assertIsSatisfied(context);
     }

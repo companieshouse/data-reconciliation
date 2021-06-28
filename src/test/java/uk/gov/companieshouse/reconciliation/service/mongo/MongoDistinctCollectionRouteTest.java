@@ -28,12 +28,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest
 @DirtiesContext
 @TestPropertySource(locations = "classpath:application-stubbed.properties")
-public class MongoDisqualificationsCollectionRouteTest {
+public class MongoDistinctCollectionRouteTest {
 
     @Autowired
     private CamelContext camelContext;
 
-    @Produce("direct:mongodb-disqualifications-collection")
+    @Produce("direct:mongodb-distinct-collection")
     private ProducerTemplate template;
 
     @EndpointInject("mock:dsq_compare_target")
@@ -57,8 +57,13 @@ public class MongoDisqualificationsCollectionRouteTest {
         cache.returnReplyHeader(CaffeineConstants.ACTION_HAS_RESULT, ExpressionBuilder.constantExpression(false));
         mongoEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(Arrays.asList("12345678", "ABCD1234")));
         mongoEndpoint.expectedHeaderReceived(MongoDbConstants.DISTINCT_QUERY_FIELD, "officer_id_raw");
+        mongoEndpoint.expectedBodyReceived().constant("query");
         Exchange exchange = new DefaultExchange(camelContext);
         exchange.getIn().setBody("undefined");
+        exchange.getIn().setHeader("MongoDistinctEndpoint", "mock:dsq_compare_target");
+        exchange.getIn().setHeader("MongoQuery", "query");
+        exchange.getIn().setHeader("MongoDistinctCacheKey", "mongoDisqualifications");
+        exchange.getIn().setHeader(MongoDbConstants.DISTINCT_QUERY_FIELD, "officer_id_raw");
 
         //when
         Exchange result = template.send(exchange);
@@ -81,6 +86,8 @@ public class MongoDisqualificationsCollectionRouteTest {
         });
         mongoEndpoint.expectedMessageCount(0);
         Exchange exchange = new DefaultExchange(camelContext);
+        exchange.getIn().setHeader("MongoDistinctEndpoint", "mock:dsq_compare_target");
+        exchange.getIn().setHeader("MongoDistinctCacheKey", "mongoDisqualifications");
 
         //when
         Exchange result = template.send(exchange);
@@ -103,6 +110,9 @@ public class MongoDisqualificationsCollectionRouteTest {
         });
         mongoEndpoint.expectedHeaderReceived(MongoDbConstants.DISTINCT_QUERY_FIELD, "officer_id_raw");
         Exchange exchange = new DefaultExchange(camelContext);
+        exchange.getIn().setHeader("MongoDistinctEndpoint", "mock:dsq_compare_target");
+        exchange.getIn().setHeader("MongoDistinctCacheKey", "mongoDisqualifications");
+        exchange.getIn().setHeader(MongoDbConstants.DISTINCT_QUERY_FIELD, "officer_id_raw");
 
         //when
         Exchange result = template.send(exchange);

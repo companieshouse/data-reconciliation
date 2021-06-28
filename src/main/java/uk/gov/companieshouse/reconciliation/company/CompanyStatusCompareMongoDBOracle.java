@@ -20,7 +20,7 @@ public class CompanyStatusCompareMongoDBOracle extends RouteBuilder {
                 .setHeader("Target").constant("{{endpoint.oracle.multi}}")
                 .setHeader("TargetDescription").constant("Oracle")
                 .setHeader("OracleQuery").constant("{{queries.oracle.company_status}}")
-                .setHeader("OracleEndpoint").constant("{{endpoint.oracle.corporate_body_collection}}")
+                .setHeader("OracleEndpoint").constant("{{endpoint.oracle.list}}")
                 .setHeader("RecordKey").constant("Company Number")
                 .setHeader("Comparison").constant("company statuses")
                 .setHeader("ComparisonGroup").constant("Company profile")
