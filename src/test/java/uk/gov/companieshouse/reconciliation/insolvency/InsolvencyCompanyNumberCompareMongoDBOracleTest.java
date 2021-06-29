@@ -1,12 +1,10 @@
 package uk.gov.companieshouse.reconciliation.insolvency;
 
-import com.mongodb.client.model.Filters;
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.mongodb.MongoDbConstants;
 import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,11 +30,7 @@ public class InsolvencyCompanyNumberCompareMongoDBOracleTest {
     @Test
     void testSetHeadersAndProduceMessage() throws InterruptedException {
         compareCollection.expectedHeaderReceived("SrcDescription", "MongoDB");
-        compareCollection.expectedHeaderReceived("Src", "mock:mongoDistinctCollection");
-        compareCollection.expectedHeaderReceived(MongoDbConstants.DISTINCT_QUERY_FIELD, "_id");
-        compareCollection.expectedHeaderReceived("MongoDistinctEndpoint", "mock:insolvency_target");
-        compareCollection.expectedHeaderReceived("MongoDistinctCacheKey", "mongoInsolvencies");
-        compareCollection.expectedHeaderReceived("MongoQuery", Filters.exists("data.cases.number", true));
+        compareCollection.expectedHeaderReceived("Src", "direct:mongo-insolvency-mapper");
         compareCollection.expectedHeaderReceived("TargetDescription", "Oracle");
         compareCollection.expectedHeaderReceived("Target", "direct:oracle-collection");
         compareCollection.expectedHeaderReceived("OracleQuery", "SELECT '12345678' FROM DUAL");

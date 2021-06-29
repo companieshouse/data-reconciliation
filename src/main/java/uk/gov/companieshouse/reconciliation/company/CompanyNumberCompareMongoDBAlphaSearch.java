@@ -2,7 +2,6 @@ package uk.gov.companieshouse.reconciliation.company;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.s3.AWS2S3Constants;
-import org.apache.camel.component.mongodb.MongoDbConstants;
 import org.springframework.stereotype.Component;
 
 /**
@@ -17,7 +16,6 @@ public class CompanyNumberCompareMongoDBAlphaSearch extends RouteBuilder {
         from("{{endpoint.company_number_mongo_alpha.timer}}")
                 .autoStartup("{{company_number_mongo_alpha_enabled}}")
                 .setHeader("SrcDescription", constant("MongoDB"))
-                .setHeader(MongoDbConstants.DISTINCT_QUERY_FIELD, constant("_id"))
                 .setHeader("Src", constant("{{endpoint.mongodb.mapper.collection.company_number}}"))
                 .setHeader("ElasticsearchEndpoint", constant("{{endpoint.elasticsearch.alpha}}"))
                 .setHeader("ElasticsearchQuery", constant("{{query.elasticsearch.alpha.company}}"))

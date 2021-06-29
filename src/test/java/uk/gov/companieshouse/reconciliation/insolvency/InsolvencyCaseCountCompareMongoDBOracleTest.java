@@ -29,7 +29,7 @@ public class InsolvencyCaseCountCompareMongoDBOracleTest {
 
     @Test
     void testTriggerCompanyStatusComparisonBetweenMongoAndOracle() throws InterruptedException {
-        mockEndpoint.expectedHeaderReceived("Src", "mock:mongoCompanyProfileCollection");
+        mockEndpoint.expectedHeaderReceived("Src", "mock:mongoAggregation");
         mockEndpoint.expectedHeaderReceived("SrcDescription", "MongoDB - Number of cases");
         mockEndpoint.expectedHeaderReceived("MongoCacheKey", "mongoInsolvencyCases");
         mockEndpoint.expectedHeaderReceived("MongoEndpoint", "mock:insolvency_cases");

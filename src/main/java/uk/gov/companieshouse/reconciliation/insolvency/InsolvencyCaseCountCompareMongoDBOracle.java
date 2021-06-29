@@ -1,20 +1,21 @@
 package uk.gov.companieshouse.reconciliation.insolvency;
 
-import com.mongodb.client.model.Aggregates;
-import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.Projections;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.s3.AWS2S3Constants;
-import org.bson.Document;
+import org.bson.conversions.Bson;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
+import java.util.List;
 
 /**
  * Trigger a comparison between counts of company insolvency cases on MongoDB and Oracle.
  */
 @Component
 public class InsolvencyCaseCountCompareMongoDBOracle extends RouteBuilder {
+
+    @Autowired
+    private List<Bson> insolvencyAggregationQuery;
 
     @Override
     public void configure() throws Exception {
@@ -23,12 +24,8 @@ public class InsolvencyCaseCountCompareMongoDBOracle extends RouteBuilder {
                 .setHeader("Src").constant("{{endpoint.mongodb.wrapper.aggregation.collection}}")
                 .setHeader("SrcDescription").constant("MongoDB - Number of cases")
                 .setHeader("MongoCacheKey").constant("{{endpoint.mongodb.insolvency_cases.cache.key}}")
-                .setHeader("MongoQuery").constant(Arrays.asList(
-                        Aggregates.match(Filters.exists("data.cases.number")),
-                        Aggregates.project(Projections.fields(
-                                Projections.include("_id"),
-                                Projections.computed("cases", new Document("$size", "$data.cases.number"))))))
-                .setHeader("MongoEndpoint").constant("{{endpoint.mongodb.insolvency_aggregation_collection}}")
+                .setHeader("MongoQuery").constant(insolvencyAggregationQuery)
+                .setHeader("MongoEndpoint").constant("{{endpoint.mongodb.insolvency_collection}}")
                 .setHeader("MongoTransformer").constant("{{transformer.mongo.insolvency_cases}}")
                 .setHeader("Target").constant("{{endpoint.oracle.collection}}")
                 .setHeader("TargetDescription").constant("Oracle DB - Number of cases")

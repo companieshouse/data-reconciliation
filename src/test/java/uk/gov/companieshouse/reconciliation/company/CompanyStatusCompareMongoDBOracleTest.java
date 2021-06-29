@@ -33,7 +33,7 @@ public class CompanyStatusCompareMongoDBOracleTest {
 
     @Test
     void testTriggerCompanyStatusComparisonBetweenMongoAndOracle() throws InterruptedException {
-        mockEndpoint.expectedHeaderReceived("Src", "mock:mongoCompanyProfileCollection");
+        mockEndpoint.expectedHeaderReceived("Src", "mock:mongoAggregation");
         mockEndpoint.expectedHeaderReceived("SrcDescription", "MongoDB - Company Profile");
         mockEndpoint.expectedHeaderReceived("MongoCacheKey", "mongoCompanyProfile");
         mockEndpoint.expectedHeaderReceived("MongoQuery", Collections.singletonList(Aggregates.project(Projections.include("_id", "data.company_name", "data.company_status"))));
