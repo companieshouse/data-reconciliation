@@ -43,7 +43,6 @@ public class CompanyNumberCompareOracleMongoDBTriggerTest {
         compareCollection.expectedHeaderReceived("TargetDescription", "MongoDB");
         compareCollection.expectedHeaderReceived("Target", "direct:mongo-company_number-mapper");
         compareCollection.expectedHeaderReceived("Destination", "mock:result");
-        compareCollection.expectedHeaderReceived("Comparison", "company numbers");
         compareCollection.expectedHeaderReceived("RecordType", "Company Number");
         compareCollection.expectedHeaderReceived("Upload", "mock:s3_bucket_destination");
         compareCollection.expectedHeaderReceived("Presign", "mock:s3_download_link");

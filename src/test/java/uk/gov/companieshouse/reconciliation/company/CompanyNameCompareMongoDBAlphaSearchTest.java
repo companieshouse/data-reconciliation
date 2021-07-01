@@ -51,7 +51,6 @@ public class CompanyNameCompareMongoDBAlphaSearchTest {
         target.expectedHeaderReceived("ElasticsearchEndpoint", "mock:elasticsearch-alpha-stub");
         target.expectedHeaderReceived("ElasticsearchQuery", "alpha-test");
         target.expectedHeaderReceived("RecordKey", "Company Number");
-        target.expectedHeaderReceived("Comparison", "company names");
         target.expectedHeaderReceived("Destination", "mock:result");
         target.expectedHeaderReceived("Upload", "mock:s3_bucket_destination");
         target.expectedHeaderReceived("Presign", "mock:s3_download_link");

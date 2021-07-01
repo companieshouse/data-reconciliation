@@ -42,7 +42,6 @@ public class DisqualifiedOfficerIdMongoDBOracleCompareTriggerTest {
         compareCollection.expectedHeaderReceived("Src", "direct:oracle-collection");
         compareCollection.expectedHeaderReceived("TargetDescription", "MongoDB");
         compareCollection.expectedHeaderReceived("Target", "direct:mongo-disqualified_officer-mapper");
-        compareCollection.expectedHeaderReceived("Comparison", "disqualified officers");
         compareCollection.expectedHeaderReceived("Destination", "mock:result");
         compareCollection.expectedHeaderReceived("RecordType", "Disqualified Officer");
         compareCollection.expectedHeaderReceived("Upload", "mock:s3_bucket_destination");

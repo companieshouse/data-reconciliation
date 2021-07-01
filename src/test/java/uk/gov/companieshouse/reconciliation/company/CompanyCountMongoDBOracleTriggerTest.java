@@ -40,7 +40,6 @@ public class CompanyCountMongoDBOracleTriggerTest {
         compareCount.expectedHeaderReceived("SrcName", "Oracle");
         compareCount.expectedHeaderReceived("Target", "mock:company_profile_count");
         compareCount.expectedHeaderReceived("TargetName", "MongoDB");
-        compareCount.expectedHeaderReceived("Comparison", "company profiles");
         compareCount.expectedHeaderReceived("Upload", "mock:s3_bucket_destination");
         compareCount.expectedHeaderReceived("Presign", "mock:s3_download_link");
         compareCount.expectedHeaderReceived(AWS2S3Constants.DOWNLOAD_LINK_EXPIRATION_TIME, 2000L);

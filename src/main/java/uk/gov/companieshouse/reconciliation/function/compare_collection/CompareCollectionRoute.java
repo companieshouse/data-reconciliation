@@ -28,7 +28,7 @@ public class CompareCollectionRoute extends RouteBuilder {
     public void configure() throws Exception {
         from("direct:compare_collection")
                 .onException(ComparisonFailedException.class)
-                    .setHeader("ResourceLinkDescription", simple("Failed to compare ${header.Comparison} in ${header.SrcDescription} and ${header.TargetDescription}."))
+                    .setHeader("ResourceLinkDescription", simple("Failed to perform ${header.ComparisonDescription}."))
                     .setHeader("Failed").constant(true)
                     .log(LoggingLevel.ERROR, "${header.ResourceLinkDescription}")
                     .handled(true)
@@ -56,7 +56,7 @@ public class CompareCollectionRoute extends RouteBuilder {
                 })
                 .bean(CompareCollectionTransformer.class)
                 .marshal().csv()
-                .setHeader("ResourceLinkDescription", simple("Comparisons completed for ${header.Comparison} in ${header.SrcDescription} and ${header.TargetDescription}."))
+                .setHeader("ResourceLinkDescription", simple("Completed ${header.ComparisonDescription}."))
                 .log("${header.ResourceLinkDescription}")
                 .toD("${header.Destination}");
     }

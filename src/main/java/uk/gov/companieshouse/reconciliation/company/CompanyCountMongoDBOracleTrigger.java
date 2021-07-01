@@ -27,6 +27,7 @@ public class CompanyCountMongoDBOracleTrigger extends RouteBuilder {
                 .setHeader("TargetName", constant("MongoDB"))
                 .setHeader("Comparison", constant("company profiles"))
                 .setHeader("ComparisonGroup", constant("Company profile"))
+                .setHeader("ComparisonDescription", constant("company count comparison between MongoDB and Oracle"))
                 .setHeader("Destination", constant("{{endpoint.output}}"))
                 .setHeader("Upload", constant("{{endpoint.s3.upload}}"))
                 .setHeader("Presign", constant("{{endpoint.s3presigner.download}}"))

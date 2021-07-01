@@ -59,6 +59,7 @@ public class S3EmailPublisherAggregationStrategyTest {
         curr.getIn().setHeader("Presign", "presignerEndpoint");
         curr.getIn().setHeader("ResourceLinkDescription", "resourceLinkDescription");
         curr.getIn().setHeader("AggregationModelId", "AggregationModelId");
+        curr.getIn().setHeader("ComparisonDescription", "description");
         curr.getIn().setBody("results".getBytes());
 
         when(aggregationHandler.getAggregationConfiguration(anyString())).thenReturn(aggregationGroupModel);
@@ -68,7 +69,7 @@ public class S3EmailPublisherAggregationStrategyTest {
         Exchange actual = aggregationStrategy.aggregate(null, curr);
 
         // then
-        assertEquals(new PublisherResourceRequestWrapper(Collections.singletonList(new PublisherResourceRequest("key", 300L, "uploaderEndpoint", "presignerEndpoint", "resourceLinkDescription", "results".getBytes(), "group", "AggregationModelId", false))), actual.getIn().getHeader("PublisherResourceRequests"));
+        assertEquals(new PublisherResourceRequestWrapper(Collections.singletonList(new PublisherResourceRequest("key", 300L, "uploaderEndpoint", "presignerEndpoint", "resourceLinkDescription", "results".getBytes(), "group", "AggregationModelId", false, "description"))), actual.getIn().getHeader("PublisherResourceRequests"));
         assertTrue(actual.getIn().getHeader("Completed", Boolean.class));
         verify(aggregationHandler).getAggregationConfiguration("group");
     }
@@ -77,7 +78,7 @@ public class S3EmailPublisherAggregationStrategyTest {
     void testAggregateFurtherMessages() {
         // given
         Exchange prev = new DefaultExchange(context);
-        prev.getIn().setHeader("PublisherResourceRequests", new PublisherResourceRequestWrapper(new ArrayList<>(Collections.singletonList(new PublisherResourceRequest("key", 300L, "uploaderEndpoint", "presignerEndpoint", "resourceLinkDescription", "results".getBytes(), "group", "aggregationModelId", false)))));
+        prev.getIn().setHeader("PublisherResourceRequests", new PublisherResourceRequestWrapper(new ArrayList<>(Collections.singletonList(new PublisherResourceRequest("key", 300L, "uploaderEndpoint", "presignerEndpoint", "resourceLinkDescription", "results".getBytes(), "group", "aggregationModelId", false, "description")))));
 
         Exchange curr = new DefaultExchange(context);
         curr.getIn().setHeader("ComparisonGroup", "group");
@@ -88,6 +89,7 @@ public class S3EmailPublisherAggregationStrategyTest {
         curr.getIn().setHeader("ResourceLinkDescription", "resourceLinkDescription2");
         curr.getIn().setHeader("AggregationModelId", "aggregationModelId2");
         curr.getIn().setHeader("Failed", true);
+        curr.getIn().setHeader("ComparisonDescription", "description2");
         curr.getIn().setBody("results2".getBytes());
 
         when(aggregationHandler.getAggregationConfiguration(anyString())).thenReturn(aggregationGroupModel);
@@ -97,7 +99,7 @@ public class S3EmailPublisherAggregationStrategyTest {
         Exchange actual = aggregationStrategy.aggregate(prev, curr);
 
         // then
-        assertEquals(new PublisherResourceRequestWrapper(Arrays.asList(new PublisherResourceRequest("key", 300L, "uploaderEndpoint", "presignerEndpoint", "resourceLinkDescription", "results".getBytes(), "group", "aggregationModelId", false), new PublisherResourceRequest("key2", 301L, "uploaderEndpoint2", "presignerEndpoint2", "resourceLinkDescription2", "results2".getBytes(), "group", "aggregationModelId2", true))), actual.getIn().getHeader("PublisherResourceRequests"));
+        assertEquals(new PublisherResourceRequestWrapper(Arrays.asList(new PublisherResourceRequest("key", 300L, "uploaderEndpoint", "presignerEndpoint", "resourceLinkDescription", "results".getBytes(), "group", "aggregationModelId", false, "description"), new PublisherResourceRequest("key2", 301L, "uploaderEndpoint2", "presignerEndpoint2", "resourceLinkDescription2", "results2".getBytes(), "group", "aggregationModelId2", true, "description2"))), actual.getIn().getHeader("PublisherResourceRequests"));
         assertSame(prev, actual);
         assertNull(actual.getIn().getHeader("Completed"));
         verify(aggregationHandler).getAggregationConfiguration("group");
@@ -121,7 +123,7 @@ public class S3EmailPublisherAggregationStrategyTest {
     void testIllegalArgumentExceptionIsThrownIfComparisonGroupUnhandled() {
         // given
         Exchange prev = new DefaultExchange(context);
-        prev.getIn().setHeader("PublisherResourceRequests", new PublisherResourceRequestWrapper(new ArrayList<>(Collections.singletonList(new PublisherResourceRequest("key", 300L, "uploaderEndpoint", "presignerEndpoint", "resourceLinkDescription", "results".getBytes(), "group", "AggregationModelId", false)))));
+        prev.getIn().setHeader("PublisherResourceRequests", new PublisherResourceRequestWrapper(new ArrayList<>(Collections.singletonList(new PublisherResourceRequest("key", 300L, "uploaderEndpoint", "presignerEndpoint", "resourceLinkDescription", "results".getBytes(), "group", "AggregationModelId", false, "description")))));
 
         Exchange curr = new DefaultExchange(context);
         curr.getIn().setHeader("ComparisonGroup", "group");
