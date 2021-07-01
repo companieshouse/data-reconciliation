@@ -118,9 +118,13 @@
 Each comparator belongs to a comparison group. After all comparators in the comparison group have run, 
 results produced by each comparator will be published to S3 and a message will be sent to a Kafka topic.
 
-The following tables contain toggles (for enabling/disabling each comparator) 
-and timer delays (after application startup for each comparator).
+The following tables contain toggles (for enabling/disabling each comparator) and timer delays (after application
+startup for each comparator).
 
+*Note: the application will only start when one or more comparison group toggles have been enabled; when no comparison
+group toggles have been enabled an error message will be logged i.e.*
+
+> No aggregation group models enabled; must be at least one
 
 ### Company Profile Comparisons - MongoDB-Oracle
 
