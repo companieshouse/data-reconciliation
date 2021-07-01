@@ -1,5 +1,8 @@
 package uk.gov.companieshouse.reconciliation.config;
 
+import org.springframework.validation.annotation.Validated;
+
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -7,6 +10,7 @@ import java.util.stream.Collectors;
 /**
  * Supplies {@link AggregationGroupModel}'s for given comparison group names.
  */
+@Validated
 public class AggregationHandler {
 
     @NotNull
@@ -38,6 +42,7 @@ public class AggregationHandler {
      *
      * @return size representing the number of enabled aggregation group models
      */
+    @Min(value = 1, message = "No aggregation group models enabled; must be at least one")
     public int getEnabledAggregationGroupModelsSize() {
         return aggregationGroupModel.values().stream()
                 .filter(aggregationGroupModel -> aggregationGroupModel.getEnabledAggregationModelsSize() > 0)

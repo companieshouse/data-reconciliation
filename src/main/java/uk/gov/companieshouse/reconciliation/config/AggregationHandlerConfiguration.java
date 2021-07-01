@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.validation.annotation.Validated;
 
 import java.util.Map;
 import java.util.function.Function;
@@ -37,7 +36,6 @@ public class AggregationHandlerConfiguration {
      * @return values defined in aggregation-group.properties that represents valid comparison groups.
      */
     @Bean
-    @Validated
     public AggregationHandler aggregationHandler() {
         return new AggregationHandler(aggregationGroupModels.values()
                 .stream()

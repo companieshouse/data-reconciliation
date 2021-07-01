@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.reconciliation.config;
 
+import org.springframework.validation.annotation.Validated;
 import uk.gov.companieshouse.reconciliation.model.ResourceLink;
 
 import javax.validation.constraints.NotNull;
@@ -8,6 +9,7 @@ import javax.validation.constraints.NotNull;
  * Aggregation model that defines a rank that can be used to order {@link ResourceLink}.
  * Also contains a boolean field to represent whether the model is enabled or not.
  */
+@Validated
 public class AggregationModel {
 
     @NotNull
