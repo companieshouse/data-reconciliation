@@ -46,7 +46,7 @@ public class CompareCountRoute extends RetryableRoute {
         super.configure();
         from("direct:compare_count")
                 .onException(SQLException.class, MongoException.class)
-                    .setHeader("ResourceLinkDescription", simple("Failed to compare counts of ${header.Comparison} in ${header.SrcName} with ${header.TargetName}."))
+                    .setHeader("ResourceLinkDescription", simple("Failed to perform ${header.ComparisonDescription}."))
                     .setHeader("Failed").constant(true)
                     .log(LoggingLevel.ERROR, "Compare count failed: ${header.ResourceLinkDescription}")
                     .handled(true)
@@ -82,7 +82,7 @@ public class CompareCountRoute extends RetryableRoute {
                     .otherwise()
                         .setHeader("ResourceLinkDescription", simple("${header.SrcName} and ${header.TargetName} contain the same number of ${header.Comparison}."))
                 .end()
-                .log("Compare count succeeded: ${header.ResourceLinkDescription}")
+                .log("Completed ${header.ComparisonDescription}.")
                 .toD("${header.Destination}");
     }
 }

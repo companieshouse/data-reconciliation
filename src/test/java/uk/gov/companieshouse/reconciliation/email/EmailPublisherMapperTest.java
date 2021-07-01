@@ -33,7 +33,7 @@ public class EmailPublisherMapperTest {
 
         //given
         Map<String, Object> headers = new HashMap<>();
-        PublisherResourceRequest request = new PublisherResourceRequest("key", 300, "uploader", "presigner", "description", "BODY".getBytes(), "group", "AggregationModelId", true);
+        PublisherResourceRequest request = new PublisherResourceRequest("key", 300, "uploader", "presigner", "description", "BODY".getBytes(), "group", "AggregationModelId", true, "comparison description");
 
         //when
         Object actual = emailPublisherMapper.map(request, headers);
@@ -44,6 +44,7 @@ public class EmailPublisherMapperTest {
         assertEquals("uploader", headers.get("Upload"));
         assertEquals("presigner", headers.get("Presign"));
         assertEquals("description", headers.get("ResourceLinkDescription"));
+        assertEquals("comparison description", headers.get("ComparisonDescription"));
         assertArrayEquals("BODY".getBytes(), (byte[])actual);
         assertTrue((boolean)headers.get("Failed"));
     }
@@ -52,7 +53,7 @@ public class EmailPublisherMapperTest {
     void testMapResourceRequestToExchangeSkipFailedIfFalse() {
         //given
         Map<String, Object> headers = new HashMap<>();
-        PublisherResourceRequest request = new PublisherResourceRequest("key", 300, "uploader", "presigner", "description", "BODY".getBytes(), "group", "AggregationModelId", false);
+        PublisherResourceRequest request = new PublisherResourceRequest("key", 300, "uploader", "presigner", "description", "BODY".getBytes(), "group", "AggregationModelId", false, "comparison description");
 
         //when
         Object actual = emailPublisherMapper.map(request, headers);
@@ -65,6 +66,7 @@ public class EmailPublisherMapperTest {
         assertEquals("description", headers.get("ResourceLinkDescription"));
         assertEquals("group", headers.get("ComparisonGroup"));
         assertEquals("AggregationModelId", headers.get("AggregationModelId"));
+        assertEquals("comparison description", headers.get("ComparisonDescription"));
         assertArrayEquals("BODY".getBytes(), (byte[])actual);
         assertFalse((boolean)headers.get("Failed"));
     }

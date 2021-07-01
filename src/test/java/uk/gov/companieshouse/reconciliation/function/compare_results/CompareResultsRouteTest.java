@@ -66,8 +66,7 @@ public class CompareResultsRouteTest {
         targetEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(targetResults));
         output.allMessages().body().isEqualTo(
                 "Company Number,MongoDB - Company Profile,Primary Search Index\r\n12345678,ACME LTD,ACME LIMITED\r\n");
-        output.expectedHeaderReceived("ResourceLinkDescription",
-                "Comparisons completed for companies in MongoDB - Company Profile and Primary Search Index.");
+        output.expectedHeaderReceived("ResourceLinkDescription", "Completed comparison.");
 
         transformer.expectedHeaderReceived("SrcList", srcResults);
         transformer.expectedHeaderReceived("SrcDescription", "MongoDB - Company Profile");
@@ -97,8 +96,7 @@ public class CompareResultsRouteTest {
     void testSetLinkDescriptionToFailureMessageIfComparisonSourceFails() throws InterruptedException {
         //given
         srcEndpoint.returnReplyHeader("Failed", ExpressionBuilder.constantExpression(true));
-        output.expectedHeaderReceived("ResourceLinkDescription",
-                "Failed to compare companies in MongoDB - Company Profile and Primary Search Index.");
+        output.expectedHeaderReceived("ResourceLinkDescription", "Failed to perform comparison.");
 
         //when
         producerTemplate.sendBodyAndHeaders(0, createHeaders());
@@ -115,8 +113,7 @@ public class CompareResultsRouteTest {
                 new ResultModel("ABCD1234", "UNLIMITED LTD")));
         srcEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(srcResults));
         targetEndpoint.returnReplyHeader("Failed", ExpressionBuilder.constantExpression(true));
-        output.expectedHeaderReceived("ResourceLinkDescription",
-                "Failed to compare companies in MongoDB - Company Profile and Primary Search Index.");
+        output.expectedHeaderReceived("ResourceLinkDescription", "Failed to perform comparison.");
 
         //when
         producerTemplate.sendBodyAndHeaders(0, createHeaders());
@@ -132,7 +129,7 @@ public class CompareResultsRouteTest {
         headers.put("SrcDescription", "MongoDB - Company Profile");
         headers.put("TargetDescription", "Primary Search Index");
         headers.put("RecordKey", "Company Number");
-        headers.put("Comparison", "companies");
+        headers.put("ComparisonDescription", "comparison");
         headers.put("Destination", "mock:log-result");
         headers.put("ResultsTransformer", "mock:transformer");
         return headers;

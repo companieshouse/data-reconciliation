@@ -80,7 +80,7 @@ public class CompareCountRouteTest {
         mockCorporateBodyCountEndpoint.whenAnyExchangeReceived(exchange -> {
             throw new SQLException("Failed");
         });
-        mockResult.expectedHeaderReceived("ResourceLinkDescription", "Failed to compare counts of things in A with B.");
+        mockResult.expectedHeaderReceived("ResourceLinkDescription", "Failed to perform comparison.");
         template.sendBodyAndHeaders(0, createHeaders());
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -90,7 +90,7 @@ public class CompareCountRouteTest {
         mockCorporateBodyCountEndpoint.whenAnyExchangeReceived(exchange -> {
             throw new MongoException("Failed");
         });
-        mockResult.expectedHeaderReceived("ResourceLinkDescription", "Failed to compare counts of things in A with B.");
+        mockResult.expectedHeaderReceived("ResourceLinkDescription", "Failed to perform comparison.");
         template.sendBodyAndHeaders(0, createHeaders());
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -102,6 +102,7 @@ public class CompareCountRouteTest {
         headers.put("Target", "mock:b");
         headers.put("TargetName", "B");
         headers.put("Comparison", "things");
+        headers.put("ComparisonDescription", "comparison");
         headers.put("Destination", "mock:result");
         return headers;
     }

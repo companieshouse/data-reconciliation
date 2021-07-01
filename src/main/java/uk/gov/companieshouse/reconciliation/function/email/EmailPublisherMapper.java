@@ -16,9 +16,10 @@ public class EmailPublisherMapper {
         headers.put("Upload", request.getUploaderEndpoint());
         headers.put("Presign", request.getPresignerEndpoint());
         headers.put("ResourceLinkDescription", request.getResourceDescription());
-        headers.put("ComparisonGroup", request.getDescription());
+        headers.put("ComparisonGroup", request.getComparisonGroup());
         headers.put("AggregationModelId", request.getAggregationModelId());
         headers.put("Failed", request.isFailed());
+        headers.put("ComparisonDescription", request.getComparisonDescription());
         return request.getResults();
     }
 }

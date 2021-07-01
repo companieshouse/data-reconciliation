@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
+import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import uk.gov.companieshouse.reconciliation.model.ResourceLinksWrapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -71,20 +72,23 @@ public class SendEmailRouteTest {
         });
         context.start();
         s3Uploader.expectedMessageCount(7);
-        s3Presigner.expectedMessageCount(7);
+        s3Uploader.whenExchangeReceived(2, exchange -> {
+            throw AwsServiceException.builder().build();
+        });
+        s3Presigner.expectedMessageCount(6);
         s3Presigner.returnReplyBody(ExpressionBuilder.constantExpression("URL"));
 
-        Exchange firstCompanyExchange = buildExchange("Key", 300L, "Company profile", "Compare Count Link", "apple", "company-count-mongo-oracle", true);
-        Exchange secondCompanyExchange = buildExchange("Key", 300L, "Company profile", "Compare Collection Link", "orange", "company-number-mongo-oracle", false);
+        Exchange firstCompanyExchange = buildExchange("Key", 300L, "Company profile", "Compare Count Link", "apple", "company-count-mongo-oracle", true, "1.1");
+        Exchange secondCompanyExchange = buildExchange("Key", 300L, "Company profile", "Compare Collection Link", "orange", "company-number-mongo-oracle", false, "1.2");
 
-        Exchange firstDsqExchange = buildExchange("Key", 300L, "Disqualified officer", "Disqualified Officer Link 1", "pear", "dsq-officer-id-mongo-oracle", false);
-        Exchange secondDsqExchange = buildExchange("Key", 300L, "Disqualified officer", "Disqualified Officer Link 2", "carrot", "dsq-officer-id-mongo-oracle2", false);
+        Exchange firstDsqExchange = buildExchange("Key", 300L, "Disqualified officer", "Disqualified Officer Link 1", "pear", "dsq-officer-id-mongo-oracle", false, "2.1");
+        Exchange secondDsqExchange = buildExchange("Key", 300L, "Disqualified officer", "Disqualified Officer Link 2", "carrot", "dsq-officer-id-mongo-oracle2", false, "2.2");
 
-        Exchange firstElasticsearchExchange = buildExchange("Key", 300L, "Elasticsearch", "Elasticsearch link 1", "strawberry", "company-name-mongo-alpha", false);
-        Exchange secondElasticsearchExchange = buildExchange("Key", 300L, "Elasticsearch", "Elasticsearch link 2", "raspberry", "company-name-mongo-primary", false);
+        Exchange firstElasticsearchExchange = buildExchange("Key", 300L, "Elasticsearch", "Elasticsearch link 1", "strawberry", "company-name-mongo-alpha", false, "3.1");
+        Exchange secondElasticsearchExchange = buildExchange("Key", 300L, "Elasticsearch", "Elasticsearch link 2", "raspberry", "company-name-mongo-primary", false, "3.2");
 
-        Exchange firstInsolvencyExchange = buildExchange("Key", 300L, "Company insolvency", "Insolvency link 1", "avocado", "insolvency-company-number-mongo-oracle", false);
-        Exchange secondInsolvencyExchange = buildExchange("Key", 300L, "Company insolvency", "Insolvency link 2", "kale", "insolvency-link2", false);
+        Exchange firstInsolvencyExchange = buildExchange("Key", 300L, "Company insolvency", "Insolvency link 1", "avocado", "insolvency-company-number-mongo-oracle", false, "4.1");
+        Exchange secondInsolvencyExchange = buildExchange("Key", 300L, "Company insolvency", "Insolvency link 2", "kale", "insolvency-link2", false, "4.2");
 
         kafkaEndpoint.expectedMessageCount(4);
 
@@ -100,7 +104,7 @@ public class SendEmailRouteTest {
         MockEndpoint.assertIsSatisfied(context);
     }
 
-    private Exchange buildExchange(String key, long expirationTime, String group, String linkDescription, String body, String aggregationModelId, boolean failed) {
+    private Exchange buildExchange(String key, long expirationTime, String group, String linkDescription, String body, String aggregationModelId, boolean failed, String comparisonDescription) {
 
         return ExchangeBuilder.anExchange(context)
                 .withHeader(AWS2S3Constants.KEY, key)
@@ -111,6 +115,7 @@ public class SendEmailRouteTest {
                 .withHeader("Presign", "mock:s3-presigner")
                 .withHeader("AggregationModelId", aggregationModelId)
                 .withHeader("Failed", failed)
+                .withHeader("ComparisonDescription", comparisonDescription)
                 .withBody(body)
                 .build();
     }

@@ -29,9 +29,17 @@ public class SendEmailRoute extends RouteBuilder {
                     .bean(EmailPublisherMapper.class)
                     .choice()
                     .when(header("Failed").isNotEqualTo(true))
-                        .to("direct:s3-publisher")
+                        .enrich("direct:s3-publisher", (prev, curr) -> {
+                            if(curr.getIn().getHeader("Failed", boolean.class)) {
+                                prev.getIn().setHeader("ResourceLinkReference", null);
+                                prev.getIn().setHeader("ResourceLinkDescription", String.format("Failed to upload results for %s to S3.", curr.getIn().getHeader("ComparisonDescription", String.class)));
+                            } else {
+                                prev.getIn().setHeader("ResourceLinkReference", curr.getIn().getHeader("ResourceLinkReference"));
+                            }
+                            return prev;
+                        })
                     .otherwise()
-                        .log("Not publishing ${header.ComparisonGroup} comparison to S3 as it has failed.")
+                        .log("Not publishing ${header.ComparisonDescription} to S3 as it has failed.")
                     .end()
                 .end()
                 .setHeader("CompletionDate", simple("${date:now:dd MMMM yyyy}"))

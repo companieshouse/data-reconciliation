@@ -35,7 +35,6 @@ public class InsolvencyCompanyNumberCompareMongoDBOracleTest {
         compareCollection.expectedHeaderReceived("Target", "direct:oracle-collection");
         compareCollection.expectedHeaderReceived("OracleQuery", "SELECT '12345678' FROM DUAL");
         compareCollection.expectedHeaderReceived("OracleEndpoint", "mock:fruitTree");
-        compareCollection.expectedHeaderReceived("Comparison", "company insolvency cases");
         compareCollection.expectedHeaderReceived("ComparisonGroup", "Company insolvency");
         compareCollection.expectedHeaderReceived("RecordType", "Company Number");
         compareCollection.expectedHeaderReceived("Destination", "mock:result");

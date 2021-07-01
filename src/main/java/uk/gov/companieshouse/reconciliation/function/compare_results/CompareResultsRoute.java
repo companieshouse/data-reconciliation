@@ -27,7 +27,7 @@ public class CompareResultsRoute extends RouteBuilder {
     public void configure() throws Exception {
         from("direct:compare_results")
                 .onException(ComparisonFailedException.class)
-                    .setHeader("ResourceLinkDescription").simple("Failed to compare ${header.Comparison} in ${header.SrcDescription} and ${header.TargetDescription}.")
+                    .setHeader("ResourceLinkDescription").simple("Failed to perform ${header.ComparisonDescription}.")
                     .setHeader("Failed").constant(true)
                     .log("Compare results failed: ${header.ResourceLinkDescription}")
                     .handled(true)
@@ -53,7 +53,7 @@ public class CompareResultsRoute extends RouteBuilder {
                 })
                 .toD("${header.ResultsTransformer}")
                 .marshal().csv()
-                .setHeader("ResourceLinkDescription").simple("Comparisons completed for ${header.Comparison} in ${header.SrcDescription} and ${header.TargetDescription}.")
+                .setHeader("ResourceLinkDescription").simple("Completed ${header.ComparisonDescription}.")
                 .log("Compare results succeeded: ${header.ResourceLinkDescription}")
                 .toD("${header.Destination}");
     }
