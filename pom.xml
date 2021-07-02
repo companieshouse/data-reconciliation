@@ -12,7 +12,7 @@
     <version>0.0.1</version>
     <properties>
         <structured-logging.version>1.9.7</structured-logging.version>
-        <elasticsearch.version>6.2.3</elasticsearch.version>
+        <elasticsearch.version>6.8.15</elasticsearch.version>
         <oracle.ojdbc8.version>12.2.0.1.0</oracle.ojdbc8.version>
         <apache.camel.version>3.8.0</apache.camel.version>
         <spring.boot.version>2.4.4</spring.boot.version>
