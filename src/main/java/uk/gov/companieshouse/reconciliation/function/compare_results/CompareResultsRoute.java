@@ -52,6 +52,8 @@ public class CompareResultsRoute extends RouteBuilder {
                     return oldExchange;
                 })
                 .toD("${header.ResultsTransformer}")
+                .removeHeader("SrcList")
+                .removeHeader("TargetList")
                 .marshal().csv()
                 .setHeader("ResourceLinkDescription").simple("Completed ${header.ComparisonDescription}.")
                 .log("Compare results succeeded: ${header.ResourceLinkDescription}")

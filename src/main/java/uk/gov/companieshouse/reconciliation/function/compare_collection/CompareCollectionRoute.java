@@ -55,6 +55,8 @@ public class CompareCollectionRoute extends RouteBuilder {
                     return prev;
                 })
                 .bean(CompareCollectionTransformer.class)
+                .removeHeader("SrcList")
+                .removeHeader("TargetList")
                 .marshal().csv()
                 .setHeader("ResourceLinkDescription", simple("Completed ${header.ComparisonDescription}."))
                 .log("${header.ResourceLinkDescription}")
