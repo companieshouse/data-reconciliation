@@ -19,6 +19,8 @@ import uk.gov.companieshouse.reconciliation.function.compare_collection.entity.R
 
 import java.util.Arrays;
 
+import static org.junit.jupiter.api.Assertions.assertNull;
+
 @CamelSpringBootTest
 @SpringBootTest
 @DirtiesContext
@@ -52,7 +54,10 @@ public class CompareCollectionRouteTest {
         mockFruitTreeEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(new ResourceList(Arrays.asList("apple", "strawberry"), "Fruit Tree")));
         mockFruitBasketEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(new ResourceList(Arrays.asList("apple", "orange", "pineapple"), "Fruit Basket")));
         mockCompareResult.expectedBodyReceived().constant("Fruit,Exclusive To\r\nstrawberry,Fruit Tree\r\norange,Fruit Basket\r\npineapple,Fruit Basket\r\n".getBytes());
-        producerTemplate.send(createExchange());
+        Exchange msg = createExchange();
+        producerTemplate.send(msg);
+        assertNull(msg.getIn().getHeader("SrcList"));
+        assertNull(msg.getIn().getHeader("TargetList"));
         MockEndpoint.assertIsSatisfied(context);
     }
 
@@ -61,7 +66,10 @@ public class CompareCollectionRouteTest {
         mockFruitTreeEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(new ResourceList(Arrays.asList("apple", null), "Fruit Tree")));
         mockFruitBasketEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(new ResourceList(Arrays.asList("apple", "orange", "pineapple"), "Fruit Basket")));
         mockCompareResult.expectedBodyReceived().constant("Fruit,Exclusive To\r\n,Fruit Tree\r\norange,Fruit Basket\r\npineapple,Fruit Basket\r\n".getBytes());
-        producerTemplate.send(createExchange());
+        Exchange msg = createExchange();
+        producerTemplate.send(msg);
+        assertNull(msg.getIn().getHeader("SrcList"));
+        assertNull(msg.getIn().getHeader("TargetList"));
         MockEndpoint.assertIsSatisfied(context);
     }
 

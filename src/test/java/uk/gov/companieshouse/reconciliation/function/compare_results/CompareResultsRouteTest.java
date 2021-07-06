@@ -2,10 +2,12 @@ package uk.gov.companieshouse.reconciliation.function.compare_results;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
+import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -19,6 +21,8 @@ import uk.gov.companieshouse.reconciliation.model.Results;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @CamelSpringBootTest
 @SpringBootTest
@@ -67,7 +71,6 @@ public class CompareResultsRouteTest {
         output.allMessages().body().isEqualTo(
                 "Company Number,MongoDB - Company Profile,Primary Search Index\r\n12345678,ACME LTD,ACME LIMITED\r\n");
         output.expectedHeaderReceived("ResourceLinkDescription", "Completed comparison.");
-
         transformer.expectedHeaderReceived("SrcList", srcResults);
         transformer.expectedHeaderReceived("SrcDescription", "MongoDB - Company Profile");
         transformer.expectedHeaderReceived("TargetList", targetResults);
@@ -87,8 +90,15 @@ public class CompareResultsRouteTest {
                         }}
                 )));
 
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeaders(createHeaders());
+
         // when
-        producerTemplate.sendBodyAndHeaders(0, createHeaders());
+        producerTemplate.send(exchange);
+
+        //then
+        assertNull(exchange.getIn().getHeader("SrcList"));
+        assertNull(exchange.getIn().getHeader("TargetList"));
         MockEndpoint.assertIsSatisfied(context);
     }
 
