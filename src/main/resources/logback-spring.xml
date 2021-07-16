@@ -33,8 +33,15 @@
     </appender>
 
     <!-- LOG everything at debug level -->
-    <root level="debug">
+    <root level="INFO">
         <appender-ref ref="RollingFile"/>
         <appender-ref ref="Console"/>
     </root>
+
+    <logger name="org.apache.camel.component.jdbc.JdbcProducer">
+        <level value="DEBUG"/>
+        <appender-ref ref="RollingFile"/>
+        <appender-ref ref="Console"/>
+    </logger>
+
 </configuration>
