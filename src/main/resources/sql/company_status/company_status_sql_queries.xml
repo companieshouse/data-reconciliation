@@ -2,7 +2,7 @@
   <valid-companies-query>
     <sql-statement>
 -- Valid companies: Live companies + companies dissolved on or after 01/01/2010 + companies that were struck off before 01/01/2010 and dissolved on 05/01/2010
-SELECT INCORPORATION_NUMBER as result
+SELECT INCORPORATION_NUMBER
 FROM (
          (SELECT INCORPORATION_NUMBER AS INCORPORATION_NUMBER
           FROM CORPORATE_BODY CB
@@ -35,7 +35,7 @@ WHERE CB.ACTION_CODE_TYPE_ID = 9000 -- Dissolved companies
   AND CB.ACTION_CODE_DATE >= TO_DATE('30/12/2009', 'DD/MM/YYYY') -- Dissolved: on or after 30/12/2009
     </sql-statement>
     <sql-statement status="liquidation">
-SELECT INCORPORATION_NUMBER AS RESULT
+SELECT INCORPORATION_NUMBER
 FROM (
          (SELECT CB.INCORPORATION_NUMBER AS INCORPORATION_NUMBER
           FROM CORPORATE_BODY CB
@@ -53,7 +53,7 @@ FROM (
      )
     </sql-statement>
     <sql-statement status="insolvency-proceedings">
-SELECT INCORPORATION_NUMBER AS RESULT
+SELECT INCORPORATION_NUMBER
 FROM (
          (SELECT CB.INCORPORATION_NUMBER AS INCORPORATION_NUMBER
           FROM CORPORATE_BODY CB
@@ -102,7 +102,7 @@ WHERE CB.TRADING_STATUS_TYPE_ID = 5 -- Closed companies
     OR CB.ACTION_CODE_TYPE_ID = 9100 AND CB.TRADING_STATUS_SUB_TYPE_ID = 2) -- European Company: 9100=Dissolved, 2=Transformed to European Company
     </sql-statement>
     <sql-statement status="receivership">
-SELECT INCORPORATION_NUMBER AS RESULT
+SELECT INCORPORATION_NUMBER
 FROM (
          (SELECT CB.INCORPORATION_NUMBER AS INCORPORATION_NUMBER
           FROM CORPORATE_BODY CB
