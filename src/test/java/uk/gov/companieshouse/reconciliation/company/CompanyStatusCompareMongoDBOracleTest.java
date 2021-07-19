@@ -33,13 +33,13 @@ public class CompanyStatusCompareMongoDBOracleTest {
 
     @Test
     void testTriggerCompanyStatusComparisonBetweenMongoAndOracle() throws InterruptedException {
-        mockEndpoint.expectedHeaderReceived("Src", "mock:mongoAggregation");
-        mockEndpoint.expectedHeaderReceived("SrcDescription", "MongoDB - Company Profile");
+        mockEndpoint.expectedHeaderReceived("Src", "mock:oracle-multi");
+        mockEndpoint.expectedHeaderReceived("SrcDescription", "Oracle");
         mockEndpoint.expectedHeaderReceived("MongoCacheKey", "mongoCompanyProfile");
         mockEndpoint.expectedHeaderReceived("MongoQuery", Collections.singletonList(Aggregates.project(Projections.include("_id", "data.company_name", "data.company_status"))));
         mockEndpoint.expectedHeaderReceived("MongoEndpoint", "mock:fruitBasket");
-        mockEndpoint.expectedHeaderReceived("Target", "mock:oracle-multi");
-        mockEndpoint.expectedHeaderReceived("TargetDescription", "Oracle");
+        mockEndpoint.expectedHeaderReceived("Target", "mock:mongoAggregation");
+        mockEndpoint.expectedHeaderReceived("TargetDescription", "MongoDB - Company Profile");
         mockEndpoint.expectedHeaderReceived("OracleQuery", "SELECT 1 FROM DUAL");
         mockEndpoint.expectedHeaderReceived("OracleEndpoint", "mock:fruitTree");
         producerTemplate.sendBody(0);
