@@ -1,12 +1,15 @@
 package uk.gov.companieshouse.reconciliation.component.elasticsearch.slicedscroll.client;
 
 import org.elasticsearch.action.search.ClearScrollResponse;
+import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -14,6 +17,8 @@ import java.io.IOException;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -40,6 +45,9 @@ public class ElasticsearchScrollingSearchClientTest {
     @Mock
     private ElasticsearchSlicedScrollValidator validator;
 
+    @Captor
+    private ArgumentCaptor<SearchRequest> request;
+
     private ElasticsearchScrollingSearchClient client;
 
     @BeforeEach
@@ -48,7 +56,7 @@ public class ElasticsearchScrollingSearchClientTest {
     }
 
     @Test
-    void testFirstSearch() throws IOException {
+    void testFirstSearchMultipleSlices() throws IOException {
         //given
         when(restHighLevelClient.search(any())).thenReturn(expectedResponse);
         when(validator.validateSliceConfiguration(anyInt(), anyInt())).thenReturn(true);
@@ -58,6 +66,25 @@ public class ElasticsearchScrollingSearchClientTest {
 
         //then
         assertEquals(expectedResponse, actual);
+        verify(restHighLevelClient).search(request.capture());
+        SearchRequest req = request.getValue();
+        assertNotNull(req.source().slice());
+    }
+
+    @Test
+    void testFirstSearchSingleSlice() throws IOException {
+        //given
+        when(restHighLevelClient.search(any())).thenReturn(expectedResponse);
+        when(validator.validateSliceConfiguration(anyInt(), anyInt())).thenReturn(true);
+
+        //when
+        SearchResponse actual = client.firstSearch(QUERY_MATCH_ALL, 0, 1);
+
+        //then
+        assertEquals(expectedResponse, actual);
+        verify(restHighLevelClient).search(request.capture());
+        SearchRequest req = request.getValue();
+        assertNull(req.source().slice());
     }
 
     @Test
