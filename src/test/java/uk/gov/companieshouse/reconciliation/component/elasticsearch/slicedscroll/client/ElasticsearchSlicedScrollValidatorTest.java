@@ -16,9 +16,18 @@ public class ElasticsearchSlicedScrollValidatorTest {
     }
 
     @Test
-    void testReturnTrueIfArgsValid() {
+    void testReturnTrueIfMultipleSlicedScrollRequestValid() {
         //when
         boolean actual = validator.validateSliceConfiguration(1, 2);
+
+        //then
+        assertTrue(actual);
+    }
+
+    @Test
+    void testReturnTrueIfSingleSlicedScrollRequestValid() {
+        //when
+        boolean actual = validator.validateSliceConfiguration(0, 1);
 
         //then
         assertTrue(actual);
@@ -43,9 +52,18 @@ public class ElasticsearchSlicedScrollValidatorTest {
     }
 
     @Test
-    void testReturnFalseIfNumberOfSlicesLessThanTwo() {
+    void testReturnFalseIfNumberOfSlicesLessThanOne() {
         //when
-        boolean actual = validator.validateSliceConfiguration(0, 1);
+        boolean actual = validator.validateSliceConfiguration(0, 0);
+
+        //then
+        assertFalse(actual);
+    }
+
+    @Test
+    void testReturnFalseIfSliceIdNonzeroAndNumberOfSlicesIsOne() {
+        //when
+        boolean actual = validator.validateSliceConfiguration(1, 1);
 
         //then
         assertFalse(actual);

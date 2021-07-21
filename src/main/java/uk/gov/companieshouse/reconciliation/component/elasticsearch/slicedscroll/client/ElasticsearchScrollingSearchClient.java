@@ -59,12 +59,14 @@ public class ElasticsearchScrollingSearchClient implements AutoCloseable {
         SearchModule module = new SearchModule(Settings.EMPTY, false, Collections.emptyList());
         XContentParser parser = JsonXContent.jsonXContent.createParser(new NamedXContentRegistry(module.getNamedXContents()), query);
         SearchSourceBuilder searchSourceBuilder = SearchSourceBuilder.fromXContent(parser);
-        searchRequest.scroll(new TimeValue(timeout, TimeUnit.SECONDS))
+        SearchSourceBuilder scrollRequestSource = searchRequest.scroll(new TimeValue(timeout, TimeUnit.SECONDS))
                 .source()
                 .query(searchSourceBuilder.query())
-                .slice(new SliceBuilder(sliceField, sliceId, noOfSlices))
                 .fetchSource(searchSourceBuilder.fetchSource())
                 .size(size);
+        if(noOfSlices > 1) {
+            scrollRequestSource.slice(new SliceBuilder(sliceField, sliceId, noOfSlices));
+        }
         return client.search(searchRequest);
     }
 

@@ -6,6 +6,6 @@ package uk.gov.companieshouse.reconciliation.component.elasticsearch.slicedscrol
 public class ElasticsearchSlicedScrollValidator {
 
     public boolean validateSliceConfiguration(int sliceId, int noOfSlices) {
-        return sliceId >= 0 && noOfSlices > 1 && sliceId < noOfSlices;
+        return (sliceId == 0 && noOfSlices == 1) || (sliceId >= 0 && noOfSlices > 1 && sliceId < noOfSlices);
     }
 }
