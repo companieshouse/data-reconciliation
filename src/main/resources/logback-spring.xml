@@ -38,10 +38,4 @@
         <appender-ref ref="Console"/>
     </root>
 
-    <logger name="org.apache.camel.component.jdbc.JdbcProducer">
-        <level value="DEBUG"/>
-        <appender-ref ref="RollingFile"/>
-        <appender-ref ref="Console"/>
-    </logger>
-
 </configuration>
