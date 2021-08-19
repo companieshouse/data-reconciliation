@@ -46,7 +46,7 @@ public class CompareCountRoute extends RetryableRoute {
         super.configure();
         from("direct:compare_count")
                 .onException(SQLException.class, MongoException.class)
-                    .setHeader("ResourceLinkDescription", simple("Failed to perform ${header.ComparisonDescription}."))
+                    .setHeader("ResourceLinkDescription", simple("Failed to perform ${header.ComparisonDescription}"))
                     .setHeader("Failed").constant(true)
                     .log(LoggingLevel.ERROR, "Compare count failed: ${header.ResourceLinkDescription}")
                     .handled(true)
@@ -76,11 +76,11 @@ public class CompareCountRoute extends RetryableRoute {
                 .marshal().csv()
                 .choice()
                     .when(header("Weight").isLessThan(0))
-                        .setHeader("ResourceLinkDescription", simple("${header.TargetName} has ${header.WeightAbs} more ${header.Comparison} than ${header.SrcName}."))
+                        .setHeader("ResourceLinkDescription", simple("${header.TargetName} has ${header.WeightAbs} more ${header.Comparison} than ${header.SrcName}"))
                     .when(header("Weight").isGreaterThan(0))
-                        .setHeader("ResourceLinkDescription", simple("${header.SrcName} has ${header.WeightAbs} more ${header.Comparison} than ${header.TargetName}."))
+                        .setHeader("ResourceLinkDescription", simple("${header.SrcName} has ${header.WeightAbs} more ${header.Comparison} than ${header.TargetName}"))
                     .otherwise()
-                        .setHeader("ResourceLinkDescription", simple("${header.SrcName} and ${header.TargetName} contain the same number of ${header.Comparison}."))
+                        .setHeader("ResourceLinkDescription", simple("${header.SrcName} and ${header.TargetName} contain the same number of ${header.Comparison}"))
                 .end()
                 .log("Completed ${header.ComparisonDescription}.")
                 .toD("${header.Destination}");
