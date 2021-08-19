@@ -70,7 +70,7 @@ public class CompareResultsRouteTest {
         targetEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(targetResults));
         output.allMessages().body().isEqualTo(
                 "Company Number,MongoDB - Company Profile,Primary Search Index\r\n12345678,ACME LTD,ACME LIMITED\r\n");
-        output.expectedHeaderReceived("ResourceLinkDescription", "Completed comparison.");
+        output.expectedHeaderReceived("ResourceLinkDescription", "Completed comparison");
         transformer.expectedHeaderReceived("SrcList", srcResults);
         transformer.expectedHeaderReceived("SrcDescription", "MongoDB - Company Profile");
         transformer.expectedHeaderReceived("TargetList", targetResults);
@@ -106,7 +106,7 @@ public class CompareResultsRouteTest {
     void testSetLinkDescriptionToFailureMessageIfComparisonSourceFails() throws InterruptedException {
         //given
         srcEndpoint.returnReplyHeader("Failed", ExpressionBuilder.constantExpression(true));
-        output.expectedHeaderReceived("ResourceLinkDescription", "Failed to perform comparison.");
+        output.expectedHeaderReceived("ResourceLinkDescription", "Failed to perform comparison");
 
         //when
         producerTemplate.sendBodyAndHeaders(0, createHeaders());
@@ -123,7 +123,7 @@ public class CompareResultsRouteTest {
                 new ResultModel("ABCD1234", "UNLIMITED LTD")));
         srcEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(srcResults));
         targetEndpoint.returnReplyHeader("Failed", ExpressionBuilder.constantExpression(true));
-        output.expectedHeaderReceived("ResourceLinkDescription", "Failed to perform comparison.");
+        output.expectedHeaderReceived("ResourceLinkDescription", "Failed to perform comparison");
 
         //when
         producerTemplate.sendBodyAndHeaders(0, createHeaders());

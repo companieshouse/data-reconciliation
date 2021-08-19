@@ -77,7 +77,7 @@ public class CompareCollectionRouteTest {
     void testCompareCollectionSetsDescriptionToFailureMessageIfComparisonFailsDueToSrc() throws InterruptedException {
         mockFruitTreeEndpoint.returnReplyHeader("Failed", ExpressionBuilder.constantExpression(true));
         mockFruitBasketEndpoint.expectedMessageCount(0);
-        mockCompareResult.expectedHeaderReceived("ResourceLinkDescription", "Failed to perform comparison.");
+        mockCompareResult.expectedHeaderReceived("ResourceLinkDescription", "Failed to perform comparison");
         producerTemplate.send(createExchange());
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -86,7 +86,7 @@ public class CompareCollectionRouteTest {
     void testCompareCollectionSetsDescriptionToFailureMessageIfComparisonFailsDueToTarget() throws InterruptedException {
         mockFruitTreeEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(new ResourceList(Arrays.asList("apple", null), "Fruit Tree")));
         mockFruitBasketEndpoint.returnReplyHeader("Failed", ExpressionBuilder.constantExpression(true));
-        mockCompareResult.expectedHeaderReceived("ResourceLinkDescription", "Failed to perform comparison.");
+        mockCompareResult.expectedHeaderReceived("ResourceLinkDescription", "Failed to perform comparison");
         producerTemplate.send(createExchange());
         MockEndpoint.assertIsSatisfied(context);
     }

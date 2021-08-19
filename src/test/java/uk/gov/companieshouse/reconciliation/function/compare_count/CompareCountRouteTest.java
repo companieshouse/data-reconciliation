@@ -52,7 +52,7 @@ public class CompareCountRouteTest {
     void testEndpointAIsGreaterThanEndpointB() throws InterruptedException {
         mockCorporateBodyCountEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(BigDecimal.valueOf(15)));
         mockCompanyProfileCountEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(10L));
-        mockResult.expectedHeaderReceived("ResourceLinkDescription", "A has 5 more things than B.");
+        mockResult.expectedHeaderReceived("ResourceLinkDescription", "A has 5 more things than B");
         template.sendBodyAndHeaders(0, createHeaders());
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -61,7 +61,7 @@ public class CompareCountRouteTest {
     void testEndpointBIsGreaterThanEndpointA() throws InterruptedException {
         mockCorporateBodyCountEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(BigDecimal.valueOf(10)));
         mockCompanyProfileCountEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(20L));
-        mockResult.expectedHeaderReceived("ResourceLinkDescription", "B has 10 more things than A.");
+        mockResult.expectedHeaderReceived("ResourceLinkDescription", "B has 10 more things than A");
         template.sendBodyAndHeaders(0, createHeaders());
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -70,7 +70,7 @@ public class CompareCountRouteTest {
     void testEndpointsAreTheSame() throws InterruptedException {
         mockCorporateBodyCountEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(BigDecimal.valueOf(10)));
         mockCompanyProfileCountEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(10));
-        mockResult.expectedHeaderReceived("ResourceLinkDescription", "A and B contain the same number of things.");
+        mockResult.expectedHeaderReceived("ResourceLinkDescription", "A and B contain the same number of things");
         template.sendBodyAndHeaders(0, createHeaders());
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -80,7 +80,7 @@ public class CompareCountRouteTest {
         mockCorporateBodyCountEndpoint.whenAnyExchangeReceived(exchange -> {
             throw new SQLException("Failed");
         });
-        mockResult.expectedHeaderReceived("ResourceLinkDescription", "Failed to perform comparison.");
+        mockResult.expectedHeaderReceived("ResourceLinkDescription", "Failed to perform comparison");
         template.sendBodyAndHeaders(0, createHeaders());
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -90,7 +90,7 @@ public class CompareCountRouteTest {
         mockCorporateBodyCountEndpoint.whenAnyExchangeReceived(exchange -> {
             throw new MongoException("Failed");
         });
-        mockResult.expectedHeaderReceived("ResourceLinkDescription", "Failed to perform comparison.");
+        mockResult.expectedHeaderReceived("ResourceLinkDescription", "Failed to perform comparison");
         template.sendBodyAndHeaders(0, createHeaders());
         MockEndpoint.assertIsSatisfied(context);
     }
