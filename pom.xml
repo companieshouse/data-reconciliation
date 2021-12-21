@@ -11,16 +11,23 @@
     <artifactId>data-reconciliation</artifactId>
     <version>0.0.1</version>
     <properties>
-        <structured-logging.version>1.9.7</structured-logging.version>
         <elasticsearch.version>6.2.3</elasticsearch.version>
         <oracle.ojdbc8.version>12.2.0.1.0</oracle.ojdbc8.version>
         <apache.camel.version>3.8.0</apache.camel.version>
         <spring.boot.version>2.4.4</spring.boot.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <log4j.version>2.17.0</log4j.version>
     </properties>
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-bom</artifactId>
+                <version>${log4j.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
