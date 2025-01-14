@@ -3,7 +3,7 @@ package uk.gov.companieshouse.reconciliation.config;
 import org.springframework.validation.annotation.Validated;
 import uk.gov.companieshouse.reconciliation.model.ResourceLink;
 
-import jakarta.validation.constraints.NotNull;
+import javax.validation.constraints.NotNull;
 
 /**
  * Aggregation model that defines a rank that can be used to order {@link ResourceLink}.

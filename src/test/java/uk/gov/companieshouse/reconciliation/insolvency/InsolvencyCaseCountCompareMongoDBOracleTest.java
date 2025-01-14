@@ -8,7 +8,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
@@ -17,7 +16,6 @@ import org.springframework.test.context.TestPropertySource;
 @SpringBootTest
 @DirtiesContext
 @TestPropertySource("classpath:application-stubbed.properties")
-@EnableAutoConfiguration
 public class InsolvencyCaseCountCompareMongoDBOracleTest {
 
     @Autowired

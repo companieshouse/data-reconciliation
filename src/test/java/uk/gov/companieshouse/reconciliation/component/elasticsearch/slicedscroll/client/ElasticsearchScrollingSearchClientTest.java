@@ -58,7 +58,7 @@ public class ElasticsearchScrollingSearchClientTest {
     @Test
     void testFirstSearchMultipleSlices() throws IOException {
         //given
-        when(restHighLevelClient.search(any(), any())).thenReturn(expectedResponse);
+        when(restHighLevelClient.search(any())).thenReturn(expectedResponse);
         when(validator.validateSliceConfiguration(anyInt(), anyInt())).thenReturn(true);
 
         //when
@@ -66,7 +66,7 @@ public class ElasticsearchScrollingSearchClientTest {
 
         //then
         assertEquals(expectedResponse, actual);
-        verify(restHighLevelClient).search(request.capture(), any());
+        verify(restHighLevelClient).search(request.capture());
         SearchRequest req = request.getValue();
         assertNotNull(req.source().slice());
     }
@@ -74,7 +74,7 @@ public class ElasticsearchScrollingSearchClientTest {
     @Test
     void testFirstSearchSingleSlice() throws IOException {
         //given
-        when(restHighLevelClient.search(any(), any())).thenReturn(expectedResponse);
+        when(restHighLevelClient.search(any())).thenReturn(expectedResponse);
         when(validator.validateSliceConfiguration(anyInt(), anyInt())).thenReturn(true);
 
         //when
@@ -82,7 +82,7 @@ public class ElasticsearchScrollingSearchClientTest {
 
         //then
         assertEquals(expectedResponse, actual);
-        verify(restHighLevelClient).search(request.capture(), any());
+        verify(restHighLevelClient).search(request.capture());
         SearchRequest req = request.getValue();
         assertNull(req.source().slice());
     }
@@ -104,7 +104,7 @@ public class ElasticsearchScrollingSearchClientTest {
     @Test
     void testFirstSearchPropagatesIOExceptionThrownByClient() throws IOException {
         //given
-        when(restHighLevelClient.search(any(), any())).thenThrow(IOException.class);
+        when(restHighLevelClient.search(any())).thenThrow(IOException.class);
         when(validator.validateSliceConfiguration(anyInt(), anyInt())).thenReturn(true);
 
         //when
@@ -117,7 +117,7 @@ public class ElasticsearchScrollingSearchClientTest {
     @Test
     void testScroll() throws IOException {
         //given
-        when(restHighLevelClient.searchScroll(any(), any())).thenReturn(expectedResponse);
+        when(restHighLevelClient.searchScroll(any())).thenReturn(expectedResponse);
 
         //when
         SearchResponse actual = client.scroll(SCROLL_ID);
@@ -149,7 +149,7 @@ public class ElasticsearchScrollingSearchClientTest {
     @Test
     void testClearScroll() throws IOException {
         //given
-        when(restHighLevelClient.clearScroll(any(), any())).thenReturn(expectedClearScrollResponse);
+        when(restHighLevelClient.clearScroll(any())).thenReturn(expectedClearScrollResponse);
 
         //when
         ClearScrollResponse actual = client.clearScroll(Collections.singletonList(SCROLL_ID));

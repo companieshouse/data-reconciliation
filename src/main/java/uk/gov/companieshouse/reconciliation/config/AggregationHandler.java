@@ -2,8 +2,8 @@ package uk.gov.companieshouse.reconciliation.config;
 
 import org.springframework.validation.annotation.Validated;
 
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.util.Map;
 import java.util.stream.Collectors;
 
