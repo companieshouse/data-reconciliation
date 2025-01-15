@@ -15,7 +15,7 @@
 
     <elasticsearch.version>6.2.3</elasticsearch.version>
     <oracle.ojdbc11.version>23.6.0.24.10</oracle.ojdbc11.version>
-    <apache.camel.version>3.17.0</apache.camel.version>
+    <apache.camel.version>3.22.3</apache.camel.version>
     <spring.boot.version>2.7.18</spring.boot.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
