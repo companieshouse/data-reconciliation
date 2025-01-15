@@ -11,12 +11,12 @@
   <artifactId>data-reconciliation</artifactId>
   <version>0.0.1</version>
   <properties>
-    <java.version>17</java.version>
+    <java.version>21</java.version>
 
     <elasticsearch.version>6.2.3</elasticsearch.version>
     <oracle.ojdbc11.version>23.6.0.24.10</oracle.ojdbc11.version>
-    <apache.camel.version>4.1.0</apache.camel.version>
-    <spring.boot.version>2.7.18</spring.boot.version>
+    <apache.camel.version>4.5.0</apache.camel.version>
+    <spring.boot.version>3.4.0</spring.boot.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
 <!--    <log4j.version>2.17.0</log4j.version>-->
@@ -76,6 +76,11 @@
       <version>${apache.camel.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jackson</artifactId>
+      <version>${apache.camel.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.elasticsearch</groupId>
       <artifactId>elasticsearch</artifactId>
       <version>${elasticsearch.version}</version>
@@ -103,7 +108,7 @@
     <dependency>
       <groupId>uk.gov.companieshouse</groupId>
       <artifactId>kafka-models</artifactId>
-      <version>1.0.40</version>
+      <version>3.0.8</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
