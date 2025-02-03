@@ -111,7 +111,7 @@ variable "use_set_environment_files" {
   description = "Toggle default global and shared environment files"
 }
 
-variable "document_reconciliation_version" {
+variable "data_reconciliation_version" {
   type        = string
-  description = "The version of the document-reconciliation container to run."
+  description = "The version of the data-reconciliation container to run."
 }
