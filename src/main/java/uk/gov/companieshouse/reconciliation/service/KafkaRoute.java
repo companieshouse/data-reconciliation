@@ -2,6 +2,7 @@ package uk.gov.companieshouse.reconciliation.service;
 
 import email.email_send;
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.model.dataformat.AvroLibrary;
 import org.apache.kafka.common.KafkaException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -87,7 +88,7 @@ public class KafkaRoute extends RetryableRoute {
                             .setCreatedAt(LocalDate.now().format(DateTimeFormatter.ofPattern(emailDateFormat)))
                             .build())
                 )
-                .marshal().avro()
+                .marshal().avro(AvroLibrary.ApacheAvro)
                 .process(exchange -> exchange.getIn().removeHeaders("*"))
                 .to("{{endpoint.kafka}}")
                 .to("{{endpoint.shutdown}}");
