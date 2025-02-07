@@ -169,6 +169,10 @@
           <artifactId>http2-client</artifactId>
         </exclusion>
         <exclusion>
+          <groupId>net.minidev</groupId>
+          <artifactId>json-smart</artifactId>
+        </exclusion>
+        <exclusion>
           <groupId>org.eclipse.jetty</groupId>
           <artifactId>jetty-webapp</artifactId>
         </exclusion>
