@@ -17,7 +17,7 @@ import software.amazon.awssdk.services.sts.auth.StsGetSessionTokenCredentialsPro
 public class S3ClientConfig {
 
     @Bean
-    public S3Client s3Client() {
+    public S3Client s3Client(CamelContext camelContext) {
         final var stsClient = StsClient.builder()
                 .region(Region.of("eu-west-2"))
                 .build();
@@ -25,9 +25,11 @@ public class S3ClientConfig {
                 StsGetSessionTokenCredentialsProvider.builder().
                         stsClient(stsClient)
                         .build();
-        return S3Client.builder().
+        S3Client s3Client = S3Client.builder().
                 region(Region.of("eu-west-2")).
                 credentialsProvider(stsGetSessionTokenCredentialsProvider)
                 .build();
+        camelContext.getRegistry().bind("s3Client", s3Client);
+        return s3Client;
     }
 }
