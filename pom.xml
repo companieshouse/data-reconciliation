@@ -143,11 +143,6 @@
       <artifactId>camel-aws2-s3-starter</artifactId>
     </dependency>
     <dependency>
-      <groupId>software.amazon.awssdk</groupId>
-      <artifactId>sts</artifactId>
-      <version>${amazon-sts.version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.apache.camel.springboot</groupId>
       <artifactId>camel-csv-starter</artifactId>
     </dependency>
