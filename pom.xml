@@ -139,9 +139,8 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>software.amazon.awssdk</groupId>
-      <artifactId>sts</artifactId>
-      <version>${amazon-sts.version}</version>
+      <groupId>org.apache.camel.springboot</groupId>
+      <artifactId>camel-aws2-s3-starter</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel.springboot</groupId>
