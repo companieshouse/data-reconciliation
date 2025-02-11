@@ -5,8 +5,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
- * Redelivers messages in the event of an exception being thrown. The maximum allowed number of message redeliveries is
- * configured by property wrapper.retries.
+ * Redelivers messages in the event of an exception being thrown. The maximum allowed number of
+ * message redeliveries is configured by property wrapper.retries.
  */
 @Component
 public class RetryableRoute extends RouteBuilder {

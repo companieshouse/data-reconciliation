@@ -39,7 +39,7 @@
   </properties>
   <dependencyManagement>
     <dependencies>
-    <!--https://camel.apache.org/camel-spring-boot/4.8.x/index.html#_camel_spring_boot_bom_vs_camel_spring_boot_dependencies_bom-->
+      <!--https://camel.apache.org/camel-spring-boot/4.8.x/index.html#_camel_spring_boot_bom_vs_camel_spring_boot_dependencies_bom-->
       <dependency>
         <groupId>org.apache.camel.springboot</groupId>
         <artifactId>camel-spring-boot-bom</artifactId>
@@ -64,6 +64,11 @@
     </dependencies>
   </dependencyManagement>
   <dependencies>
+    <!--https://users.camel.apache.narkive.com/pHkOVOnc/no-camelcontext-defined-yet-so-cannot-inject-into-bean-or-->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-management</artifactId>
+    </dependency>
     <dependency>
       <groupId>org.apache.camel.springboot</groupId>
       <artifactId>camel-spring-boot-starter</artifactId>
