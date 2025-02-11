@@ -39,6 +39,14 @@
   </properties>
   <dependencyManagement>
     <dependencies>
+    <!--https://camel.apache.org/camel-spring-boot/4.8.x/index.html#_camel_spring_boot_bom_vs_camel_spring_boot_dependencies_bom-->
+      <dependency>
+        <groupId>org.apache.camel.springboot</groupId>
+        <artifactId>camel-spring-boot-bom</artifactId>
+        <version>${apache.camel.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
       <dependency>
         <groupId>org.apache.camel.springboot</groupId>
         <artifactId>camel-spring-boot-dependencies</artifactId>
@@ -141,6 +149,13 @@
     <dependency>
       <groupId>org.apache.camel.springboot</groupId>
       <artifactId>camel-aws2-s3-starter</artifactId>
+      <!--CVE-2025-24970-->
+      <exclusions>
+        <exclusion>
+          <groupId>io.netty</groupId>
+          <artifactId>netty-handler</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.camel.springboot</groupId>
