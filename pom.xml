@@ -149,6 +149,13 @@
     <dependency>
       <groupId>org.apache.camel.springboot</groupId>
       <artifactId>camel-aws2-s3-starter</artifactId>
+      <!--CVE-2025-24970-->
+      <exclusions>
+        <exclusion>
+          <groupId>io.netty</groupId>
+          <artifactId>netty-handler</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.camel.springboot</groupId>
