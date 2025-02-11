@@ -1,10 +1,8 @@
 package uk.gov.companieshouse.reconciliation.service.aws;
 
 import org.apache.camel.LoggingLevel;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
-import software.amazon.awssdk.services.s3.S3Client;
 import uk.gov.companieshouse.reconciliation.common.RetryableRoute;
 import uk.gov.companieshouse.reconciliation.function.email.PublisherResourceRequest;
 
@@ -14,9 +12,6 @@ import uk.gov.companieshouse.reconciliation.function.email.PublisherResourceRequ
  */
 @Component
 public class S3PublisherRoute extends RetryableRoute {
-
-    @Autowired
-    private S3Client s3Client;
 
     @Override
     public void configure() {
