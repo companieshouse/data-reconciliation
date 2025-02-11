@@ -12,6 +12,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 
@@ -19,11 +20,13 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import uk.gov.companieshouse.reconciliation.config.aws.S3ClientConfig;
 
 @CamelSpringBootTest
 @SpringBootTest
 @DirtiesContext
 @TestPropertySource(locations = "classpath:application-stubbed.properties")
+@Import(S3ClientConfig.class)
 public class CompareCountRouteTest {
 
     @Autowired

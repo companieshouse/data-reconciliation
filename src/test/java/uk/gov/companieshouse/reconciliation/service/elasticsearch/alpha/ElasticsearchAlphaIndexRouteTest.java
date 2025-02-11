@@ -15,9 +15,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import uk.gov.companieshouse.reconciliation.component.elasticsearch.slicedscroll.client.ElasticsearchSlicedScrollIterator;
+import uk.gov.companieshouse.reconciliation.config.aws.S3ClientConfig;
 import uk.gov.companieshouse.reconciliation.model.ResultModel;
 import uk.gov.companieshouse.reconciliation.model.Results;
 
@@ -33,6 +35,7 @@ import static org.mockito.Mockito.when;
 @DirtiesContext
 @TestPropertySource(locations = "classpath:application-stubbed.properties")
 @ExtendWith(MockitoExtension.class)
+@Import(S3ClientConfig.class)
 public class ElasticsearchAlphaIndexRouteTest {
 
     @Autowired
