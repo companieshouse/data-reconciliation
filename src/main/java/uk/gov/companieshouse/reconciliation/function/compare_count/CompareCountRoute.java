@@ -49,7 +49,7 @@ public class CompareCountRoute extends RetryableRoute {
                     .setHeader("ResourceLinkDescription", simple("Failed to perform ${header.ComparisonDescription}"))
                     .setHeader("Failed").constant(true)
                     .log(LoggingLevel.ERROR, "Compare count failed: ${header.ResourceLinkDescription}")
-                    .handled(true)
+                    .handled(false)
                     .toD("${header.Destination}")
                 .end()
                 .enrich().simple("${header.Src}").aggregationStrategy((base, src) -> {

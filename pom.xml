@@ -15,6 +15,7 @@
 
     <!-- CH Internal -->
     <kafka-models.version>3.0.8</kafka-models.version>
+    <structured-logging.version>3.0.26</structured-logging.version>
     <!-- Third party -->
     <elasticsearch.version>6.2.3</elasticsearch.version>
     <oracle.ojdbc11.version>23.6.0.24.10</oracle.ojdbc11.version>
@@ -97,6 +98,21 @@
           <artifactId>commons-logging</artifactId>
         </exclusion>
       </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>uk.gov.companieshouse</groupId>
+      <artifactId>structured-logging</artifactId>
+      <version>${structured-logging.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-logging</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>

@@ -18,7 +18,7 @@ public class S3PublisherRoute extends RetryableRoute {
         super.configure();
         from("direct:s3-publisher")
                 .onException(AwsServiceException.class)
-                    .handled(true)
+                    .handled(false)
                     .log(LoggingLevel.ERROR, "Failed to publish results to S3.")
                     .setHeader("Failed").constant(true)
                 .end()

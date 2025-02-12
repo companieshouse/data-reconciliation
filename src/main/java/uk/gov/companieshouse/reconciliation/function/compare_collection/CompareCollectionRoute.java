@@ -31,7 +31,7 @@ public class CompareCollectionRoute extends RouteBuilder {
                     .setHeader("ResourceLinkDescription", simple("Failed to perform ${header.ComparisonDescription}"))
                     .setHeader("Failed").constant(true)
                     .log(LoggingLevel.ERROR, "${header.ResourceLinkDescription}")
-                    .handled(true)
+                    .handled(false)
                     .toD("${header.Destination}")
                 .end()
                 .setHeader("Description").header("SrcDescription")

@@ -62,7 +62,7 @@ public class KafkaRoute extends RetryableRoute {
         super.configure();
         from("direct:send-to-kafka")
                 .onException(KafkaException.class)
-                    .handled(true)
+                    .handled(false)
                     .log(LoggingLevel.ERROR, "Failed to send email for comparison group: ${header.ComparisonGroup}")
                     .to("{{endpoint.shutdown}}")
                 .end()
