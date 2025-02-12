@@ -162,8 +162,8 @@
         </exclusion>
         <!--CVE-2025-25193-->
         <exclusion>
-          <groupId>io-netty</groupId>
-          <artifactId>netty-common</artifactId>
+          <groupId>software.amazon.awssdk</groupId>
+          <artifactId>netty-nio-client</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
