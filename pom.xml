@@ -160,6 +160,11 @@
           <groupId>io.netty</groupId>
           <artifactId>netty-handler</artifactId>
         </exclusion>
+        <!--CVE-2025-25193-->
+        <exclusion>
+          <groupId>io-netty</groupId>
+          <artifactId>netty-common</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
