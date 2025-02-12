@@ -25,7 +25,7 @@ public class OracleCollectionRoute extends RetryableRoute {
         super.configure();
         from("direct:oracle-collection")
                 .onException(SQLException.class)
-                    .handled(true)
+                    .handled(false)
                     .log(LoggingLevel.ERROR, "Failed to retrieve results from Oracle")
                     .setHeader("Failed").constant(true)
                 .end()

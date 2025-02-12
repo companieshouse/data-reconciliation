@@ -28,7 +28,7 @@ public class MongoAggregationRoute extends RetryableRoute {
         super.configure();
         from("direct:mongodb-aggregation-collection")
                 .onException(MongoException.class)
-                    .handled(true)
+                    .handled(false)
                     .log(LoggingLevel.ERROR, "Failed to retrieve data from MongoDB")
                     .setHeader("Failed").constant(true)
                 .end()
