@@ -42,11 +42,11 @@ module "ecs-service" {
   
 
   # ECS Task container health check
-  use_task_container_healthcheck    = true
+  use_task_container_healthcheck    = false
   healthcheck_path                  = local.healthcheck_path
   healthcheck_matcher               = local.healthcheck_matcher
   health_check_grace_period_seconds = 240
-  healthcheck_healthy_threshold     = 2
+  
 
   # Docker container details
   docker_registry   = var.docker_registry
