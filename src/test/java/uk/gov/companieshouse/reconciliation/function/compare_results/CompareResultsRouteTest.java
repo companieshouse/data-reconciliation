@@ -1,5 +1,10 @@
 package uk.gov.companieshouse.reconciliation.function.compare_results;
 
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -13,24 +18,15 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
-import uk.gov.companieshouse.reconciliation.config.aws.S3ClientConfig;
 import uk.gov.companieshouse.reconciliation.model.ResultModel;
 import uk.gov.companieshouse.reconciliation.model.Results;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 @CamelSpringBootTest
 @SpringBootTest
 @DirtiesContext
 @TestPropertySource(locations = "classpath:application-stubbed.properties")
-@Import(S3ClientConfig.class)
 public class CompareResultsRouteTest {
 
     @Autowired
@@ -72,7 +68,8 @@ public class CompareResultsRouteTest {
         srcEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(srcResults));
         targetEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(targetResults));
         output.allMessages().body().isEqualTo(
-                "Company Number,MongoDB - Company Profile,Primary Search Index\r\n12345678,ACME LTD,ACME LIMITED\r\n");
+                "Company Number,MongoDB - Company Profile,Primary Search Index\r\n12345678,ACME "
+                        + "LTD,ACME LIMITED\r\n");
         output.expectedHeaderReceived("ResourceLinkDescription", "Completed comparison");
         transformer.expectedHeaderReceived("SrcList", srcResults);
         transformer.expectedHeaderReceived("SrcDescription", "MongoDB - Company Profile");
@@ -80,18 +77,15 @@ public class CompareResultsRouteTest {
         transformer.expectedHeaderReceived("TargetDescription", "Primary Search Index");
         transformer.expectedHeaderReceived("RecordKey", "Company Number");
         transformer.returnReplyBody(
-                ExpressionBuilder.constantExpression(Arrays.asList(
-                        new HashMap<String, Object>() {{
-                            put("Company Number", "Company Number");
-                            put("MongoDB - Company Profile", "MongoDB - Company Profile");
-                            put("Primary Search Index", "Primary Search Index");
-                        }},
-                        new HashMap<String, Object>() {{
-                            put("Company Number", "12345678");
-                            put("MongoDB - Company Profile", "ACME LTD");
-                            put("Primary Search Index", "ACME LIMITED");
-                        }}
-                )));
+                ExpressionBuilder.constantExpression(Arrays.asList(new HashMap<String, Object>() {{
+                    put("Company Number", "Company Number");
+                    put("MongoDB - Company Profile", "MongoDB - Company Profile");
+                    put("Primary Search Index", "Primary Search Index");
+                }}, new HashMap<String, Object>() {{
+                    put("Company Number", "12345678");
+                    put("MongoDB - Company Profile", "ACME LTD");
+                    put("Primary Search Index", "ACME LIMITED");
+                }})));
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeaders(createHeaders());
@@ -106,7 +100,8 @@ public class CompareResultsRouteTest {
     }
 
     @Test
-    void testSetLinkDescriptionToFailureMessageIfComparisonSourceFails() throws InterruptedException {
+    void testSetLinkDescriptionToFailureMessageIfComparisonSourceFails()
+            throws InterruptedException {
         //given
         srcEndpoint.returnReplyHeader("Failed", ExpressionBuilder.constantExpression(true));
         output.expectedHeaderReceived("ResourceLinkDescription", "Failed to perform comparison");
@@ -119,7 +114,8 @@ public class CompareResultsRouteTest {
     }
 
     @Test
-    void testSetLinkDescriptionToFailureMessageIfComparisonTargetFails() throws InterruptedException {
+    void testSetLinkDescriptionToFailureMessageIfComparisonTargetFails()
+            throws InterruptedException {
         // given
         Results srcResults = new Results(Arrays.asList(new ResultModel("12345678", "ACME LTD"),
                 new ResultModel("23456789", "KICK CIC"),

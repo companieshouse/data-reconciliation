@@ -1,5 +1,10 @@
 package uk.gov.companieshouse.reconciliation.service.elasticsearch;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -15,26 +20,17 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import uk.gov.companieshouse.reconciliation.component.elasticsearch.slicedscroll.client.ElasticsearchException;
 import uk.gov.companieshouse.reconciliation.component.elasticsearch.slicedscroll.client.ElasticsearchSlicedScrollIterator;
-import uk.gov.companieshouse.reconciliation.config.aws.S3ClientConfig;
 import uk.gov.companieshouse.reconciliation.model.ResultModel;
 import uk.gov.companieshouse.reconciliation.model.Results;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @CamelSpringBootTest
 @SpringBootTest
 @DirtiesContext
 @TestPropertySource(locations = "classpath:application-stubbed.properties")
-@Import(S3ClientConfig.class)
 public class ElasticsearchCollectionRouteTest {
 
     @Autowired
@@ -65,36 +61,43 @@ public class ElasticsearchCollectionRouteTest {
     @Test
     void testStoreResourceListInRequiredHeaderUncached() throws InterruptedException {
         elasticsearchEndpoint.expectedBodyReceived().constant("QUERY");
-        elasticsearchEndpoint.whenAnyExchangeReceived(exchange ->
-                exchange.getIn().setBody(iterator)
-        );
-        cache.expectedHeaderValuesReceivedInAnyOrder(CaffeineConstants.ACTION, CaffeineConstants.ACTION_GET, CaffeineConstants.ACTION_PUT);
-        cache.expectedHeaderValuesReceivedInAnyOrder(CaffeineConstants.KEY, "elasticsearchCache", "elasticsearchCache");
-        cache.returnReplyHeader(CaffeineConstants.ACTION_HAS_RESULT, ExpressionBuilder.constantExpression(false));
+        elasticsearchEndpoint.whenAnyExchangeReceived(
+                exchange -> exchange.getIn().setBody(iterator));
+        cache.expectedHeaderValuesReceivedInAnyOrder(CaffeineConstants.ACTION,
+                CaffeineConstants.ACTION_GET, CaffeineConstants.ACTION_PUT);
+        cache.expectedHeaderValuesReceivedInAnyOrder(CaffeineConstants.KEY, "elasticsearchCache",
+                "elasticsearchCache");
+        cache.returnReplyHeader(CaffeineConstants.ACTION_HAS_RESULT,
+                ExpressionBuilder.constantExpression(false));
         transformer.expectedBodyReceived().constant(iterator);
-        transformer.returnReplyBody(ExpressionBuilder.constantExpression(new Results(Collections.singletonList(new ResultModel("12345678", "ACME LIMITED")))));
+        transformer.returnReplyBody(ExpressionBuilder.constantExpression(new Results(
+                Collections.singletonList(new ResultModel("12345678", "ACME LIMITED")))));
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeaders(getHeaders());
         exchange.getIn().setBody(new Object());
         Exchange actual = producer.send(exchange);
-        assertTrue(actual.getIn().getBody(Results.class).contains(new ResultModel("12345678", "ACME LIMITED")));
+        assertTrue(actual.getIn().getBody(Results.class)
+                .contains(new ResultModel("12345678", "ACME LIMITED")));
         MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     void testStoreResourceListInRequiredHeaderCached() throws InterruptedException {
         elasticsearchEndpoint.expectedMessageCount(0);
-        cache.expectedHeaderValuesReceivedInAnyOrder(CaffeineConstants.ACTION, CaffeineConstants.ACTION_GET);
+        cache.expectedHeaderValuesReceivedInAnyOrder(CaffeineConstants.ACTION,
+                CaffeineConstants.ACTION_GET);
         cache.expectedHeaderValuesReceivedInAnyOrder(CaffeineConstants.KEY, "elasticsearchCache");
         cache.whenAnyExchangeReceived(exchange -> {
-            exchange.getIn().setBody(new Results(Collections.singletonList(new ResultModel("12345678", "ACME LIMITED"))));
+            exchange.getIn().setBody(new Results(
+                    Collections.singletonList(new ResultModel("12345678", "ACME LIMITED"))));
             exchange.getIn().setHeader(CaffeineConstants.ACTION_HAS_RESULT, true);
         });
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeaders(getHeaders());
         exchange.getIn().setBody(new Object());
         Exchange actual = producer.send(exchange);
-        assertTrue(actual.getIn().getBody(Results.class).contains(new ResultModel("12345678", "ACME LIMITED")));
+        assertTrue(actual.getIn().getBody(Results.class)
+                .contains(new ResultModel("12345678", "ACME LIMITED")));
         MockEndpoint.assertIsSatisfied(context);
     }
 
@@ -104,9 +107,11 @@ public class ElasticsearchCollectionRouteTest {
         elasticsearchEndpoint.whenAnyExchangeReceived(exchange -> {
             throw new ElasticsearchException("Failed");
         });
-        cache.expectedHeaderValuesReceivedInAnyOrder(CaffeineConstants.ACTION, CaffeineConstants.ACTION_GET);
+        cache.expectedHeaderValuesReceivedInAnyOrder(CaffeineConstants.ACTION,
+                CaffeineConstants.ACTION_GET);
         cache.expectedHeaderValuesReceivedInAnyOrder(CaffeineConstants.KEY, "elasticsearchCache");
-        cache.returnReplyHeader(CaffeineConstants.ACTION_HAS_RESULT, ExpressionBuilder.constantExpression(false));
+        cache.returnReplyHeader(CaffeineConstants.ACTION_HAS_RESULT,
+                ExpressionBuilder.constantExpression(false));
         transformer.expectedMessageCount(0);
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeaders(getHeaders());

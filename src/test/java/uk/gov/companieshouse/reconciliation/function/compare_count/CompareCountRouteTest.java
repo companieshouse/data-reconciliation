@@ -1,6 +1,10 @@
 package uk.gov.companieshouse.reconciliation.function.compare_count;
 
 import com.mongodb.MongoException;
+import java.math.BigDecimal;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
@@ -12,21 +16,13 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
-
-import java.math.BigDecimal;
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
-import uk.gov.companieshouse.reconciliation.config.aws.S3ClientConfig;
 
 @CamelSpringBootTest
 @SpringBootTest
 @DirtiesContext
 @TestPropertySource(locations = "classpath:application-stubbed.properties")
-@Import(S3ClientConfig.class)
 public class CompareCountRouteTest {
 
     @Autowired
@@ -53,7 +49,8 @@ public class CompareCountRouteTest {
 
     @Test
     void testEndpointAIsGreaterThanEndpointB() throws InterruptedException {
-        mockCorporateBodyCountEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(BigDecimal.valueOf(15)));
+        mockCorporateBodyCountEndpoint.returnReplyBody(
+                ExpressionBuilder.constantExpression(BigDecimal.valueOf(15)));
         mockCompanyProfileCountEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(10L));
         mockResult.expectedHeaderReceived("ResourceLinkDescription", "A has 5 more things than B");
         template.sendBodyAndHeaders(0, createHeaders());
@@ -62,7 +59,8 @@ public class CompareCountRouteTest {
 
     @Test
     void testEndpointBIsGreaterThanEndpointA() throws InterruptedException {
-        mockCorporateBodyCountEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(BigDecimal.valueOf(10)));
+        mockCorporateBodyCountEndpoint.returnReplyBody(
+                ExpressionBuilder.constantExpression(BigDecimal.valueOf(10)));
         mockCompanyProfileCountEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(20L));
         mockResult.expectedHeaderReceived("ResourceLinkDescription", "B has 10 more things than A");
         template.sendBodyAndHeaders(0, createHeaders());
@@ -71,29 +69,35 @@ public class CompareCountRouteTest {
 
     @Test
     void testEndpointsAreTheSame() throws InterruptedException {
-        mockCorporateBodyCountEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(BigDecimal.valueOf(10)));
+        mockCorporateBodyCountEndpoint.returnReplyBody(
+                ExpressionBuilder.constantExpression(BigDecimal.valueOf(10)));
         mockCompanyProfileCountEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(10));
-        mockResult.expectedHeaderReceived("ResourceLinkDescription", "A and B contain the same number of things");
+        mockResult.expectedHeaderReceived("ResourceLinkDescription",
+                "A and B contain the same number of things");
         template.sendBodyAndHeaders(0, createHeaders());
         MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
-    void testSetLinkDescriptionToFailureMessageIfComparisonFailsDueToSQLException() throws InterruptedException {
+    void testSetLinkDescriptionToFailureMessageIfComparisonFailsDueToSQLException()
+            throws InterruptedException {
         mockCorporateBodyCountEndpoint.whenAnyExchangeReceived(exchange -> {
             throw new SQLException("Failed");
         });
-        mockResult.expectedHeaderReceived("ResourceLinkDescription", "Failed to perform comparison");
+        mockResult.expectedHeaderReceived("ResourceLinkDescription",
+                "Failed to perform comparison");
         template.sendBodyAndHeaders(0, createHeaders());
         MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
-    void testSetLinkDescriptionToFailureMessageIfComparisonFailsDueToMongoException() throws InterruptedException {
+    void testSetLinkDescriptionToFailureMessageIfComparisonFailsDueToMongoException()
+            throws InterruptedException {
         mockCorporateBodyCountEndpoint.whenAnyExchangeReceived(exchange -> {
             throw new MongoException("Failed");
         });
-        mockResult.expectedHeaderReceived("ResourceLinkDescription", "Failed to perform comparison");
+        mockResult.expectedHeaderReceived("ResourceLinkDescription",
+                "Failed to perform comparison");
         template.sendBodyAndHeaders(0, createHeaders());
         MockEndpoint.assertIsSatisfied(context);
     }

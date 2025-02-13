@@ -1,5 +1,10 @@
 package uk.gov.companieshouse.reconciliation.service.elasticsearch;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.Collections;
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -13,25 +18,16 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
-import uk.gov.companieshouse.reconciliation.config.aws.S3ClientConfig;
 import uk.gov.companieshouse.reconciliation.function.compare_collection.entity.ResourceList;
 import uk.gov.companieshouse.reconciliation.model.ResultModel;
 import uk.gov.companieshouse.reconciliation.model.Results;
-
-import java.util.Collections;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @CamelSpringBootTest
 @SpringBootTest
 @DirtiesContext
 @TestPropertySource(locations = "classpath:application-stubbed.properties")
-@Import(S3ClientConfig.class)
 public class ElasticsearchCompanyNumberMapperTest {
 
     @Autowired
@@ -54,7 +50,8 @@ public class ElasticsearchCompanyNumberMapperTest {
         Exchange request = new DefaultExchange(context);
         request.getIn().setHeader("ElasticsearchEndpoint", "mock:elasticsearch-wrapper");
         request.getIn().setHeader("Description", "Description");
-        elasticsearchServiceWrapper.returnReplyBody(ExpressionBuilder.constantExpression(new Results(Collections.singletonList(expected))));
+        elasticsearchServiceWrapper.returnReplyBody(ExpressionBuilder.constantExpression(
+                new Results(Collections.singletonList(expected))));
         elasticsearchServiceWrapper.expectedMessageCount(1);
         Exchange exchange = producerTemplate.send(request);
         ResourceList actual = exchange.getIn().getBody(ResourceList.class);
@@ -68,7 +65,8 @@ public class ElasticsearchCompanyNumberMapperTest {
         Exchange request = new DefaultExchange(context);
         request.getIn().setHeader("ElasticsearchEndpoint", "mock:elasticsearch-wrapper");
         request.getIn().setHeader("Description", "Description");
-        elasticsearchServiceWrapper.returnReplyHeader("Failed", ExpressionBuilder.constantExpression(true));
+        elasticsearchServiceWrapper.returnReplyHeader("Failed",
+                ExpressionBuilder.constantExpression(true));
         elasticsearchServiceWrapper.expectedMessageCount(1);
         Exchange exchange = producerTemplate.send(request);
         assertNull(exchange.getIn().getBody());

@@ -1,5 +1,12 @@
 package uk.gov.companieshouse.reconciliation.service.oracle;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
@@ -9,25 +16,14 @@ import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
-import uk.gov.companieshouse.reconciliation.config.aws.S3ClientConfig;
 import uk.gov.companieshouse.reconciliation.function.compare_collection.entity.ResourceList;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @CamelSpringBootTest
 @SpringBootTest
 @DirtiesContext
 @TestPropertySource(locations = "classpath:application-stubbed.properties")
-@Import(S3ClientConfig.class)
 public class OracleSingleColumnTransformerRouteTest {
 
     @Autowired
@@ -40,13 +36,11 @@ public class OracleSingleColumnTransformerRouteTest {
     void testTransformInsolvencyCasesResultSet() {
         //given
         List<Map<String, Object>> expectedOracleResponse = Arrays.asList(
-                new HashMap<String, Object>(){{
+                new HashMap<String, Object>() {{
                     put("RESULT", "12345678");
-                }},
-                new HashMap<String, Object>(){{
+                }}, new HashMap<String, Object>() {{
                     put("RESULT", "87654321");
-                }}
-        );
+                }});
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(expectedOracleResponse);
         exchange.getIn().setHeader("Description", "description");

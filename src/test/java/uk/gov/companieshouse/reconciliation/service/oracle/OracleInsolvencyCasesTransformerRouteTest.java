@@ -1,5 +1,12 @@
 package uk.gov.companieshouse.reconciliation.service.oracle;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
@@ -9,26 +16,15 @@ import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
-import uk.gov.companieshouse.reconciliation.config.aws.S3ClientConfig;
 import uk.gov.companieshouse.reconciliation.model.InsolvencyResultModel;
 import uk.gov.companieshouse.reconciliation.model.InsolvencyResults;
-
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @CamelSpringBootTest
 @SpringBootTest
 @DirtiesContext
 @TestPropertySource(locations = "classpath:application-stubbed.properties")
-@Import(S3ClientConfig.class)
 public class OracleInsolvencyCasesTransformerRouteTest {
 
     @Autowired
@@ -41,15 +37,13 @@ public class OracleInsolvencyCasesTransformerRouteTest {
     void testTransformInsolvencyCasesResultSet() {
         //given
         List<Map<String, Object>> expectedOracleResponse = Arrays.asList(
-                new HashMap<String, Object>(){{
+                new HashMap<String, Object>() {{
                     put("INCORPORATION_NUMBER", "12345678");
                     put("NUMBER_OF_CASES", BigDecimal.valueOf(42L));
-                }},
-                new HashMap<String, Object>(){{
+                }}, new HashMap<String, Object>() {{
                     put("INCORPORATION_NUMBER", "87654321");
                     put("NUMBER_OF_CASES", BigDecimal.valueOf(3L));
-                }}
-        );
+                }});
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(expectedOracleResponse);
 
@@ -57,9 +51,7 @@ public class OracleInsolvencyCasesTransformerRouteTest {
         producerTemplate.send(exchange);
 
         //then
-        assertEquals(new InsolvencyResults(Arrays.asList(
-                new InsolvencyResultModel("12345678", 42),
-                new InsolvencyResultModel("87654321", 3)
-        )), exchange.getIn().getBody());
+        assertEquals(new InsolvencyResults(Arrays.asList(new InsolvencyResultModel("12345678", 42),
+                new InsolvencyResultModel("87654321", 3))), exchange.getIn().getBody());
     }
 }

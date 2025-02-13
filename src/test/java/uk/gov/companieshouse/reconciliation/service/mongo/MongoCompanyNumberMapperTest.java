@@ -1,7 +1,12 @@
 package uk.gov.companieshouse.reconciliation.service.mongo;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Projections;
+import java.util.Collections;
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -15,25 +20,16 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
-import uk.gov.companieshouse.reconciliation.config.aws.S3ClientConfig;
 import uk.gov.companieshouse.reconciliation.function.compare_collection.entity.ResourceList;
 import uk.gov.companieshouse.reconciliation.model.ResultModel;
 import uk.gov.companieshouse.reconciliation.model.Results;
-
-import java.util.Collections;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @CamelSpringBootTest
 @SpringBootTest
 @DirtiesContext
 @TestPropertySource(locations = "classpath:application-stubbed.properties")
-@Import(S3ClientConfig.class)
 public class MongoCompanyNumberMapperTest {
 
     @Autowired
@@ -52,15 +48,19 @@ public class MongoCompanyNumberMapperTest {
 
     @Test
     void testFetchResultsFromMongoAndTransformIntoResourceList() throws InterruptedException {
-        Results expectedResults = new Results(Collections.singletonList(new ResultModel("12345678", "ACME LIMITED")));
+        Results expectedResults = new Results(
+                Collections.singletonList(new ResultModel("12345678", "ACME LIMITED")));
         mongoEndpoint.returnReplyBody(ExpressionBuilder.constantExpression(expectedResults));
         mongoEndpoint.expectedHeaderReceived("MongoCacheKey", "mongoCompanyProfile");
-        mongoEndpoint.expectedHeaderReceived("MongoQuery", Collections.singletonList(Aggregates.project(Projections.include("_id", "data.company_name", "data.company_status"))));
+        mongoEndpoint.expectedHeaderReceived("MongoQuery", Collections.singletonList(
+                Aggregates.project(
+                        Projections.include("_id", "data.company_name", "data.company_status"))));
         mongoEndpoint.expectedHeaderReceived("MongoEndpoint", "mock:fruitBasket");
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader("Description", "description");
         exchange.getIn().setHeader("MongoCacheKey", "mongoCompanyProfile");
-        exchange.getIn().setHeader("MongoQuery", Collections.singletonList(Aggregates.project(Projections.include("_id", "data.company_name", "data.company_status"))));
+        exchange.getIn().setHeader("MongoQuery", Collections.singletonList(Aggregates.project(
+                Projections.include("_id", "data.company_name", "data.company_status"))));
         exchange.getIn().setHeader("MongoEndpoint", "mock:fruitBasket");
         Exchange result = producerTemplate.send(exchange);
         ResourceList actual = result.getIn().getBody(ResourceList.class);

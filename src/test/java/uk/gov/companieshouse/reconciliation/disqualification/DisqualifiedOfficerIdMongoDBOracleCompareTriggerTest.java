@@ -5,22 +5,18 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.mongodb.MongoDbConstants;
 import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
-import uk.gov.companieshouse.reconciliation.config.aws.S3ClientConfig;
 
 @CamelSpringBootTest
 @SpringBootTest
 @DirtiesContext
 @TestPropertySource(locations = "classpath:application-stubbed.properties")
-@Import(S3ClientConfig.class)
 public class DisqualifiedOfficerIdMongoDBOracleCompareTriggerTest {
 
     @Autowired
@@ -33,7 +29,7 @@ public class DisqualifiedOfficerIdMongoDBOracleCompareTriggerTest {
     private ProducerTemplate producerTemplate;
 
     @BeforeEach
-    void before(){
+    void before() {
         compareCollection.reset();
     }
 
@@ -44,7 +40,8 @@ public class DisqualifiedOfficerIdMongoDBOracleCompareTriggerTest {
         compareCollection.expectedHeaderReceived("SrcDescription", "Oracle");
         compareCollection.expectedHeaderReceived("Src", "direct:oracle-collection");
         compareCollection.expectedHeaderReceived("TargetDescription", "MongoDB");
-        compareCollection.expectedHeaderReceived("Target", "direct:mongo-disqualified_officer-mapper");
+        compareCollection.expectedHeaderReceived("Target",
+                "direct:mongo-disqualified_officer-mapper");
         compareCollection.expectedHeaderReceived("Destination", "mock:result");
         compareCollection.expectedHeaderReceived("RecordType", "Disqualified Officer");
         compareCollection.expectedHeaderReceived("Upload", "mock:s3_bucket_destination");

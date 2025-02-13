@@ -1,5 +1,10 @@
 package uk.gov.companieshouse.reconciliation.service.mongo;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.Collections;
+import java.util.List;
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -14,25 +19,16 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
-import uk.gov.companieshouse.reconciliation.config.aws.S3ClientConfig;
 import uk.gov.companieshouse.reconciliation.function.compare_collection.entity.ResourceList;
 import uk.gov.companieshouse.reconciliation.model.DisqualificationResultModel;
 import uk.gov.companieshouse.reconciliation.model.DisqualificationResults;
-
-import java.util.Collections;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @CamelSpringBootTest
 @SpringBootTest
 @DirtiesContext
 @TestPropertySource(locations = "classpath:application-stubbed.properties")
-@Import(S3ClientConfig.class)
 public class MongoDisqualifiedOfficerMapperTest {
 
     @Autowired
@@ -56,10 +52,13 @@ public class MongoDisqualifiedOfficerMapperTest {
     void testFetchAndTransformDisqualifiedOfficers() throws InterruptedException {
         companyProfileCollection.expectedHeaderReceived("MongoEndpoint", "mock:dsq_compare_target");
         companyProfileCollection.expectedHeaderReceived("MongoCacheKey", "mongoDisqualifications");
-        companyProfileCollection.expectedHeaderReceived("MongoTransformer", "direct:disqualified-officer-transformer");
-        companyProfileCollection.expectedHeaderReceived("MongoQuery", disqualifiedOfficerAggregationQuery);
+        companyProfileCollection.expectedHeaderReceived("MongoTransformer",
+                "direct:disqualified-officer-transformer");
+        companyProfileCollection.expectedHeaderReceived("MongoQuery",
+                disqualifiedOfficerAggregationQuery);
         companyProfileCollection.whenAnyExchangeReceived(exchange -> {
-            exchange.getIn().setBody(new DisqualificationResults(Collections.singleton(new DisqualificationResultModel("9000000000"))));
+            exchange.getIn().setBody(new DisqualificationResults(
+                    Collections.singleton(new DisqualificationResultModel("9000000000"))));
         });
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader("Description", "description");
@@ -75,9 +74,12 @@ public class MongoDisqualifiedOfficerMapperTest {
     void testSkipTransformIfFailed() throws InterruptedException {
         companyProfileCollection.expectedHeaderReceived("MongoEndpoint", "mock:dsq_compare_target");
         companyProfileCollection.expectedHeaderReceived("MongoCacheKey", "mongoDisqualifications");
-        companyProfileCollection.expectedHeaderReceived("MongoTransformer", "direct:disqualified-officer-transformer");
-        companyProfileCollection.expectedHeaderReceived("MongoQuery", disqualifiedOfficerAggregationQuery);
-        companyProfileCollection.returnReplyHeader("Failed", ExpressionBuilder.constantExpression(true));
+        companyProfileCollection.expectedHeaderReceived("MongoTransformer",
+                "direct:disqualified-officer-transformer");
+        companyProfileCollection.expectedHeaderReceived("MongoQuery",
+                disqualifiedOfficerAggregationQuery);
+        companyProfileCollection.returnReplyHeader("Failed",
+                ExpressionBuilder.constantExpression(true));
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader("Description", "description");
         Exchange actual = producerTemplate.send(exchange);

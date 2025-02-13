@@ -1,5 +1,11 @@
 package uk.gov.companieshouse.reconciliation.service.elasticsearch.alpha;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.HashMap;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
@@ -15,27 +21,17 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import uk.gov.companieshouse.reconciliation.component.elasticsearch.slicedscroll.client.ElasticsearchSlicedScrollIterator;
-import uk.gov.companieshouse.reconciliation.config.aws.S3ClientConfig;
 import uk.gov.companieshouse.reconciliation.model.ResultModel;
 import uk.gov.companieshouse.reconciliation.model.Results;
-
-import java.util.HashMap;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @CamelSpringBootTest
 @SpringBootTest
 @DirtiesContext
 @TestPropertySource(locations = "classpath:application-stubbed.properties")
 @ExtendWith(MockitoExtension.class)
-@Import(S3ClientConfig.class)
 public class ElasticsearchAlphaIndexRouteTest {
 
     @Autowired
@@ -61,7 +57,8 @@ public class ElasticsearchAlphaIndexRouteTest {
         Exchange actual = producer.send(exchange);
 
         // then
-        assertTrue(actual.getIn().getBody(Results.class).contains(new ResultModel("12345678", "ACME LIMITED")));
+        assertTrue(actual.getIn().getBody(Results.class)
+                .contains(new ResultModel("12345678", "ACME LIMITED")));
         verify(iterator, times(2)).hasNext();
         verify(iterator, times(1)).next();
     }

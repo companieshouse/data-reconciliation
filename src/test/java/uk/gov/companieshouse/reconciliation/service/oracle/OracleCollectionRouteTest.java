@@ -1,5 +1,13 @@
 package uk.gov.companieshouse.reconciliation.service.oracle;
 
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -13,26 +21,14 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
-import uk.gov.companieshouse.reconciliation.config.aws.S3ClientConfig;
 import uk.gov.companieshouse.reconciliation.function.compare_collection.entity.ResourceList;
-
-import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @CamelSpringBootTest
 @SpringBootTest
 @DirtiesContext
 @TestPropertySource(locations = "classpath:application-stubbed.properties")
-@Import(S3ClientConfig.class)
 public class OracleCollectionRouteTest {
 
     @Autowired
@@ -55,16 +51,16 @@ public class OracleCollectionRouteTest {
     @Test
     void testRetrieveAndAggregateResultSet() throws InterruptedException {
         //given
-        ResourceList expectedResourceList = new ResourceList(Arrays.asList("12345678", "ABCD1234"), "description");
+        ResourceList expectedResourceList = new ResourceList(Arrays.asList("12345678", "ABCD1234"),
+                "description");
         List<Map<String, Object>> expectedOracleResponse = Arrays.asList(
                 Collections.singletonMap("RESULT", "12345678"),
-                Collections.singletonMap("RESULT", "ABCD1234")
-        );
-        oracleEndpoint.whenAnyExchangeReceived(exchange ->
-            exchange.getIn().setBody(expectedOracleResponse)
-        );
+                Collections.singletonMap("RESULT", "ABCD1234"));
+        oracleEndpoint.whenAnyExchangeReceived(
+                exchange -> exchange.getIn().setBody(expectedOracleResponse));
         oracleEndpoint.expectedBodiesReceived("SELECT '12345678' FROM DUAL");
-        oracleTransformer.returnReplyBody(ExpressionBuilder.constantExpression(expectedResourceList));
+        oracleTransformer.returnReplyBody(
+                ExpressionBuilder.constantExpression(expectedResourceList));
         oracleTransformer.expectedBodyReceived().constant(expectedOracleResponse);
         oracleTransformer.expectedHeaderReceived("Description", "description");
 
