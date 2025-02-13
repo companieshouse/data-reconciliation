@@ -36,12 +36,12 @@ variable "desired_task_count" {
 variable "required_cpus" {
   type = number
   description = "The required cpu resource for this service. 1024 here is 1 vCPU"
-  default = 256 # defaulted low for dev environments, override for production
+  default = 512 # defaulted low for dev environments, override for production
 }
 variable "required_memory" {
   type = number
   description = "The required memory for this service"
-  default = 512 # defaulted low for node service in dev environments, override for production
+  default = 1024 # defaulted low for node service in dev environments, override for production
 }
 
 variable "max_task_count" {
