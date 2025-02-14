@@ -3,3 +3,8 @@ aws_profile = "live-eu-west-2"
 
 # service configs
 use_set_environment_files = true
+
+# Scheduled scaling of tasks
+service_autoscale_enabled  = true
+service_scaleup_schedule   = "cron(0 18 ? * MON-FRI *)"
+service_scaledown_schedule = "cron(59 17 ? * MON-FRI,SAT,SUN *)"
