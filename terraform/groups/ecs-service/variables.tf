@@ -41,7 +41,7 @@ variable "required_cpus" {
 variable "required_memory" {
   type = number
   description = "The required memory for this service"
-  default = 2048 # defaulted low for node service in dev environments, override for production
+  default = 8192 # defaulted low for node service in dev environments, override for production
 }
 
 variable "max_task_count" {
