@@ -7,5 +7,9 @@ use_set_environment_files = true
 # Scheduled scaling of tasks
 service_autoscale_enabled  = true
 service_scaleup_schedule   = "0 7,11,15 ? * MON-FRI *"
-service_scaledown_schedule = "59 6,10,14 ? * MON-FRI,SAT,SUN *"
+service_scaledown_schedule = "58 6,10,14 ? * MON-FRI *"
 
+# scaling configs
+desired_task_count = 1
+max_task_count     = 1
+min_task_count     = 0
