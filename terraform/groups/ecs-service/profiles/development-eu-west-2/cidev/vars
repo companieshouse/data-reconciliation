@@ -7,5 +7,5 @@ use_set_environment_files = true
 
 # Scheduled scaling of tasks
 service_autoscale_enabled  = true
-service_scaleup_schedule   = "cron(0/15 6-17 ? * MON-FRI *)"
-service_scaledown_schedule = "cron(59/15 5-16 ? * MON-FRI,SAT,SUN *)"
+service_scaleup_schedule   = "0/15 6-17 ? * MON-FRI *"
+service_scaledown_schedule = "59/15 5-16 ? * MON-FRI,SAT,SUN *"
