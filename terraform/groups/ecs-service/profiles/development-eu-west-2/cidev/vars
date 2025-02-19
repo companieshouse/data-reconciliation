@@ -12,5 +12,5 @@ service_scaledown_schedule = "58,13,28,43 6-17 ? * MON-FRI *"
 
 # scaling configs
 desired_task_count = 1
-max_task_count     = 1
+max_task_count     = 2
 min_task_count     = 0
