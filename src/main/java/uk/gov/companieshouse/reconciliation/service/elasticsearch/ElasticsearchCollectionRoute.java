@@ -27,7 +27,7 @@ public class ElasticsearchCollectionRoute extends RetryableRoute {
         super.configure();
         from("direct:elasticsearch-collection")
                 .onException(ElasticsearchException.class)
-                    .handled(false)
+                    .handled(true)
                     .setHeader("Failed").constant(true)
                     .log(LoggingLevel.ERROR, "Failed to retrieve results from Elasticsearch")
                 .end()

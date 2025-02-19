@@ -78,25 +78,25 @@ public class CompareCountRouteTest {
         MockEndpoint.assertIsSatisfied(context);
     }
 
-//    @Test
-//    void testSetLinkDescriptionToFailureMessageIfComparisonFailsDueToSQLException() throws InterruptedException {
-//        mockCorporateBodyCountEndpoint.whenAnyExchangeReceived(exchange -> {
-//            throw new SQLException("Failed");
-//        });
-//        mockResult.expectedHeaderReceived("ResourceLinkDescription", "Failed to perform comparison");
-//        template.sendBodyAndHeaders(0, createHeaders());
-//        MockEndpoint.assertIsSatisfied(context);
-//    }
+    @Test
+    void testSetLinkDescriptionToFailureMessageIfComparisonFailsDueToSQLException() throws InterruptedException {
+        mockCorporateBodyCountEndpoint.whenAnyExchangeReceived(exchange -> {
+            throw new SQLException("Failed");
+        });
+        mockResult.expectedHeaderReceived("ResourceLinkDescription", "Failed to perform comparison");
+        template.sendBodyAndHeaders(0, createHeaders());
+        MockEndpoint.assertIsSatisfied(context);
+    }
 
-//    @Test
-//    void testSetLinkDescriptionToFailureMessageIfComparisonFailsDueToMongoException() throws InterruptedException {
-//        mockCorporateBodyCountEndpoint.whenAnyExchangeReceived(exchange -> {
-//            throw new MongoException("Failed");
-//        });
-//        mockResult.expectedHeaderReceived("ResourceLinkDescription", "Failed to perform comparison");
-//        template.sendBodyAndHeaders(0, createHeaders());
-//        MockEndpoint.assertIsSatisfied(context);
-//    }
+    @Test
+    void testSetLinkDescriptionToFailureMessageIfComparisonFailsDueToMongoException() throws InterruptedException {
+        mockCorporateBodyCountEndpoint.whenAnyExchangeReceived(exchange -> {
+            throw new MongoException("Failed");
+        });
+        mockResult.expectedHeaderReceived("ResourceLinkDescription", "Failed to perform comparison");
+        template.sendBodyAndHeaders(0, createHeaders());
+        MockEndpoint.assertIsSatisfied(context);
+    }
 
     private Map<String, Object> createHeaders() {
         Map<String, Object> headers = new HashMap<>();
