@@ -14,8 +14,8 @@ public class ElasticsearchScrollingSearchClientFactory {
             String index, int size, long timeout, String sliceField) {
         return new ElasticsearchScrollingSearchClient(new RestHighLevelClient(
                 RestClient.builder(new HttpHost(hostname, port, scheme)).setRequestConfigCallback(
-                                builder -> builder.setConnectTimeout(5000).setSocketTimeout(60000))
-                        .setMaxRetryTimeoutMillis(60000)), index, size, timeout, sliceField,
+                                builder -> builder.setConnectTimeout(5000).setSocketTimeout(60000*2))
+                        .setMaxRetryTimeoutMillis(60000*2)), index, size, timeout, sliceField,
                 new ElasticsearchSlicedScrollValidator());
     }
 }
