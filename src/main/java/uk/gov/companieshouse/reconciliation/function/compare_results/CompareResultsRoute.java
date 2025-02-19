@@ -30,7 +30,7 @@ public class CompareResultsRoute extends RouteBuilder {
                     .setHeader("ResourceLinkDescription").simple("Failed to perform ${header.ComparisonDescription}")
                     .setHeader("Failed").constant(true)
                     .log("Compare results failed: ${header.ResourceLinkDescription}")
-                    .handled(false)
+                    .handled(true)
                     .toD("${header.Destination}")
                 .end()
                 .enrich()
