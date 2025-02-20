@@ -2,8 +2,9 @@ package uk.gov.companieshouse.reconciliation.component.elasticsearch.slicedscrol
 
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import uk.gov.companieshouse.logging.Logger;
+import uk.gov.companieshouse.logging.LoggerFactory;
+import uk.gov.companieshouse.reconciliation.App;
 import uk.gov.companieshouse.reconciliation.component.elasticsearch.slicedscroll.client.ElasticsearchScrollingSearchClient;
 import uk.gov.companieshouse.reconciliation.component.elasticsearch.slicedscroll.client.ElasticsearchSlicedScrollIterator;
 import uk.gov.companieshouse.reconciliation.component.elasticsearch.slicedscroll.client.ElasticsearchSlicedScrollRunnerFactory;
@@ -13,7 +14,7 @@ import java.util.concurrent.Executors;
 
 public class ElasticsearchSlicedScrollProducer extends DefaultProducer {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ElasticsearchSlicedScrollProducer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(App.APPLICATION_NAMESPACE);
 
     private final ElasticsearchSlicedScrollEndpoint endpoint;
     private final ElasticsearchScrollingSearchClient client;
@@ -33,7 +34,7 @@ public class ElasticsearchSlicedScrollProducer extends DefaultProducer {
         try {
             this.client.close();
         } catch (IOException e) {
-            LOGGER.warn("Failed to close Elasticsearch client", e);
+            LOGGER.error("Failed to close Elasticsearch client", e);
         }
     }
 
