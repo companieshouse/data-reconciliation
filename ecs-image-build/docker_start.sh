@@ -6,4 +6,4 @@
 
 
 PORT=8080
-exec java -jar -Dserver.port="${PORT}" "data-reconciliation.jar"
+exec java -jar -Dserver.port="${PORT}" -XX:MaxRAMPercentage=80 "data-reconciliation.jar"
