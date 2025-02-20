@@ -1,8 +1,6 @@
 package uk.gov.companieshouse.reconciliation.component.elasticsearch.slicedscroll.client;
 
 import org.elasticsearch.search.SearchHit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,13 +15,16 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import uk.gov.companieshouse.logging.Logger;
+import uk.gov.companieshouse.logging.LoggerFactory;
+import uk.gov.companieshouse.reconciliation.App;
 
 /**
  * All {@link SearchHit search hits} returned by an Elasticsearch sliced scrolling search.
  */
 public class ElasticsearchSlicedScrollIterator implements Runnable, Iterator<SearchHit> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ElasticsearchSlicedScrollIterator.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(App.APPLICATION_NAMESPACE);
 
     private final ElasticsearchScrollingSearchClient client;
     private final int noOfSlices;
@@ -100,9 +101,12 @@ public class ElasticsearchSlicedScrollIterator implements Runnable, Iterator<Sea
                     .forEach(futures::add);
             CompletableFuture.allOf(futures.toArray(new CompletableFuture<?>[0])).join();
         } catch (CompletionException e) {
-            this.completedExceptionally = true;
-            futures.forEach(f -> f.cancel(true));
-            throw new ElasticsearchException(e);
+            LOGGER.error(e);
+            // Temporary (?) workaround to still send elasticsearch emails in the event of an exception
+            // 404 responses from attempts to delete a scroll ID are incorrectly (?) interpreted as exceptions
+//            this.completedExceptionally = true;
+//            futures.forEach(f -> f.cancel(true));
+//            throw new ElasticsearchException(e);
         } finally {
             try {
                 List<String> scrollIdsToClear = runners.stream()
@@ -113,7 +117,7 @@ public class ElasticsearchSlicedScrollIterator implements Runnable, Iterator<Sea
                     client.clearScroll(scrollIdsToClear);
                 }
             } catch (IOException e) {
-                LOGGER.warn("Error clearing scrolling search", e);
+                LOGGER.error("Error clearing scrolling search", e);
             } finally {
                 synchronized (this) {
                     this.executorService.shutdown();

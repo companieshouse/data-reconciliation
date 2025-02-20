@@ -2,8 +2,9 @@ package uk.gov.companieshouse.reconciliation.function.email.aggregator;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import uk.gov.companieshouse.logging.Logger;
+import uk.gov.companieshouse.logging.LoggerFactory;
+import uk.gov.companieshouse.reconciliation.App;
 import uk.gov.companieshouse.reconciliation.config.AggregationHandler;
 import uk.gov.companieshouse.reconciliation.config.AggregationGroupModel;
 import uk.gov.companieshouse.reconciliation.config.AggregationModel;
@@ -19,7 +20,7 @@ import java.util.TreeSet;
  */
 public class EmailAggregationStrategy implements AggregationStrategy {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(EmailAggregationStrategy.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(App.APPLICATION_NAMESPACE);
 
     private static final String RESOURCE_LINKS_HEADER = "ResourceLinks";
     private static final String LINK_REFERENCE_HEADER = "ResourceLinkReference";
@@ -61,7 +62,7 @@ public class EmailAggregationStrategy implements AggregationStrategy {
                 throw new IllegalStateException("Neither a link description nor a link reference are present");
             }
 
-            LOGGER.warn("ResourceLinkReference is absent");
+            LOGGER.error("ResourceLinkReference is absent");
         }
 
         //on first invocation, oldExchange will be null as this is the first message that we are aggregating
