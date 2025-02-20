@@ -2,6 +2,7 @@ package uk.gov.companieshouse.reconciliation.service.elasticsearch;
 
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.component.caffeine.CaffeineConstants;
+import org.elasticsearch.ElasticsearchStatusException;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.reconciliation.common.RetryableRoute;
 import uk.gov.companieshouse.reconciliation.component.elasticsearch.slicedscroll.client.ElasticsearchException;
@@ -29,7 +30,12 @@ public class ElasticsearchCollectionRoute extends RetryableRoute {
                 .onException(ElasticsearchException.class)
                     .handled(true)
                     .setHeader("Failed").constant(true)
-                    .log(LoggingLevel.ERROR, "Failed to retrieve results from Elasticsearch")
+                    .log(LoggingLevel.ERROR, "Failed to rertieve results from Elasticsearch")
+                .end()
+                .onException(ElasticsearchStatusException.class)
+                    .handled(true)
+                    .setHeader("Failed").constant("true")
+                    .log(LoggingLevel.ERROR, "Elasticsearch returned a status exception")
                 .end()
                 .setHeader(CaffeineConstants.ACTION, constant(CaffeineConstants.ACTION_GET))
                 .setHeader(CaffeineConstants.KEY, simple("${header.ElasticsearchCacheKey}"))
