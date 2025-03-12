@@ -19,7 +19,7 @@ terraform {
 }
 
 module "secrets" {
-  source = "git@github.com:companieshouse/terraform-modules//aws/ecs/secrets?ref=1.0.293"
+  source = "git@github.com:companieshouse/terraform-modules//aws/ecs/secrets?ref=feature/JU-954-fix-healthcheck"
 
   name_prefix = "${local.service_name}-${var.environment}"
   environment = var.environment
@@ -28,7 +28,7 @@ module "secrets" {
 }
 
 module "ecs-service" {
-  source = "git@github.com:companieshouse/terraform-modules//aws/ecs/ecs-service?ref=1.0.293"
+  source = "git@github.com:companieshouse/terraform-modules//aws/ecs/ecs-service?ref=feature/JU-954-fix-healthcheck"
 
 
   # Environmental configuration
@@ -42,7 +42,8 @@ module "ecs-service" {
   
 
   # ECS Task container health check
-  use_task_container_healthcheck    = false
+  use_task_container_healthcheck    = true
+  healthcheck_command               = "[[ $(pgrep java) && $? -ne 1 ]] || exit 1"
   healthcheck_path                  = local.healthcheck_path
   healthcheck_matcher               = local.healthcheck_matcher
   health_check_grace_period_seconds = 240
