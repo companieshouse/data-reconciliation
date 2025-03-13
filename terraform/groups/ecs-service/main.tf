@@ -70,7 +70,7 @@ module "ecs-service" {
   use_fargate                        = var.use_fargate
   fargate_subnets                    = local.application_subnet_ids
   read_only_root_filesystem          = false
-
+  enable_scheduler                   = true
 
   # Service environment variable and secret configs
   task_environment          = local.task_environment
