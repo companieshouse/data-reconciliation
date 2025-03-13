@@ -29,7 +29,11 @@ data "aws_ecs_cluster" "ecs_cluster" {
   cluster_name = "${local.name_prefix}-cluster"
 }
 
-data "aws_iam_role" "ecs_cluster_iam_role" {
+data "aws_iam_role" "eventbridge_role" {
+  name = "${local.name_prefix}-eventbridge-scheduler-role"
+}
+
+data "aws_iam_role" "eventbridge_scheduler_role_arn" {
   name = "${local.name_prefix}-ecs-task-execution-role"
 }
 
