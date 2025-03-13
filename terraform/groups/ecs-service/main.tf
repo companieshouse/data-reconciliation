@@ -71,7 +71,10 @@ module "ecs-service" {
   use_fargate                        = var.use_fargate
   fargate_subnets                    = local.application_subnet_ids
   read_only_root_filesystem          = false
-  enable_scheduler                   = true
+
+  # # Scheduler configuration
+  # enable_scheduler                   = true
+  # scheduler_cron                     = "cron(0/15 6-17 ? * MON-FRI *)"
 
   # Service environment variable and secret configs
   task_environment          = local.task_environment
