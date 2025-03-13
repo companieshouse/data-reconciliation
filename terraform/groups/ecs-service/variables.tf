@@ -115,3 +115,21 @@ variable "data_reconciliation_version" {
   type        = string
   description = "The version of the data-reconciliation container to run."
 }
+
+
+
+# ------------------------------------------------------------------------------
+# Scheduler variables
+# ------------------------------------------------------------------------------
+
+variable "enable_scheduler" {
+  description = "Whether to enable the EventBridge scheduler for the ECS service"
+  type        = bool
+  default     = false
+}
+
+variable "scheduler_cron" {
+  description = "Cron expression for the scheduler"
+  type        = string
+  default     = "" 
+}

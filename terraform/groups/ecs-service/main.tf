@@ -19,7 +19,7 @@ terraform {
 }
 
 module "secrets" {
-  source = "git@github.com:companieshouse/terraform-modules//aws/ecs/secrets?ref=feature/JU-954-fix-healthcheck"
+  source = "git@github.com:companieshouse/terraform-modules//aws/ecs/secrets?ref=feature/JU-954-add-scheduler"
 
   name_prefix = "${local.service_name}-${var.environment}"
   environment = var.environment
@@ -28,7 +28,7 @@ module "secrets" {
 }
 
 module "ecs-service" {
-  source = "git@github.com:companieshouse/terraform-modules//aws/ecs/ecs-service?ref=feature/JU-954-fix-healthcheck"
+  source = "git@github.com:companieshouse/terraform-modules//aws/ecs/ecs-service?ref=feature/JU-954-add-scheduler"
 
 
   # Environmental configuration
@@ -38,12 +38,13 @@ module "ecs-service" {
   vpc_id                  = data.aws_vpc.vpc.id
   ecs_cluster_id          = data.aws_ecs_cluster.ecs_cluster.id
   task_execution_role_arn = data.aws_iam_role.ecs_cluster_iam_role.arn
+  eventbridge_scheduler_role_arn = data.aws_iam_role.eventbridge_role.arn
   batch_service           = true
   
 
   # ECS Task container health check
-  use_task_container_healthcheck    = true
-  healthcheck_command               = "pgrep -q java; [[ $? -ne 1 ]] || exit 1"
+  # use_task_container_healthcheck    = false
+  # healthcheck_command               = "pgrep -q java; [[ $? -ne 1 ]] || exit 1"
   healthcheck_path                  = local.healthcheck_path
   healthcheck_matcher               = local.healthcheck_matcher
   health_check_grace_period_seconds = 240
@@ -71,6 +72,11 @@ module "ecs-service" {
   fargate_subnets                    = local.application_subnet_ids
   read_only_root_filesystem          = false
 
+  # Scheduler configuration
+  enable_scheduler                   = var.enable_scheduler
+  scheduler_cron                     = var.scheduler_cron
+  
+  # "cron(0/15 6-17 ? * MON-FRI *)"
 
   # Service environment variable and secret configs
   task_environment          = local.task_environment
