@@ -32,14 +32,14 @@ module "ecs-service" {
 
 
   # Environmental configuration
-  environment             = var.environment
-  aws_region              = var.aws_region
-  aws_profile             = var.aws_profile
-  vpc_id                  = data.aws_vpc.vpc.id
-  ecs_cluster_id          = data.aws_ecs_cluster.ecs_cluster.id
-  task_execution_role_arn = data.aws_iam_role.ecs_cluster_iam_role.arn
-  eventbridge_scheduler_role_arn = data.aws_iam_role.eventbridge_role.arn
-  batch_service           = true
+  environment                     = var.environment
+  aws_region                      = var.aws_region
+  aws_profile                     = var.aws_profile
+  vpc_id                          = data.aws_vpc.vpc.id
+  ecs_cluster_id                  = data.aws_ecs_cluster.ecs_cluster.id
+  task_execution_role_arn         = data.aws_iam_role.ecs_cluster_iam_role.arn
+  eventbridge_scheduler_role_arn  = data.aws_iam_role.eventbridge_role.arn
+  batch_service                   = true
   
 
   # ECS Task container health check
@@ -75,8 +75,6 @@ module "ecs-service" {
   # Scheduler configuration
   enable_scheduler                   = var.enable_scheduler
   scheduler_cron                     = var.scheduler_cron
-  
-  # "cron(0/15 6-17 ? * MON-FRI *)"
 
   # Service environment variable and secret configs
   task_environment          = local.task_environment
