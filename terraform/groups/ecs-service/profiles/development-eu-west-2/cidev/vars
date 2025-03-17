@@ -7,5 +7,5 @@ use_set_environment_files = true
 
 # Scheduler configuration
 enable_scheduler       = true
-scheduler_cron         = "cron(0/15 * * * * *)"
+scheduler_cron         = "cron(0/15 * ? * MON-FRI *)"
 # scheduler_cron         = "cron(0/15 6-17 ? * MON-FRI *)"
