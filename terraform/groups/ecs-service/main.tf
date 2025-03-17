@@ -37,6 +37,7 @@ module "ecs-service" {
   aws_profile                     = var.aws_profile
   vpc_id                          = data.aws_vpc.vpc.id
   ecs_cluster_id                  = data.aws_ecs_cluster.ecs_cluster.id
+  ecs_cluster_arn                 = data.aws_ecs_cluster.ecs_cluster.arn
   task_execution_role_arn         = data.aws_iam_role.ecs_cluster_iam_role.arn
   eventbridge_scheduler_role_arn  = data.aws_iam_role.eventbridge_role.arn
   batch_service                   = true
