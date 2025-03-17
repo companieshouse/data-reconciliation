@@ -19,7 +19,6 @@ locals {
   stack_secrets   = jsondecode(data.vault_generic_secret.stack_secrets.data_json)
   service_secrets = jsondecode(data.vault_generic_secret.service_secrets.data_json)
 
-
   # create a map of secret name => secret arn to pass into ecs service module
   # using the trimprefix function to remove the prefixed path from the secret name
   secrets_arn_map = {
