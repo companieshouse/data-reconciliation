@@ -33,9 +33,6 @@ data "aws_iam_role" "ecs_cluster_iam_role" {
   name = "${local.name_prefix}-ecs-task-execution-role"
 }
 
-data "aws_iam_role" "eventbridge_role" {
-  name = "${local.name_prefix}-eventbridge-scheduler-role"
-}
 
 # retrieve all secrets for this stack using the stack path
 data "aws_ssm_parameters_by_path" "secrets" {
