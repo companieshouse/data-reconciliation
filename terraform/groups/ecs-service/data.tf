@@ -33,9 +33,6 @@ data "aws_iam_role" "ecs_cluster_iam_role" {
   name = "${local.name_prefix}-ecs-task-execution-role"
 }
 
-data "aws_iam_role" "eventbridge_role" {
-  name = "${local.name_prefix}-eventbridge-scheduler-role"
-}
 
 # retrieve all secrets for this stack using the stack path
 data "aws_ssm_parameters_by_path" "secrets" {
@@ -63,3 +60,8 @@ data "aws_ssm_parameter" "global_secret" {
 data "vault_generic_secret" "shared_s3" {
   path = "aws-accounts/shared-services/s3"
 }
+
+data "aws_iam_role" "eventbridge_role" {
+   name = "${local.name_prefix}-eventbridge-scheduler-role"
+ }
+ 
