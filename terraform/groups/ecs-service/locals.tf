@@ -26,7 +26,6 @@ locals {
     trimprefix(sec.name, "/${local.name_prefix}/") => sec.arn
   }
 
-
   global_secrets_arn_map = {
     for sec in data.aws_ssm_parameter.global_secret :
     trimprefix(sec.name, "/${local.global_prefix}/") => sec.arn
