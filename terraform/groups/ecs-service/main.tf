@@ -75,7 +75,8 @@ module "ecs-service" {
 
   # Scheduler configuration
   enable_scheduler                   = var.enable_scheduler
-  scheduler_cron                     = var.scheduler_cron
+  startup_scheduler_cron             = var.startup_scheduler_cron
+  shutdown_scheduler_cron            = var.shutdown_scheduler_cron
 
   # Service environment variable and secret configs
   task_environment          = local.task_environment

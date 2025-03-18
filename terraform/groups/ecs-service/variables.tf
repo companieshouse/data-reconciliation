@@ -128,8 +128,14 @@ variable "enable_scheduler" {
   default     = false
 }
 
-variable "scheduler_cron" {
-  description = "Cron expression for the scheduler"
+variable "startup_scheduler_cron" {
+  description = "Cron expression for the startup scheduler"
+  type        = string
+  default     = "" 
+}
+
+variable "shutdown_scheduler_cron" {
+  description = "Cron expression for shutdown scheduler"
   type        = string
   default     = "" 
 }
