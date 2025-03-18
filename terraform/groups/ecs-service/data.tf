@@ -60,3 +60,8 @@ data "aws_ssm_parameter" "global_secret" {
 data "vault_generic_secret" "shared_s3" {
   path = "aws-accounts/shared-services/s3"
 }
+
+
+data "aws_iam_role" "eventbridge_role" {
+   name = "${local.name_prefix}-eventbridge-scheduler-role"
+ }
