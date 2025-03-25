@@ -121,21 +121,20 @@ variable "data_reconciliation_version" {
 # ------------------------------------------------------------------------------
 # Scheduler variables
 # ------------------------------------------------------------------------------
-
-variable "enable_scheduler" {
+variable "enable_eventbridge_scheduler" {
+  default     = false
   description = "Whether to enable the EventBridge scheduler for the ECS service"
   type        = bool
-  default     = false
 }
 
-variable "startup_scheduler_cron" {
-  description = "Cron expression for the startup scheduler"
-  type        = string
+variable "shutdown_eventbridge_scheduler_cron" {
   default     = "" 
+  description = "Cron expression for the scheduler"
+  type        = string
 }
 
-variable "shutdown_scheduler_cron" {
-  description = "Cron expression for shutdown scheduler"
-  type        = string
+variable "startup_eventbridge_scheduler_cron" {
   default     = "" 
+  description = "Cron expression for the scheduler"
+  type        = string
 }
