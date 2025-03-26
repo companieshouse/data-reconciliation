@@ -74,9 +74,9 @@ module "ecs-service" {
   read_only_root_filesystem          = false
 
   # Scheduler configuration
-  enable_scheduler                   = var.enable_scheduler
-  startup_scheduler_cron             = var.startup_scheduler_cron
-  shutdown_scheduler_cron            = var.shutdown_scheduler_cron
+  enable_eventbridge_scheduler                   = var.enable_eventbridge_scheduler
+  startup_eventbridge_scheduler_cron             = var.startup_eventbridge_scheduler_cron
+  shutdown_eventbridge_scheduler_cron            = var.shutdown_eventbridge_scheduler_cron
 
   # Service environment variable and secret configs
   task_environment          = local.task_environment
