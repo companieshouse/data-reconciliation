@@ -127,6 +127,12 @@ variable "enable_eventbridge_scheduler" {
   type        = bool
 }
 
+variable "eventbridge_group_name" {
+  default     = "default"
+  description = "Group of the eventbridge schedulers"
+  type        = string
+}
+
 variable "shutdown_eventbridge_scheduler_cron" {
   default     = "" 
   description = "Cron expression for the scheduler"
