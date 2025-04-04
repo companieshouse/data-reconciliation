@@ -19,7 +19,7 @@ terraform {
 }
 
 module "secrets" {
-  source = "git@github.com:companieshouse/terraform-modules//aws/ecs/secrets?ref=feature/JU-954-add-scheduler"
+  source = "git@github.com:companieshouse/terraform-modules//aws/ecs/secrets?ref=1.0.311"
 
   name_prefix = "${local.service_name}-${var.environment}"
   environment = var.environment
@@ -28,7 +28,7 @@ module "secrets" {
 }
 
 module "ecs-service" {
-  source = "git@github.com:companieshouse/terraform-modules//aws/ecs/ecs-service?ref=feature/JU-954-add-scheduler"
+  source = "git@github.com:companieshouse/terraform-modules//aws/ecs/ecs-service?ref=1.0.311"
 
 
   # Environmental configuration
@@ -44,8 +44,8 @@ module "ecs-service" {
   
 
   # ECS Task container health check
-  # use_task_container_healthcheck    = false
-  # healthcheck_command               = "pgrep -q java; [[ $? -ne 1 ]] || exit 1"
+  use_task_container_healthcheck    = false
+  healthcheck_command               = "pgrep -q java; [[ $? -ne 1 ]] || exit 1"
   healthcheck_path                  = local.healthcheck_path
   healthcheck_matcher               = local.healthcheck_matcher
   health_check_grace_period_seconds = 240
@@ -77,7 +77,6 @@ module "ecs-service" {
   enable_eventbridge_scheduler                   = var.enable_eventbridge_scheduler
   startup_eventbridge_scheduler_cron             = var.startup_eventbridge_scheduler_cron
   shutdown_eventbridge_scheduler_cron            = var.shutdown_eventbridge_scheduler_cron
-  # eventbridge_group_name                         = local.service_name
 
   # Service environment variable and secret configs
   task_environment          = local.task_environment

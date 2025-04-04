@@ -116,6 +116,16 @@ variable "data_reconciliation_version" {
   description = "The version of the data-reconciliation container to run."
 }
 
+variable "use_task_container_healthcheck" {
+  type        = bool
+  description = "If true, sets the ECS Tasks' container health check"
+  default     = false
+}
+variable "healthcheck_command" {
+  type        = string
+  description = "Custom healthcheck command"
+  default     = ""
+}
 
 
 # ------------------------------------------------------------------------------
