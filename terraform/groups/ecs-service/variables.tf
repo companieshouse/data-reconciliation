@@ -128,7 +128,7 @@ variable "enable_eventbridge_scheduler" {
 }
 
 variable "eventbridge_group_name" {
-  default     = "default"
+  default     = ""
   description = "Group of the eventbridge schedulers"
   type        = string
 }
