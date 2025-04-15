@@ -7,4 +7,4 @@ use_set_environment_files = true
 # Scheduler configuration
 enable_eventbridge_scheduler              = true
 startup_eventbridge_scheduler_cron        = "cron(0 18 ? * MON-FRI *)"
-shutdown_eventbridge_scheduler_cron       = "cron(0 0 ? * MON-FRI *)"
+shutdown_eventbridge_scheduler_cron       = "cron(58 17 ? * MON-FRI *)"
