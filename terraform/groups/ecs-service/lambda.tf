@@ -66,25 +66,25 @@ module "lambda" {
   ]
 }
 
-resource "aws_iam_role" "lambda_role" {
-  name                  = "${var.environment}-${local.service_name}-ecs-task-stopper-role"
-  assume_role_policy    = data.aws_iam_policy_document.lambda_role_policy.json
-}
+# resource "aws_iam_role" "lambda_role" {
+#   name                  = "${var.environment}-${local.service_name}-ecs-task-stopper-role"
+#   assume_role_policy    = data.aws_iam_policy_document.lambda_role_policy.json
+# }
 
 ####################
 # add this to data.tf later  
 # this is the lambda role needed by the service
 ####################
 
-data "aws_iam_policy_document" "lambda_role_policy" {
-  version = "2012-10-17"
-  statement {
-    actions = ["sts:AssumeRole"]
-    effect = "Allow"
-    principals {
-      type = "Service"
-      identifiers = ["lambda.amazonaws.com"]
-    }
-  }
-} 
+# data "aws_iam_policy_document" "lambda_role_policy" {
+#   version = "2012-10-17"
+#   statement {
+#     actions = ["sts:AssumeRole"]
+#     effect = "Allow"
+#     principals {
+#       type = "Service"
+#       identifiers = ["lambda.amazonaws.com"]
+#     }
+#   }
+# } 
 
