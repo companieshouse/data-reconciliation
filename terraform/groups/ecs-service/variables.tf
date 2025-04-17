@@ -194,3 +194,13 @@ variable "lambda_runtime" {
   description = "The lambda runtime to use for the function"
   default     = "python3.9"
 }
+
+variable "release_bucket_name" {
+  type        = string
+  description = "The name of the S3 bucket containing the release artefact for the Lambda function"
+}
+
+variable "release_artifact_key" {
+  type        = string
+  description = "The release artifact key for the Lambda function"
+}
