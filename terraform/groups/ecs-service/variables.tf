@@ -160,3 +160,37 @@ variable "startup_eventbridge_scheduler_cron" {
   description = "Cron expression for the scheduler"
   type        = string
 }
+
+# ------------------------------------------------------------------------------
+# Lambda variable configs
+# ------------------------------------------------------------------------------
+
+variable "lambda_memory_size" {
+  default     = "128"
+  description = "The amount of memory made available to the Lambda function at runtime in megabytes"
+  type        = string
+}
+
+variable "lambda_timeout_seconds" {
+  default     = "600"
+  description = "The amount of time the lambda function is allowed to run before being stopped"
+  type        = string
+}
+
+variable "lambda_logs_retention_days" {
+  default     = "7"
+  description = "Number of days to keep AWS logs around in specific log group."
+  type        = string
+}
+
+variable "lambda_handler_name" {
+  type        = string
+  description = "The lambda function entrypoint"
+  default     = "uk.gov.companieshouse.ecs.datareconciliation.lambdaFunction::lambdaHandler"
+}
+
+variable "lambda_runtime" {
+  type        = string
+  description = "The lambda runtime to use for the function"
+  default     = "python3.9"
+}

@@ -87,33 +87,3 @@ module "ecs-service" {
   app_environment_filename  = local.app_environment_filename
   use_set_environment_files = local.use_set_environment_files
 }
-
-# EventBridge rule to detect when tasks stop
-resource "aws_cloudwatch_event_rule" "ecs_task_state_change" {
-  name        = "${var.environment}-${local.service_name}-ecs-task-stopped-rule"
-  description = "Detect when ECS tasks stop and reset desired count to 0"
-  
-  event_pattern = jsonencode({
-    source      = ["aws.ecs"],
-    detail-type = ["ECS Task State Change"],
-    detail = {
-      clusterArn = [data.aws_ecs_cluster.ecs_cluster.arn],
-      lastStatus = ["STOPPED"],
-      group      = ["service:${var.environment}-${local.service_name}"]
-    }
-  })
-}
-
-# EventBridge target to directly update ECS service
-resource "aws_cloudwatch_event_target" "update_ecs_service" {
-  rule      = aws_cloudwatch_event_rule.ecs_task_state_change.name
-  target_id = "SetEcsDesiredCountToZero"
-  arn       = "arn:aws:scheduler:::aws-sdk:ecs:updateService"
-  role_arn  = data.aws_iam_role.eventbridge_role.arn
-  
-  input = jsonencode({
-    Cluster     = data.aws_ecs_cluster.ecs_cluster.id
-    Service     = "${var.environment}-${local.service_name}"
-    DesiredCount = 0
-  })
-}
