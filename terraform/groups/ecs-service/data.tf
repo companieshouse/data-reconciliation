@@ -1,3 +1,5 @@
+data "aws_caller_identity" "current" {}
+
 data "vault_generic_secret" "stack_secrets" {
   path = "applications/${var.aws_profile}/${var.environment}/${local.stack_name}-stack"
 }
