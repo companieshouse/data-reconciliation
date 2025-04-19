@@ -1,5 +1,22 @@
+provider "aws-lambda" {
+  region = var.aws_region
+  alias  = "v5"
+}
+
+terraform {
+  required_providers {
+    aws-lambda = {
+      source  = "hashicorp/aws"
+      version = ">= 5.72.0, < 6.0"
+    }
+  }
+}
+
 module "lambda" {
   source = "git@github.com:companieshouse/terraform-modules.git//aws/lambda?ref=1.0.315"
+  providers = {
+    aws = aws-lambda.v5
+  }
 
   # Lambda function configuration
   environment                   = var.environment
@@ -65,26 +82,3 @@ module "lambda" {
     }
   ]
 }
-
-# resource "aws_iam_role" "lambda_role" {
-#   name                  = "${var.environment}-${local.service_name}-ecs-task-stopper-role"
-#   assume_role_policy    = data.aws_iam_policy_document.lambda_role_policy.json
-# }
-
-####################
-# add this to data.tf later  
-# this is the lambda role needed by the service
-####################
-
-# data "aws_iam_policy_document" "lambda_role_policy" {
-#   version = "2012-10-17"
-#   statement {
-#     actions = ["sts:AssumeRole"]
-#     effect = "Allow"
-#     principals {
-#       type = "Service"
-#       identifiers = ["lambda.amazonaws.com"]
-#     }
-#   }
-# } 
-
