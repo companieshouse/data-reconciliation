@@ -3,15 +3,6 @@ provider "aws-lambda" {
   alias  = "v5"
 }
 
-terraform {
-  required_providers {
-    aws-lambda = {
-      source  = "hashicorp/aws"
-      version = ">= 5.72.0, < 6.0"
-    }
-  }
-}
-
 module "lambda" {
   source = "git@github.com:companieshouse/terraform-modules.git//aws/lambda?ref=1.0.315"
   providers = {
