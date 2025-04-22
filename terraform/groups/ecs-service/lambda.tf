@@ -1,14 +1,5 @@
-# provider "aws" {
-#   region = var.aws_region
-#   alias  = "v5"
-#   version = "~> 5.72.0"
-# }
-
 module "lambda" {
-  source = "git@github.com:companieshouse/terraform-modules.git//aws/lambda?ref=1.0.315"
-  # providers = {
-  #   aws = aws-lambda.v5
-  # }
+  source = "git@github.com:companieshouse/terraform-modules.git//aws/lambda?ref=1.0.316"
 
   # Lambda function configuration
   environment                   = var.environment
