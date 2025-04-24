@@ -186,7 +186,7 @@ variable "lambda_logs_retention_days" {
 variable "lambda_handler_name" {
   type        = string
   description = "The lambda function entrypoint"
-  default     = "uk.gov.companieshouse.reconciliation::handleRequest"
+  default     = "uk.gov.companieshouse.reconciliation.ecs.EcsTaskStopperHandler::handleRequest"
 }
 
 variable "lambda_runtime" {
