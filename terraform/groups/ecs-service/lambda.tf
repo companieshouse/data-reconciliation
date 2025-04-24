@@ -3,7 +3,7 @@ module "lambda" {
 
   # Lambda function configuration
   environment                   = var.environment
-  function_name                 = "${var.environment}-${local.service_name}-ecs-task-stopper"
+  function_name                 = "${local.service_name}-ecs-task-stopper"
   lambda_runtime                = var.lambda_runtime
   lambda_handler                = var.lambda_handler_name 
 
@@ -32,7 +32,7 @@ module "lambda" {
       Version = "2012-10-17",
       Statement = [{
         Action   = "ecs:UpdateService",
-        Resource = "arn:aws:ecs:${var.aws_region}:${local.account_id}:service/${local.name_prefix}-cluster/${var.environment}-${local.service_name}",
+        Resource = "arn:aws:ecs:${var.aws_region}:${local.account_id}:service/${local.name_prefix}-cluster/${local.service_name}",
         Effect   = "Allow"
       }]
     })
@@ -61,7 +61,7 @@ module "lambda" {
       statement_id = "AllowExecutionFromCloudWatch"
       action       = "lambda:InvokeFunction"
       principal    = "events.amazonaws.com"
-      source_arn   = "arn:aws:events:${var.aws_region}:${local.account_id}:rule/${var.environment}-${local.service_name}-ecs-task-stopped-event"
+      source_arn   = "arn:aws:events:${var.aws_region}:${local.account_id}:rule/${local.service_name}-ecs-task-stopped-event"
     }
   ]
 }

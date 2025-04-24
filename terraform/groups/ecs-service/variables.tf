@@ -192,7 +192,7 @@ variable "lambda_handler_name" {
 variable "lambda_runtime" {
   type        = string
   description = "The lambda runtime to use for the function"
-  default     = "python3.9"
+  default     = "java21"
 }
 
 variable "release_bucket_name" {
