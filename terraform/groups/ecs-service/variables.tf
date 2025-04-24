@@ -137,9 +137,15 @@ variable "healthcheck_command" {
 # ------------------------------------------------------------------------------
 # Scheduler variables
 # ------------------------------------------------------------------------------
-variable "enable_eventbridge_scheduler" {
+variable "enable_scale_down_eventbridge_scheduler" {
   default     = false
-  description = "Whether to enable the EventBridge scheduler for the ECS service"
+  description = "Whether to enable the scale down EventBridge scheduler for the ECS service"
+  type        = bool
+}
+
+variable "enable_scale_up_eventbridge_scheduler" {
+  default     = false
+  description = "Whether to enable the scale up EventBridge scheduler for the ECS service"
   type        = bool
 }
 
