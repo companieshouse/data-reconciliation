@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.reconciliation;
+package uk.gov.companieshouse.reconciliation.ecs;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
@@ -8,19 +8,17 @@ import software.amazon.awssdk.services.ecs.EcsClient;
 import software.amazon.awssdk.services.ecs.model.UpdateServiceRequest;
 import software.amazon.awssdk.services.ecs.model.UpdateServiceResponse;
 
-import java.io.IOException;
-
 public class EcsTaskStopperHandler implements RequestHandler<JsonNode, Void> {
 
     // Read env vars set by Terraform
     private static final String CLUSTER = System.getenv("ECS_CLUSTER");
-    private static final String SERVICE = System.getenv("ECS_SERVICE"); // :contentReference[oaicite:6]{index=6}
+    private static final String SERVICE = System.getenv("ECS_SERVICE");
 
     // Jackson mapper
     private final ObjectMapper mapper = new ObjectMapper();
 
     // ECS client (v2)
-    private final EcsClient ecs = EcsClient.create(); // :contentReference[oaicite:7]{index=7}
+    private final EcsClient ecs = EcsClient.create();
 
     @Override
     public Void handleRequest(JsonNode event, Context context) {
@@ -48,7 +46,7 @@ public class EcsTaskStopperHandler implements RequestHandler<JsonNode, Void> {
                     .service(SERVICE)
                     .desiredCount(0)
                     .build();
-                UpdateServiceResponse resp = ecs.updateService(req); // :contentReference[oaicite:8]{index=8}
+                UpdateServiceResponse resp = ecs.updateService(req);
                 context.getLogger().log("UpdateService response: " + resp.toString());
             } catch (Exception e) {
                 context.getLogger().log("Failed to update service: " + e.getMessage());
