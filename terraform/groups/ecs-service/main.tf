@@ -80,7 +80,7 @@ module "ecs-service" {
   enable_eventbridge_scheduler                   = var.enable_eventbridge_scheduler
   eventbridge_group_name                         = local.name_prefix
   startup_eventbridge_scheduler_cron             = var.startup_eventbridge_scheduler_cron
-  # shutdown_eventbridge_scheduler_cron            = var.shutdown_eventbridge_scheduler_cron
+  shutdown_eventbridge_scheduler_cron            = var.shutdown_eventbridge_scheduler_cron
 
   # Service environment variable and secret configs
   task_environment          = local.task_environment
