@@ -5,21 +5,22 @@ provider "aws" {
 terraform {
   backend "s3" {
   }
-  required_version = "~> 1.3"
+  required_version = ">= 1.3.0, < 2.0.0"
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 4.54.0"
+      version = ">= 5.94.0, < 6.0"
     }
+
     vault = {
       source  = "hashicorp/vault"
-      version = "~> 3.18.0"
+      version = ">= 3.18.0, < 5.0"
     }
   }
 }
 
 module "secrets" {
-  source = "git@github.com:companieshouse/terraform-modules//aws/ecs/secrets?ref=1.0.315"
+  source = "git@github.com:companieshouse/terraform-modules//aws/ecs/secrets?ref=1.0.316"
 
   name_prefix = "${local.service_name}-${var.environment}"
   environment = var.environment
@@ -28,7 +29,7 @@ module "secrets" {
 }
 
 module "ecs-service" {
-  source = "git@github.com:companieshouse/terraform-modules//aws/ecs/ecs-service?ref=1.0.315"
+  source = "git@github.com:companieshouse/terraform-modules//aws/ecs/ecs-service?ref=1.0.316"
   
 
 
