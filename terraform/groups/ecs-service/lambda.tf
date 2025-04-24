@@ -3,7 +3,7 @@ module "lambda" {
 
   # Lambda function configuration
   environment                   = var.environment
-  function_name                 = "${var.environment}-${local.service_name}-ecs-task-stopper"
+  function_name                 = "${local.service_name}-ecs-task-stopper"
   lambda_runtime                = var.lambda_runtime
   lambda_handler                = var.lambda_handler_name 
 
