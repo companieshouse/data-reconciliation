@@ -258,6 +258,7 @@
       <scope>test</scope>
     </dependency>
     
+
     <dependency>
       <groupId>software.amazon.awssdk</groupId>
       <artifactId>ecs</artifactId>
@@ -280,6 +281,7 @@
     
   </dependencies>
   <build>
+    <sourceDirectory>data-reconciliation/src/main/java</sourceDirectory>
     <plugins>
       <plugin>
         <groupId>org.springframework.boot</groupId>
@@ -328,6 +330,36 @@
         <artifactId>jacoco-maven-plugin</artifactId>
         <version>${jacoco-maven-plugin.version}</version>
       </plugin>
+
+      <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>${maven-compiler-plugin.version}</version>
+          <configuration>
+              <source>21</source>
+              <target>21</target>
+              <parameters>true</parameters>
+          </configuration>
+      </plugin>
+
+      <!-- Maven Shade plugin to create an Uber JAR -->
+      <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-shade-plugin</artifactId>
+          <version>3.2.1</version>
+          <configuration>
+              <createDependencyReducedPom>false</createDependencyReducedPom>
+          </configuration>
+          <executions>
+              <execution>
+                  <phase>package</phase>
+                  <goals>
+                      <goal>shade</goal>
+                  </goals>
+              </execution>
+          </executions>
+      </plugin>
+
     </plugins>
   </build>
 </project>
