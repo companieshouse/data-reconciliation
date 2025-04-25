@@ -29,6 +29,7 @@
     <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
     <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
     <jib-maven-plugin.version>3.4.4</jib-maven-plugin.version>
+    <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
 
     <!-- Overrides -->
     <!-- CVE-2020-13956 -->
@@ -258,6 +259,7 @@
       <scope>test</scope>
     </dependency>
     
+
     <dependency>
       <groupId>software.amazon.awssdk</groupId>
       <artifactId>ecs</artifactId>
@@ -280,6 +282,8 @@
     
   </dependencies>
   <build>
+    <sourceDirectory>data-reconciliation/src/main/java</sourceDirectory>
+    <testSourceDirectory>data-reconciliation/src/test/java</testSourceDirectory>
     <plugins>
       <plugin>
         <groupId>org.springframework.boot</groupId>
@@ -328,6 +332,49 @@
         <artifactId>jacoco-maven-plugin</artifactId>
         <version>${jacoco-maven-plugin.version}</version>
       </plugin>
+
+      <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>${maven-compiler-plugin.version}</version>
+          <configuration>
+              <source>21</source>
+              <target>21</target>
+              <parameters>true</parameters>
+          </configuration>
+      </plugin>
+
+      <!-- Maven Shade plugin to create an Uber JAR -->
+      <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-shade-plugin</artifactId>
+          <version>3.2.1</version>
+          <configuration>
+              <createDependencyReducedPom>false</createDependencyReducedPom>
+          </configuration>
+          <executions>
+              <execution>
+                  <phase>package</phase>
+                  <goals>
+                      <goal>shade</goal>
+                  </goals>
+              </execution>
+          </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.0.2</version>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>uk.gov.companieshouse.reconciliation.App</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+    </plugin>
+
     </plugins>
   </build>
 </project>
