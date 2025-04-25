@@ -282,7 +282,6 @@
     
   </dependencies>
   <build>
-    <sourceDirectory>data-reconciliation/src/main/java</sourceDirectory>
     <plugins>
       <plugin>
         <groupId>org.springframework.boot</groupId>
