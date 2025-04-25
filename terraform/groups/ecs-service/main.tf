@@ -20,8 +20,7 @@ terraform {
 }
 
 module "secrets" {
-  # source = "git@github.com:companieshouse/terraform-modules//aws/ecs/secrets?ref=1.0.316"
-  source = "git@github.com:companieshouse/terraform-modules//aws/ecs/secrets?ref=feature/JU-954-improve-scheduler"
+  source = "git@github.com:companieshouse/terraform-modules//aws/ecs/secrets?ref=1.0.318"
 
   name_prefix = "${local.service_name}-${var.environment}"
   environment = var.environment
@@ -30,8 +29,7 @@ module "secrets" {
 }
 
 module "ecs-service" {
-  # source = "git@github.com:companieshouse/terraform-modules//aws/ecs/ecs-service?ref=1.0.316"
-  source = "git@github.com:companieshouse/terraform-modules//aws/ecs/ecs-service?ref=feature/JU-954-improve-scheduler"
+  source = "git@github.com:companieshouse/terraform-modules//aws/ecs/ecs-service?ref=1.0.318"
   
 
 
@@ -80,9 +78,10 @@ module "ecs-service" {
 
   # Scheduler configuration
   enable_scale_up_eventbridge_scheduler                  = var.enable_scale_up_eventbridge_scheduler
+  enable_scale_down_eventbridge_scheduler                = var.enable_scale_down_eventbridge_scheduler
   eventbridge_group_name                                 = local.name_prefix
   startup_eventbridge_scheduler_cron                     = var.startup_eventbridge_scheduler_cron
-  # shutdown_eventbridge_scheduler_cron            = var.shutdown_eventbridge_scheduler_cron
+  shutdown_eventbridge_scheduler_cron                    = var.shutdown_eventbridge_scheduler_cron
 
   # Service environment variable and secret configs
   task_environment          = local.task_environment

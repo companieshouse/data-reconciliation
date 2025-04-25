@@ -7,8 +7,9 @@ use_set_environment_files = true
 
 # Scheduler configuration
 enable_scale_up_eventbridge_scheduler             = true
+enable_scale_down_eventbridge_scheduler           = true
 startup_eventbridge_scheduler_cron                = "cron(0/15 6-17 ? * MON-FRI *)"
-# shutdown_eventbridge_scheduler_cron       = "cron(0 0 ? * FRI *)"
+shutdown_eventbridge_scheduler_cron               = "cron(0 0 ? * FRI *)"
 
 # scaling configs
  desired_task_count = 0
