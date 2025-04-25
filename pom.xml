@@ -29,6 +29,7 @@
     <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
     <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
     <jib-maven-plugin.version>3.4.4</jib-maven-plugin.version>
+    <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
 
     <!-- Overrides -->
     <!-- CVE-2020-13956 -->
