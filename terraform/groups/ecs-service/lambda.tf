@@ -30,23 +30,37 @@ module "lambda" {
   additional_policies = [
     jsonencode({
       Version = "2012-10-17",
-      Statement = [{
+      Statement = [
+        {
         Action   = "ecs:UpdateService",
         Resource = "arn:aws:ecs:${var.aws_region}:${local.account_id}:service/${local.name_prefix}-cluster/${var.environment}-${local.service_name}",
         Effect   = "Allow"
-      }]
+        },
+
+        {
+          Action   = "ecs:DescribeTasks",
+          Resource = "arn:aws:ecs:${var.aws_region}:${local.account_id}:task/*",
+          Effect   = "Allow"
+        },
+        
+        {
+          Action   = "ecs:DescribeServices",
+          Resource = "arn:aws:ecs:${var.aws_region}:${local.account_id}:service/${local.name_prefix}-cluster/${var.environment}-${local.service_name}",
+          Effect   = "Allow"
+        }
+      ]
     })
   ]
 
   # CloudWatch Event Rule for ECS Task State Change
   lambda_cloudwatch_event_rules = [
     {
-      name        = "${var.environment}-${local.service_name}-ecs-task-stopped-event"
-      description = "Trigger when ECS task in the service stops"
+      name          = "${var.environment}-${local.service_name}-ecs-task-stopped-event"
+      description   = "Trigger when ECS task in the service stops"
       event_pattern = jsonencode({
         source      = ["aws.ecs"],
         detail-type = ["ECS Task State Change"],
-        detail = {
+        detail      = {
           clusterArn = ["arn:aws:ecs:${var.aws_region}:${local.account_id}:cluster/${local.name_prefix}-cluster"],
           lastStatus = ["STOPPED"],
           group      = ["service:${var.environment}-${local.service_name}"]
@@ -58,10 +72,10 @@ module "lambda" {
   # Permissions
   lambda_permissions = [
     {
-      statement_id = "AllowExecutionFromCloudWatch"
-      action       = "lambda:InvokeFunction"
-      principal    = "events.amazonaws.com"
-      source_arn   = "arn:aws:events:${var.aws_region}:${local.account_id}:rule/${var.environment}-${local.service_name}-ecs-task-stopped-event"
+      statement_id  = "AllowExecutionFromCloudWatch"
+      action        = "lambda:InvokeFunction"
+      principal     = "events.amazonaws.com"
+      source_arn    = "arn:aws:events:${var.aws_region}:${local.account_id}:rule/${var.environment}-${local.service_name}-ecs-task-stopped-event"
     }
   ]
 }
