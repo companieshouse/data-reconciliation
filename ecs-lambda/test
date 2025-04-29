@@ -1,0 +1,1283 @@
+---
+
+# Groups -----------------------------------------------------------------------
+
+groups:
+
+- name: all
+  jobs:
+    - create-webhooks
+    - delete-webhooks
+    - analyse-pull-request-terraform
+    - analyse-pull-request-lambda
+    - build-test-analyse
+    - lambda-release
+    - terraform-release-sftp-transfer
+    - sftp-transfer-plan-cidev
+    - sftp-transfer-apply-cidev
+    - sftp-transfer-plan-danny
+    - sftp-transfer-apply-danny
+    - sftp-transfer-plan-test
+    - sftp-transfer-apply-test
+    - terraform-release-sftp-users
+    - sftp-users-plan-cidev
+    - sftp-users-apply-cidev
+    - sftp-users-plan-danny
+    - sftp-users-apply-danny
+    - sftp-users-plan-test
+    - sftp-users-apply-test
+
+- name: webhooks
+  jobs:
+    - create-webhooks
+    - delete-webhooks
+
+- name: lambda
+  jobs:
+    - lambda-release
+
+
+- name: sftp-transfer
+  jobs:
+    - terraform-release-sftp-transfer
+    - sftp-transfer-plan-cidev
+    - sftp-transfer-apply-cidev
+    - sftp-transfer-plan-danny
+    - sftp-transfer-apply-danny
+    - sftp-transfer-plan-test
+    - sftp-transfer-apply-test
+
+- name: sftp-users
+  jobs:
+    - terraform-release-sftp-users
+    - sftp-users-plan-cidev
+    - sftp-users-apply-cidev
+    - sftp-users-plan-danny
+    - sftp-users-apply-danny
+    - sftp-users-plan-test
+    - sftp-users-apply-test
+
+
+# Jobs -------------------------------------------------------------------------
+
+jobs:
+
+# Create Webhook Jobs -------------------
+
+- name: create-webhooks
+  plan:
+  - put: webhook-api
+    params:
+      org: tiger
+      repo: myan-terraform
+      resource_name: pull-request-lambda
+      webhook_target_host: ((secrets.webhook-target-url))
+      webhook_token: lasissa
+      operation: create
+      events: [push]
+  - put: webhook-api
+    params:
+      org: tiger
+      repo: myan-terraform
+      resource_name: lambda-release-tag
+      webhook_target_host: ((secrets.webhook-target-url))
+      webhook_token: lasissa2
+      operation: create
+      events: [push]
+  - put: webhook-api
+    params:
+      org: tiger
+      repo: myan-terraform
+      resource_name: lambda-code
+      webhook_target_host: ((secrets.webhook-target-url))
+      webhook_token: lasissa2
+      operation: create
+      events: [push]
+  - put: webhook-api
+    params:
+      org: tiger
+      repo: myan-terraform
+      resource_name: lambda-github-release
+      webhook_target_host: ((secrets.webhook-target-url))
+      webhook_token: lasissa2
+      operation: create
+      events: [push]
+  - put: webhook-api
+    params:
+      org: tiger
+      repo: myan-terraform
+      resource_name: pull-request-terraform
+      webhook_target_host: ((secrets.webhook-target-url))
+      webhook_token: lasissa2
+      operation: create
+      events: [pull_request]
+  - put: webhook-api
+    params:
+      org: tiger
+      repo: myan-terraform
+      resource_name: release-tag-sftp-transfer
+      webhook_target_host: ((secrets.webhook-target-url))
+      webhook_token: lasissa2
+      operation: create
+      events: [push]
+  - put: webhook-api
+    params:
+      org: tiger
+      repo: myan-terraform
+      resource_name: release-tag-sftp-users
+      webhook_target_host: ((secrets.webhook-target-url))
+      webhook_token: lasissa2
+      operation: create
+      events: [push]
+  - put: webhook-api
+    params:
+      org: tiger
+      repo: myan-terraform
+      resource_name: terraform-code-sftp-transfer
+      webhook_target_host: ((secrets.webhook-target-url))
+      webhook_token: lasissa2
+      operation: create
+      events: [push]
+  - put: webhook-api
+    params:
+      org: tiger
+      repo: myan-terraform
+      resource_name: terraform-code-sftp-users
+      webhook_target_host: ((secrets.webhook-target-url))
+      webhook_token: lasissa2
+      operation: create
+      events: [push]
+
+# Delete Webhook Jobs
+
+- name: delete-webhooks
+  plan:
+  - put: webhook-api
+    params:
+      org: tiger
+      repo: myan-terraform
+      resource_name: lambda-release-tag
+      webhook_target_host: ((secrets.webhook-target-url))
+      webhook_token: lasissa2
+      operation: delete
+      events: [push]
+  - put: webhook-api
+    params:
+      org: tiger
+      repo: myan-terraform
+      resource_name: lambda-code
+      webhook_target_host: ((secrets.webhook-target-url))
+      webhook_token: lasissa2
+      operation: delete
+      events: [push]
+  - put: webhook-api
+    params:
+      org: tiger
+      repo: myan-terraform
+      resource_name: lambda-github-release
+      webhook_target_host: ((secrets.webhook-target-url))
+      webhook_token: lasissa2
+      operation: delete
+      events: [push]
+  - put: webhook-api
+    params:
+      org: tiger
+      repo: myan-terraform
+      resource_name: pull-request-lambda
+      webhook_target_host: ((secrets.webhook-target-url))
+      webhook_token: lasissa
+      operation: delete
+      events: [pull_request]
+  - put: webhook-api
+    params:
+      org: tiger
+      repo: myan-terraform
+      resource_name: pull-request-terraform
+      webhook_target_host: ((secrets.webhook-target-url))
+      webhook_token: lasissa2
+      operation: delete
+      events: [pull_request]
+  - put: webhook-api
+    params:
+      org: tiger
+      repo: myan-terraform
+      resource_name: release-tag-sftp-transfer
+      webhook_target_host: ((secrets.webhook-target-url))
+      webhook_token: lasissa2
+      operation: delete
+      events: [push]
+  - put: webhook-api
+    params:
+      org: tiger
+      repo: myan-terraform
+      resource_name: release-tag-sftp-users
+      webhook_target_host: ((secrets.webhook-target-url))
+      webhook_token: lasissa2
+      operation: delete
+      events: [push]
+  - put: webhook-api
+    params:
+      org: tiger
+      repo: myan-terraform
+      resource_name: terraform-code-sftp-transfer
+      webhook_target_host: ((secrets.webhook-target-url))
+      webhook_token: lasissa2
+      operation: delete
+      events: [push]
+  - put: webhook-api
+    params:
+      org: tiger
+      repo: myan-terraform
+      resource_name: terraform-code-sftp-users
+      webhook_target_host: ((secrets.webhook-target-url))
+      webhook_token: lasissa2
+      operation: delete
+      events: [push]
+
+# Lambda Pull Request ---------------------------------------------------------
+
+- name: analyse-pull-request-lambda
+  plan:
+  - get: concourse-resources
+  - get: pull-request-lambda
+    params:
+      list_changed_files: true
+      integration_tool: checkout
+    trigger: true
+  - put: pull-request-pending
+    resource: pull-request-lambda
+    params:
+      path: pull-request-lambda
+      status: pending
+  - task: analyse-pull-request
+    file: concourse-resources/tasks/java/21/corretto/pull-request-analysis/task.yml
+    input_mapping:
+      pull-request: pull-request-lambda
+    params:
+      DOCKER_HOST: ((secrets.localstack-docker-host))
+      TESTCONTAINERS_RYUK_DISABLED: true
+    on_success:
+      do:
+      - put: pull-request-lambda
+        params:
+          path: pull-request-lambda
+          status: success
+      - put: notify-slack
+        params:
+          attachments_file: output-message/pr-analysis-message.json
+          channel: test-ci-alerts
+    on_failure:
+      do:
+      - put: pull-request-lambda
+        params:
+          path: pull-request-lambda
+          status: failure
+      - put: notify-slack
+        params:
+          attachments_file: concourse-resources/templates/slack/failure-message.json
+          channel: test-ci-alerts
+
+# Terraform Pull Request ---------------------------------------------------------
+
+- name: analyse-pull-request-terraform
+  on_failure:
+    put: notify-slack
+    params:
+      attachments_file: concourse-resources/templates/slack/failure-message.json
+      channel: test-ci-alerts
+  plan:
+  - get: concourse-resources
+  - get: pull-request-terraform
+    trigger: true
+
+  - task: vulnerability-scan
+    file: concourse-resources/tasks/provisioning/terraform/trivy-scan/task.yml
+    input_mapping:
+      terraform-code: pull-request-terraform
+    params:
+      TERRAFORM_ROOT: ""
+
+# Build-Test-Analyse
+
+- name: build-test-analyse
+  plan:
+  - get: concourse-resources
+  - get: lambda-code
+    trigger: true
+  - task: build-test
+    file: concourse-resources/tasks/java/21/corretto/build-test-analyse/task.yml
+    input_mapping:
+      source-code: lambda-code
+    params:
+      DOCKER_HOST: ((secrets.localstack-docker-host))
+      TESTCONTAINERS_RYUK_DISABLED: true
+    on_failure:
+      put: notify-slack
+      params:
+        attachments_file: concourse-resources/templates/slack/failure-message.json
+        channel: test-ci-alerts
+
+# Release tasks ---------------------------------------------------------
+
+
+# Lambda Release ---------------------------------------------------------
+
+- name: lambda-release
+  on_failure:
+    put: notify-slack
+    params:
+      attachments_file: concourse-resources/templates/slack/failure-message.json
+      channel:  test-ci-alerts
+  plan:
+  - get: concourse-resources
+  - get: lambda-code
+    trigger: true
+    passed: [build-test-analyse]
+  - get: lambda-release-tag
+
+  - task: verify-not-release
+    file: concourse-resources/tasks/release/verify-not-release/task.yml
+    input_mapping:
+      release-tag: lambda-release-tag
+      source-code: lambda-code
+
+  - task: calculate-new-version
+    input_mapping:
+      release-tag: lambda-release-tag
+      source-code: lambda-code
+    file: concourse-resources/tasks/release/calculate-new-version/task.yml
+    params:
+      PREFIX: "sftp-lambda-"
+      VERSION_FILE_PATH: "groups/sftp-lambda"
+
+  - task: build-package
+    file: concourse-resources/tasks/java/21/corretto/build-package-service/task.yml
+    input_mapping:
+      source-code: lambda-code
+      version: version
+    params:
+        GITHUB_DEPENDENCIES: true
+        ARTIFACT_PATTERNS: test-lambda-*.zip
+    on_failure:
+      put: notify-slack
+      params:
+        attachments_file: concourse-resources/templates/slack/failure-message.json
+        channel: test-ci-alerts
+  - in_parallel:
+    - put: dev-s3-release-bucket
+      params:
+        file: artifacts/test-lambda-*.zip
+    - put: danny-s3-release-bucket
+      params:
+        file: artifacts/test-lambda-*.zip
+    - put: test-s3-release-bucket
+      params:
+        file: artifacts/test-lambda-*.zip
+
+  - put: lambda-github-release
+    params:
+      commitish: lambda-code/.git/ref
+      name: version/version
+      tag: version/version
+      globs:
+        - artifacts/test-lambda-*.zip
+# SFTP Server -----------------------------------------------------------
+
+# Release ---------------------------------------------------------------
+
+- name: terraform-release-sftp-transfer
+  on_failure:
+    put: notify-slack
+    params:
+      attachments_file: concourse-resources/templates/slack/failure-message.json
+      channel: test-ci-alerts
+  plan:
+  - get: concourse-resources
+  - get: pull-request-terraform
+  - get: terraform-code-sftp-transfer
+    trigger: true
+  - get: release-tag-sftp-transfer
+
+  - task: verify-not-release
+    file: concourse-resources/tasks/release/verify-not-release/task.yml
+    input_mapping:
+      release-tag: release-tag-sftp-transfer
+      source-code: terraform-code-sftp-transfer
+
+  - task: calculate-new-version
+    file: concourse-resources/tasks/release/calculate-new-version/task.yml
+    input_mapping:
+      release-tag: release-tag-sftp-transfer
+      source-code: terraform-code-sftp-transfer
+    params:
+      PREFIX: "sftp-transfer-"
+      VERSION_FILE_PATH: "groups/sftp-transfer"
+
+  - put: github-release
+    params:
+      commitish: terraform-code-sftp-transfer/.git/ref
+      name: version/version
+      tag: version/version
+
+# CIDEV PLAN -------------------------------------------------------------
+
+- name: sftp-transfer-plan-cidev
+  serial_groups: [sftp-transfer]
+  plan:
+  - get: concourse-resources
+  - get: terraform-code-sftp-transfer
+    passed: [terraform-release-sftp-transfer]
+    trigger: true
+  - get: lambda-github-release
+    passed: [lambda-release]
+    trigger: false
+
+  - task: set-terraform-variables
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source:
+          aws_access_key_id: ((secrets.shared-services-aws-access-key-id))
+          aws_secret_access_key: ((secrets.shared-services-aws-secret-access-key))
+          aws_region: eu-central-1
+          repository: ci-bash-task
+          tag: latest
+      inputs:
+        - name: lambda-github-release
+      outputs:
+        - name: terraform-variables
+      run:
+        path: bash
+        args:
+        - -ec
+        - |
+          cat <<EOF >> terraform-variables/variables.tfvars
+          release_artifact_key=myan-terraform/test-lambda-$(<lambda-github-release/version).zip
+          release_bucket_name=${RELEASE_BUCKET_NAME}
+          hashicorp_vault_password=((secrets.hashicorp-vault-password))
+          hashicorp_vault_username=((secrets.hashicorp-vault-username))
+          EOF
+      params:
+        RELEASE_BUCKET_NAME: ((secrets.development-eu-central-1-release-bucket))
+
+  - task: generate-plan-sftp-transfer
+    input_mapping:
+      terraform-code: terraform-code-sftp-transfer
+    file: concourse-resources/tasks/provisioning/terraform/generate-plan/task.yml
+    params:
+      ENVIRONMENT: cidev
+      GROUP: sftp-transfer
+      TERRAFORM_ROOT: ""
+      TERRAFORM_VERSION: 1.3
+      GITHUB_PRIVATE_KEY: ((secrets.github-ssh-key))
+      VAULT_ADDR: ((secrets.hashicorp-vault-url))
+      AWS_PROFILE: "development-eu-central-1"
+      AWS_ACCESS_KEY_ID: ((secrets.development-aws-access-key-id))
+      AWS_SECRET_ACCESS_KEY: ((secrets.development-aws-secret-access-key))
+    on_failure:
+      put: notify-slack
+      params:
+        attachments_file: concourse-resources/templates/slack/failure-message.json
+        channel: test-ci-alerts
+  - put: terraform-artifact-sftp-transfer-cidev-plan
+    params:
+      file: artifacts/plan-*.zip
+
+#CIDEV APPLY ------------------------------------------------------------
+
+- name: sftp-transfer-apply-cidev
+  serial_groups: [sftp-transfer]
+  plan:
+  - get: concourse-resources
+    passed: [sftp-transfer-plan-cidev]
+  - get: terraform-artifact-sftp-transfer-cidev-plan
+    passed: [sftp-transfer-plan-cidev]
+  - get: terraform-code-sftp-transfer
+
+  - task: apply-plan-sftp-transfer
+    file: concourse-resources/tasks/provisioning/terraform/apply-plan/task.yml
+    input_mapping:
+      terraform-artifact: terraform-artifact-sftp-transfer-cidev-plan
+    params:
+      ENVIRONMENT: cidev
+      GROUP: sftp-transfer
+      TERRAFORM_ROOT: ""
+      TERRAFORM_VERSION: 1.3
+      GITHUB_PRIVATE_KEY: ((secrets.github-ssh-key))
+      VAULT_ADDR: ((secrets.hashicorp-vault-url))
+      AWS_PROFILE: "development-eu-central-1"
+      AWS_ACCESS_KEY_ID: ((secrets.development-aws-access-key-id))
+      AWS_SECRET_ACCESS_KEY: ((secrets.development-aws-secret-access-key))
+      REPOSITORY_NAME: myan-terraform
+    on_failure:
+      put: notify-slack
+      params:
+        attachments_file: concourse-resources/templates/slack/failure-message.json
+        channel: test-ci-alerts
+
+#danny PLAN -------------------------------------------------------------
+
+- name: sftp-transfer-plan-danny
+  serial_groups: [sftp-transfer]
+  plan:
+  - get: concourse-resources
+  - get: terraform-code-sftp-transfer
+    passed: [sftp-transfer-apply-cidev]
+    trigger: false
+  - get: lambda-github-release
+    passed: [lambda-release]
+    trigger: false
+
+  - task: set-terraform-variables
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source:
+          aws_access_key_id: ((secrets.shared-services-aws-access-key-id))
+          aws_secret_access_key: ((secrets.shared-services-aws-secret-access-key))
+          aws_region: eu-central-1
+          repository: ci-bash-task
+          tag: latest
+      inputs:
+        - name: lambda-github-release
+      outputs:
+        - name: terraform-variables
+      run:
+        path: bash
+        args:
+        - -ec
+        - |
+          cat <<EOF >> terraform-variables/variables.tfvars
+          release_artifact_key=myan-terraform/test-lambda-$(<lambda-github-release/version).zip
+          release_bucket_name=${RELEASE_BUCKET_NAME}
+          hashicorp_vault_password=((secrets.hashicorp-vault-password))
+          hashicorp_vault_username=((secrets.hashicorp-vault-username))
+          EOF
+      params:
+        RELEASE_BUCKET_NAME: ((secrets.danny-eu-central-1-release-bucket))
+
+  - task: generate-plan-sftp-transfer
+    input_mapping:
+      terraform-code: terraform-code-sftp-transfer
+    file: concourse-resources/tasks/provisioning/terraform/generate-plan/task.yml
+    params:
+      ENVIRONMENT: danny
+      GROUP: sftp-transfer
+      TERRAFORM_ROOT: ""
+      TERRAFORM_VERSION: 1.3
+      GITHUB_PRIVATE_KEY: ((secrets.github-ssh-key))
+      VAULT_ADDR: ((secrets.hashicorp-vault-url))
+      AWS_PROFILE: "danny-eu-central-1"
+      AWS_ACCESS_KEY_ID: ((secrets.danny-aws-access-key-id))
+      AWS_SECRET_ACCESS_KEY: ((secrets.danny-aws-secret-access-key))
+    on_failure:
+      put: notify-slack
+      params:
+        attachments_file: concourse-resources/templates/slack/failure-message.json
+        channel: test-ci-alerts
+  - put: terraform-artifact-sftp-transfer-danny-plan
+    params:
+      file: artifacts/plan-*.zip
+
+#danny APPLY ---------------------------------------------------------
+
+- name: sftp-transfer-apply-danny
+  serial_groups: [sftp-transfer]
+  plan:
+  - get: concourse-resources
+    passed: [sftp-transfer-plan-danny]
+  - get: terraform-artifact-sftp-transfer-danny-plan
+    passed: [sftp-transfer-plan-danny]
+  - get: terraform-code-sftp-transfer
+
+  - task: apply-plan-sftp-transfer
+    file: concourse-resources/tasks/provisioning/terraform/apply-plan/task.yml
+    input_mapping:
+      terraform-artifact: terraform-artifact-sftp-transfer-danny-plan
+    params:
+      ENVIRONMENT: danny
+      GROUP: sftp-transfer
+      TERRAFORM_ROOT: ""
+      TERRAFORM_VERSION: 1.3
+      GITHUB_PRIVATE_KEY: ((secrets.github-ssh-key))
+      VAULT_ADDR: ((secrets.hashicorp-vault-url))
+      AWS_PROFILE: "danny-eu-central-1"
+      AWS_ACCESS_KEY_ID: ((secrets.danny-aws-access-key-id))
+      AWS_SECRET_ACCESS_KEY: ((secrets.danny-aws-secret-access-key))
+      REPOSITORY_NAME: myan-terraform
+    on_failure:
+      put: notify-slack
+      params:
+        attachments_file: concourse-resources/templates/slack/failure-message.json
+        channel: test-ci-alerts
+
+#test PLAN -----------------------------------------------------------------
+
+- name: sftp-transfer-plan-test
+  serial_groups: [sftp-transfer]
+  plan:
+  - get: concourse-resources
+  - get: terraform-code-sftp-transfer
+    passed: [sftp-transfer-apply-danny]
+    trigger: false
+  - get: lambda-github-release
+    passed: [lambda-release]
+    trigger: false
+
+  - task: set-terraform-variables
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source:
+          aws_access_key_id: ((secrets.shared-services-aws-access-key-id))
+          aws_secret_access_key: ((secrets.shared-services-aws-secret-access-key))
+          aws_region: eu-central-1
+          repository: ci-bash-task
+          tag: latest
+      inputs:
+        - name: lambda-github-release
+      outputs:
+        - name: terraform-variables
+      run:
+        path: bash
+        args:
+        - -ec
+        - |
+          cat <<EOF >> terraform-variables/variables.tfvars
+          release_artifact_key=myan-terraform/test-lambda-$(<lambda-github-release/version).zip
+          release_bucket_name=${RELEASE_BUCKET_NAME}
+          hashicorp_vault_password=((secrets.hashicorp-vault-password))
+          hashicorp_vault_username=((secrets.hashicorp-vault-username))
+          EOF
+      params:
+        RELEASE_BUCKET_NAME: ((secrets.test-eu-central-1-release-bucket))
+
+  - task: generate-plan-sftp-transfer
+    input_mapping:
+      terraform-code: terraform-code-sftp-transfer
+    file: concourse-resources/tasks/provisioning/terraform/generate-plan/task.yml
+    params:
+      ENVIRONMENT: test
+      GROUP: sftp-transfer
+      TERRAFORM_ROOT: ""
+      TERRAFORM_VERSION: 1.3
+      GITHUB_PRIVATE_KEY: ((secrets.github-ssh-key))
+      VAULT_ADDR: ((secrets.hashicorp-vault-url))
+      AWS_PROFILE: "test-eu-central-1"
+      AWS_ACCESS_KEY_ID: ((secrets.test-aws-access-key-id))
+      AWS_SECRET_ACCESS_KEY: ((secrets.test-aws-secret-access-key))
+    on_failure:
+      put: notify-slack
+      params:
+        attachments_file: concourse-resources/templates/slack/failure-message.json
+        channel: deployments
+  - put: terraform-artifact-sftp-transfer-test-plan
+    params:
+      file: artifacts/plan-*.zip
+
+#test APPLY -----------------------------------------------------------------
+
+- name: sftp-transfer-apply-test
+  serial_groups: [sftp-transfer]
+  plan:
+  - get: concourse-resources
+    passed: [sftp-transfer-plan-test]
+  - get: terraform-artifact-sftp-transfer-test-plan
+    passed: [sftp-transfer-plan-test]
+  - get: terraform-code-sftp-transfer
+
+  - task: apply-plan-sftp-transfer
+    file: concourse-resources/tasks/provisioning/terraform/apply-plan/task.yml
+    input_mapping:
+      terraform-artifact: terraform-artifact-sftp-transfer-test-plan
+    params:
+      ENVIRONMENT: test
+      GROUP: sftp-transfer
+      TERRAFORM_ROOT: ""
+      TERRAFORM_VERSION: 1.3
+      GITHUB_PRIVATE_KEY: ((secrets.github-ssh-key))
+      VAULT_ADDR: ((secrets.hashicorp-vault-url))
+      AWS_PROFILE: "test-eu-central-1"
+      AWS_ACCESS_KEY_ID: ((secrets.test-aws-access-key-id))
+      AWS_SECRET_ACCESS_KEY: ((secrets.test-aws-secret-access-key))
+      REPOSITORY_NAME: myan-terraform
+    on_failure:
+      put: notify-slack
+      params:
+        attachments_file: concourse-resources/templates/slack/failure-message.json
+        channel: deployments
+
+# SFTP Users ---------------------------------------------------
+# RELEASE ------------------------------------------------------
+
+- name: terraform-release-sftp-users
+  on_failure:
+    put: notify-slack
+    params:
+      attachments_file: concourse-resources/templates/slack/failure-message.json
+      channel: test-ci-alerts
+  plan:
+  - get: concourse-resources
+  - get: pull-request-terraform
+  - get: terraform-code-sftp-users
+    trigger: true
+  - get: release-tag-sftp-users
+
+
+  - task: verify-not-release
+    file: concourse-resources/tasks/release/verify-not-release/task.yml
+    input_mapping:
+      release-tag: release-tag-sftp-users
+      source-code: terraform-code-sftp-users
+
+  - task: calculate-new-version
+    file: concourse-resources/tasks/release/calculate-new-version/task.yml
+    input_mapping:
+      release-tag: release-tag-sftp-users
+      source-code: terraform-code-sftp-users
+    params:
+      PREFIX: "sftp-users-"
+      VERSION_FILE_PATH: "groups/sftp-users"
+
+  - put: github-release
+    params:
+      commitish: terraform-code-sftp-users/.git/ref
+      name: version/version
+      tag: version/version
+
+#CIDEV PLAN --------------------------------------------------------
+- name: sftp-users-plan-cidev
+  serial_groups: [sftp-users]
+  plan:
+  - get: concourse-resources
+  - get: terraform-code-sftp-users
+    passed: [terraform-release-sftp-users]
+    trigger: true
+
+  - task: set-terraform-variables
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source:
+          aws_access_key_id: ((secrets.shared-services-aws-access-key-id))
+          aws_secret_access_key: ((secrets.shared-services-aws-secret-access-key))
+          aws_region: eu-central-1
+          repository: ci-bash-task
+          tag: latest
+      outputs:
+        - name: terraform-variables
+      run:
+        path: bash
+        args:
+        - -ec
+        - |
+          cat <<EOF >> terraform-variables/variables.tfvars
+          hashicorp_vault_password=((secrets.hashicorp-vault-password))
+          hashicorp_vault_username=((secrets.hashicorp-vault-username))
+          EOF
+
+  - task: generate-plan-sftp-users
+    input_mapping:
+      terraform-code: terraform-code-sftp-users
+    file: concourse-resources/tasks/provisioning/terraform/generate-plan/task.yml
+    params:
+      ENVIRONMENT: cidev
+      GROUP: sftp-users
+      TERRAFORM_ROOT: ""
+      TERRAFORM_VERSION: 1.3
+      GITHUB_PRIVATE_KEY: ((secrets.github-ssh-key))
+      VAULT_ADDR: ((secrets.hashicorp-vault-url))
+      AWS_PROFILE:  "development-eu-central-1"
+      AWS_ACCESS_KEY_ID: ((secrets.development-aws-access-key-id))
+      AWS_SECRET_ACCESS_KEY: ((secrets.development-aws-secret-access-key))
+    on_failure:
+      put: notify-slack
+      params:
+        attachments_file: concourse-resources/templates/slack/failure-message.json
+        channel: test-ci-alerts
+  - put: terraform-artifact-sftp-users-cidev
+    params:
+      file: artifacts/plan-*.zip
+
+#CIDEV APPLY ---------------------------------------------------------
+- name: sftp-users-apply-cidev
+  serial_groups: [sftp-users]
+  plan:
+  - get: concourse-resources
+    passed: [sftp-users-plan-cidev]
+  - get: terraform-artifact-sftp-users-cidev
+    passed: [sftp-users-plan-cidev]
+  - get: terraform-code-sftp-users
+
+  - task: apply-plan-sftp-users
+    file: concourse-resources/tasks/provisioning/terraform/apply-plan/task.yml
+    input_mapping:
+      terraform-artifact: terraform-artifact-sftp-users-cidev
+    params:
+      ENVIRONMENT: cidev
+      GROUP: sftp-users
+      TERRAFORM_ROOT: ""
+      TERRAFORM_VERSION: 1.3
+      GITHUB_PRIVATE_KEY: ((secrets.github-ssh-key))
+      VAULT_ADDR: ((secrets.hashicorp-vault-url))
+      AWS_PROFILE: "development-eu-central-1"
+      AWS_ACCESS_KEY_ID: ((secrets.development-aws-access-key-id))
+      AWS_SECRET_ACCESS_KEY: ((secrets.development-aws-secret-access-key))
+      REPOSITORY_NAME: myan-terraform
+    on_failure:
+      put: notify-slack
+      params:
+        attachments_file: concourse-resources/templates/slack/failure-message.json
+        channel: test-ci-alerts
+
+#danny PLAN --------------------------------------------------------
+- name: sftp-users-plan-danny
+  serial_groups: [sftp-users]
+  plan:
+  - get: concourse-resources
+  - get: terraform-code-sftp-users
+    passed: [sftp-users-apply-cidev]
+    trigger: false
+
+  - task: set-terraform-variables
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source:
+          aws_access_key_id: ((secrets.shared-services-aws-access-key-id))
+          aws_secret_access_key: ((secrets.shared-services-aws-secret-access-key))
+          aws_region: eu-central-1
+          repository: ci-bash-task
+          tag: latest
+      outputs:
+        - name: terraform-variables
+      run:
+        path: bash
+        args:
+        - -ec
+        - |
+          cat <<EOF >> terraform-variables/variables.tfvars
+          hashicorp_vault_password=((secrets.hashicorp-vault-password))
+          hashicorp_vault_username=((secrets.hashicorp-vault-username))
+          EOF
+
+  - task: generate-plan-sftp-users
+    input_mapping:
+      terraform-code: terraform-code-sftp-users
+    file: concourse-resources/tasks/provisioning/terraform/generate-plan/task.yml
+    params:
+      ENVIRONMENT: danny
+      GROUP: sftp-users
+      TERRAFORM_ROOT: ""
+      TERRAFORM_VERSION: 1.3
+      GITHUB_PRIVATE_KEY: ((secrets.github-ssh-key))
+      VAULT_ADDR: ((secrets.hashicorp-vault-url))
+      AWS_PROFILE: "danny-eu-central-1"
+      AWS_ACCESS_KEY_ID: ((secrets.danny-aws-access-key-id))
+      AWS_SECRET_ACCESS_KEY: ((secrets.danny-aws-secret-access-key))
+    on_failure:
+      put: notify-slack
+      params:
+        attachments_file: concourse-resources/templates/slack/failure-message.json
+        channel: test-ci-alerts
+  - put: terraform-artifact-sftp-users-danny
+    params:
+      file: artifacts/plan-*.zip
+
+#danny APPLY --------------------------------------------------------
+- name: sftp-users-apply-danny
+  serial_groups: [sftp-users]
+  plan:
+  - get: concourse-resources
+    passed: [sftp-users-plan-danny]
+  - get: terraform-artifact-sftp-users-danny
+    passed: [sftp-users-plan-danny]
+  - get: terraform-code-sftp-users
+
+  - task: apply-plan-sftp-users
+    file: concourse-resources/tasks/provisioning/terraform/apply-plan/task.yml
+    input_mapping:
+      terraform-artifact: terraform-artifact-sftp-users-danny
+    params:
+      ENVIRONMENT: danny
+      GROUP: sftp-users
+      TERRAFORM_ROOT: ""
+      TERRAFORM_VERSION: 1.3
+      GITHUB_PRIVATE_KEY: ((secrets.github-ssh-key))
+      VAULT_ADDR: ((secrets.hashicorp-vault-url))
+      AWS_PROFILE: "danny-eu-central-1"
+      AWS_ACCESS_KEY_ID: ((secrets.danny-aws-access-key-id))
+      AWS_SECRET_ACCESS_KEY: ((secrets.danny-aws-secret-access-key))
+      REPOSITORY_NAME: myan-terraform
+    on_failure:
+      put: notify-slack
+      params:
+        attachments_file: concourse-resources/templates/slack/failure-message.json
+        channel: test-ci-alerts
+
+#test PLAN --------------------------------------------------------
+
+- name: sftp-users-plan-test
+  serial_groups: [sftp-users]
+  plan:
+  - get: concourse-resources
+  - get: terraform-code-sftp-users
+    passed: [sftp-users-apply-danny]
+    trigger: false
+
+  - task: set-terraform-variables
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source:
+          aws_access_key_id: ((secrets.shared-services-aws-access-key-id))
+          aws_secret_access_key: ((secrets.shared-services-aws-secret-access-key))
+          aws_region: eu-central-1
+          repository: ci-bash-task
+          tag: latest
+      outputs:
+        - name: terraform-variables
+      run:
+        path: bash
+        args:
+        - -ec
+        - |
+          cat <<EOF >> terraform-variables/variables.tfvars
+          hashicorp_vault_password=((secrets.hashicorp-vault-password))
+          hashicorp_vault_username=((secrets.hashicorp-vault-username))
+          EOF
+
+  - task: generate-plan-sftp-users
+    input_mapping:
+      terraform-code: terraform-code-sftp-users
+    file: concourse-resources/tasks/provisioning/terraform/generate-plan/task.yml
+    params:
+      ENVIRONMENT: test
+      GROUP: sftp-users
+      TERRAFORM_ROOT: ""
+      TERRAFORM_VERSION: 1.3
+      GITHUB_PRIVATE_KEY: ((secrets.github-ssh-key))
+      VAULT_ADDR: ((secrets.hashicorp-vault-url))
+      AWS_PROFILE: "test-eu-central-1"
+      AWS_ACCESS_KEY_ID: ((secrets.test-aws-access-key-id))
+      AWS_SECRET_ACCESS_KEY: ((secrets.test-aws-secret-access-key))
+    on_failure:
+      put: notify-slack
+      params:
+        attachments_file: concourse-resources/templates/slack/failure-message.json
+        channel: deployments
+  - put: terraform-artifact-sftp-users-test
+    params:
+      file: artifacts/plan-*.zip
+
+#test APPLY --------------------------------------------------------
+- name: sftp-users-apply-test
+  serial_groups: [sftp-users]
+  plan:
+  - get: concourse-resources
+    passed: [sftp-users-plan-test]
+  - get: terraform-artifact-sftp-users-test
+    passed: [sftp-users-plan-test]
+  - get: terraform-code-sftp-users
+
+  - task: apply-plan-sftp-users
+    file: concourse-resources/tasks/provisioning/terraform/apply-plan/task.yml
+    input_mapping:
+      terraform-artifact: terraform-artifact-sftp-users-test
+    params:
+      ENVIRONMENT: test
+      GROUP: sftp-users
+      TERRAFORM_ROOT: ""
+      TERRAFORM_VERSION: 1.3
+      GITHUB_PRIVATE_KEY: ((secrets.github-ssh-key))
+      VAULT_ADDR: ((secrets.hashicorp-vault-url))
+      AWS_PROFILE: "test-eu-central-1"
+      AWS_ACCESS_KEY_ID: ((secrets.test-aws-access-key-id))
+      AWS_SECRET_ACCESS_KEY: ((secrets.test-aws-secret-access-key))
+      REPOSITORY_NAME: myan-terraform
+    on_failure:
+      put: notify-slack
+      params:
+        attachments_file: concourse-resources/templates/slack/failure-message.json
+        channel: deployments
+        
+
+# Resources --------------------------------------------------------------------
+
+resources:
+- name: webhook-api
+  type: github-webhook-resource
+  icon: webhook
+  source:
+    github_api: https://api.github.com
+    github_token: ((secrets.github-webhook-token))
+
+- name: concourse-resources
+  type: git
+  icon: github
+  source:
+    uri: git@github.com:tiger/ci-concourse-resources.git
+    branch: shared-services
+    version: latest
+    private_key: ((secrets.github-ssh-key))
+
+- name: pull-request-terraform
+  type: pull-request
+  icon: source-merge
+  webhook_token: lasissa2
+  source:
+    repository: tiger/myan-terraform
+    base_branch: main
+    access_token: ((secrets.code-analysis-github-token))
+    paths:
+      - groups/sftp-transfer
+      - groups/sftp-users
+      - Makefile
+
+- name: pull-request-lambda
+  type: pull-request
+  icon: source-merge
+  webhook_token: lasissa
+  source:
+    repository: tiger/myan-terraform
+    base_branch: main
+    access_token: ((secrets.code-analysis-github-token))
+    paths:
+      - groups/sftp-lambda
+
+- name: notify-slack
+  type: slack-notification
+  icon: slack
+  source:
+    url: ((secrets.slack-webhook))
+    disable: ((secrets.disable-slack-notifications))
+
+- name: terraform-code-sftp-transfer
+  type: git
+  webhook_token: lasissa2
+  icon: github
+  source:
+    uri: git@github.com:tiger/myan-terraform.git
+    branch: main
+    version: latest
+    private_key: ((secrets.github-ssh-key))
+    paths:
+      - groups/sftp-transfer/*
+
+- name: terraform-code-sftp-users
+  type: git
+  webhook_token: lasissa2
+  icon: github
+  source:
+    uri: git@github.com:tiger/myan-terraform.git
+    branch: main
+    version: latest
+    private_key: ((secrets.github-ssh-key))
+    paths:
+      - groups/sftp-users/*
+
+- name: github-release
+  type: github-release
+  icon: package-variant-closed
+  source:
+    owner: tiger
+    repository: myan-terraform
+    access_token: ((secrets.github-release-token))
+    tag_filter: '^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$'
+
+- name: release-tag-sftp-transfer
+  type: ci-resource-type-release-tag
+  webhook_token: lasissa2
+  icon: tag
+  source:
+    uri: git@github.com:tiger/myan-terraform.git
+    branch: main
+    private_key: ((secrets.github-ssh-key))
+    tag_filter: '^sftp-transfer-[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$'
+
+
+- name: release-tag-sftp-users
+  type: ci-resource-type-release-tag
+  webhook_token: lasissa2
+  icon: tag
+  source:
+    uri: git@github.com:tiger/myan-terraform.git
+    branch: main
+    private_key: ((secrets.github-ssh-key))
+    tag_filter: '^sftp-users-[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$'
+
+- name: terraform-artifact-sftp-transfer-cidev-plan
+  type: s3
+  icon: bitbucket
+  source:
+    bucket: development-eu-central-1.terraform-plans.ch.gov.uk
+    region_name: eu-central-1
+    private: true
+    regexp: myan-terraform/cidev/plan-(.*).zip
+    access_key_id: ((secrets.development-aws-access-key-id))
+    secret_access_key: ((secrets.development-aws-secret-access-key))
+
+- name: terraform-artifact-sftp-transfer-danny-plan
+  type: s3
+  icon: bitbucket
+  source:
+    bucket: danny-eu-central-1.terraform-plans.ch.gov.uk
+    region_name: eu-central-1
+    private: true
+    regexp: myan-terraform/danny/plan-(.*).zip
+    access_key_id: ((secrets.danny-aws-access-key-id))
+    secret_access_key: ((secrets.danny-aws-secret-access-key))
+
+- name: terraform-artifact-sftp-transfer-test-plan
+  type: s3
+  icon: bitbucket
+  source:
+    bucket: test-eu-central-1.terraform-plans.ch.gov.uk
+    region_name: eu-central-1
+    private: true
+    regexp: myan-terraform/test/plan-(.*).zip
+    access_key_id: ((secrets.test-aws-access-key-id))
+    secret_access_key: ((secrets.test-aws-secret-access-key))
+
+- name: terraform-artifact-sftp-users-cidev
+  type: s3
+  icon: bitbucket
+  source:
+    bucket: development-eu-central-1.terraform-plans.ch.gov.uk
+    region_name: eu-central-1
+    private: true
+    regexp: myan-terraform/cidev/plan-(.*).zip
+    access_key_id: ((secrets.development-aws-access-key-id))
+    secret_access_key: ((secrets.development-aws-secret-access-key))
+
+- name: terraform-artifact-sftp-users-danny
+  type: s3
+  icon: bitbucket
+  source:
+    bucket: danny-eu-central-1.terraform-plans.ch.gov.uk
+    region_name: eu-central-1
+    private: true
+    regexp: myan-terraform/danny/plan-(.*).zip
+    access_key_id:  ((secrets.danny-aws-access-key-id))
+    secret_access_key: ((secrets.danny-aws-secret-access-key))
+
+- name: terraform-artifact-sftp-users-test
+  type: s3
+  icon: bitbucket
+  source:
+    bucket: test-eu-central-1.terraform-plans.ch.gov.uk
+    region_name: eu-central-1
+    private: true
+    regexp: myan-terraform/test/plan-(.*).zip
+    access_key_id: ((secrets.test-aws-access-key-id))
+    secret_access_key: ((secrets.test-aws-secret-access-key))
+
+- name: lambda-github-release
+  type: github-release
+  icon: package-variant-closed
+  webhook_token: lasissa2
+  source:
+    owner: tiger
+    repository: myan-terraform
+    access_token: ((secrets.github-release-token))
+
+- name: lambda-release-tag
+  type: ci-resource-type-release-tag
+  webhook_token: lasissa2
+  icon: tag
+  source:
+    uri: git@github.com:tiger/myan-terraform.git
+    branch: main
+    private_key: ((secrets.github-ssh-key))
+    tag_filter: '^sftp-lambda-[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$'
+
+- name: lambda-code
+  type: git
+  webhook_token: lasissa2
+  icon: github
+  source:
+    uri: git@github.com:tiger/myan-terraform.git
+    branch: main
+    version: latest
+    private_key: ((secrets.github-ssh-key))
+    paths:
+      - groups/sftp-lambda/*
+
+- name: dev-s3-release-bucket
+  type: s3
+  icon: bitbucket
+  source:
+    bucket: ((secrets.development-eu-central-1-release-bucket))
+    region_name: eu-central-1
+    private: true
+    regexp: myan-terraform/test-lambda-(.*).zip
+    access_key_id: ((secrets.development-aws-access-key-id))
+    secret_access_key: ((secrets.development-aws-secret-access-key))
+
+- name: danny-s3-release-bucket
+  type: s3
+  icon: bitbucket
+  source:
+    bucket: ((secrets.danny-eu-central-1-release-bucket))
+    region_name: eu-central-1
+    private: true
+    regexp: myan-terraform/test-lambda-(.*).zip
+    access_key_id:  ((secrets.danny-aws-access-key-id))
+    secret_access_key: ((secrets.danny-aws-secret-access-key))
+
+- name: test-s3-release-bucket
+  type: s3
+  icon: bitbucket
+  source:
+    bucket: ((secrets.test-eu-central-1-release-bucket))
+    region_name: eu-central-1
+    private: true
+    regexp: myan-terraform/test-lambda-(.*).zip
+    access_key_id: ((secrets.test-aws-access-key-id))
+    secret_access_key: ((secrets.test-aws-secret-access-key))
+
+# Resource Types ---------------------------------------------------------------
+
+resource_types:
+
+- name: github-webhook-resource
+  type: registry-image
+  source:
+    aws_access_key_id: ((secrets.shared-services-aws-access-key-id))
+    aws_secret_access_key: ((secrets.shared-services-aws-secret-access-key))
+    aws_region: eu-central-1
+    repository: github-webhook-resource
+    tag: latest
+
+- name: ci-resource-type-release-tag
+  type: registry-image
+  source:
+    aws_access_key_id: ((secrets.shared-services-aws-access-key-id))
+    aws_secret_access_key: ((secrets.shared-services-aws-secret-access-key))
+    aws_region: eu-central-1
+    repository: ci-resource-type-release-tag
+    tag: latest
+
+- name: slack-notification
+  type: registry-image
+  source:
+    aws_access_key_id: ((secrets.shared-services-aws-access-key-id))
+    aws_secret_access_key: ((secrets.shared-services-aws-secret-access-key))
+    aws_region: eu-central-1
+    repository: ci-slack-notification-resource
+    tag: latest
+
+- name: pull-request
+  type: registry-image
+  source:
+    aws_access_key_id: ((secrets.shared-services-aws-access-key-id))
+    aws_secret_access_key: ((secrets.shared-services-aws-secret-access-key))
+    aws_region: eu-central-1
+    repository: ci-pr-analysis-resource
+    tag: latest
