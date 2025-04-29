@@ -16,6 +16,7 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, String
     private final EcsClient ecsClient;
     private final ObjectMapper objectMapper;
 
+
     public LambdaHandler() {
         this.ecsClient = EcsClient.builder()
                 .region(Region.of(System.getenv("AWS_REGION")))
