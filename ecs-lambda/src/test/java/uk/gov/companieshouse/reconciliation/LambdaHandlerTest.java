@@ -1,4 +1,4 @@
-package uk.gov.companieshouse;
+package uk.gov.companieshouse.reconciliation;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import org.junit.jupiter.api.BeforeEach;
