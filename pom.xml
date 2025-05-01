@@ -13,7 +13,6 @@
   <properties>
     <java.version>21</java.version>
 
-
     <!-- CH Internal -->
     <kafka-models.version>3.0.8</kafka-models.version>
     <structured-logging.version>3.0.26</structured-logging.version>
