@@ -22,15 +22,25 @@ public class ShutdownRoute extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("direct:shutdown")
-                .aggregate()
-                .constant(true)
+        from("direct:shutdown").aggregate().constant(true)
                 .aggregationStrategy(AggregationStrategies.useLatest())
                 .completionSize(aggregationHandler.getEnabledAggregationGroupModelsSize())
                 .log(LoggingLevel.INFO, "Triggering application shutdown...")
                 .process(exchange -> new Thread(() -> {
                     context.close();
-                    System.exit(0);
+                    // AWS reserved env var, if not set we're probably not in ECS
+                    if (!System.getenv().containsKey("AWS_EXECUTION_ENV")) {
+                        System.exit(0);
+                    }
+
+                    // Workaround to allow ECS to control the lifecycle of this service
+                    for (; ; ) {
+                        try {
+                            Thread.sleep(5000);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
                 }).start());
     }
 }
