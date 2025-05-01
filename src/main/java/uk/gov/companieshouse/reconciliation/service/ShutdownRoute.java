@@ -22,7 +22,9 @@ public class ShutdownRoute extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("direct:shutdown").aggregate().constant(true)
+        from("direct:shutdown")
+                .aggregate()
+                .constant(true)
                 .aggregationStrategy(AggregationStrategies.useLatest())
                 .completionSize(aggregationHandler.getEnabledAggregationGroupModelsSize())
                 .log(LoggingLevel.INFO, "Triggering application shutdown...")
