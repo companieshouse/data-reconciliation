@@ -2,22 +2,6 @@ artifact_name       := data-reconciliation
 version             := unversioned
 exposed_port        := ${DATA_RECONCILIATION_PORT}
 
-##### Start of variable block for top of Makfile
-dependency_check_base_suppressions:=common_suppressions_spring_6.xml
-
-# dependency_check_suppressions_repo_branch
-# The branch of the dependency-check-suppressions repository to use
-# as the source of the suppressions file.
-# This should point to "main" branch when being used for release,
-# but can point to a different branch for experimentation/development.
-dependency_check_suppressions_repo_branch:=feature/suppressions-for-data-reconciliation
-
-dependency_check_minimum_cvss := 4
-dependency_check_assembly_analyzer_enabled := false
-dependency_check_suppressions_repo_url:=git@github.com:companieshouse/dependency-check-suppressions.git
-suppressions_file := target/suppressions.xml
-##### End of variable block
-
 .PHONY: all
 all: build
 
@@ -77,14 +61,18 @@ sonar-pr-analysis:
 docker-build:
 	docker build -t $(artifact_name):$(version) .
 
-##### Start of dependency-check block to be put at bottom of Makefile
 .PHONY: dependency-check
 dependency-check:
-	@ if [ -d "$(DEPENDENCY_CHECK_SUPPRESSIONS_HOME)" ]; then \
-		suppressions_home="$${DEPENDENCY_CHECK_SUPPRESSIONS_HOME}"; \
+	@ if [ -n "$(DEPENDENCY_CHECK_SUPPRESSIONS_HOME)" ]; then \
+		if [ -d "$(DEPENDENCY_CHECK_SUPPRESSIONS_HOME)" ]; then \
+			suppressions_home="$${DEPENDENCY_CHECK_SUPPRESSIONS_HOME}"; \
+		else \
+			printf -- 'DEPENDENCY_CHECK_SUPPRESSIONS_HOME is set, but its value "%s" does not point to a directory\n' "$(DEPENDENCY_CHECK_SUPPRESSIONS_HOME)"; \
+			exit 1; \
+		fi; \
 	fi; \
 	if [ ! -d "$${suppressions_home}" ]; then \
-	    suppressions_home_target_dir="./target/dependency-check-suppressions"; \
+		suppressions_home_target_dir="./target/dependency-check-suppressions"; \
 		if [ -d "$${suppressions_home_target_dir}" ]; then \
 			suppressions_home="$${suppressions_home_target_dir}"; \
 		else \
@@ -98,16 +86,9 @@ dependency-check:
 			fi; \
 		fi; \
 	fi; \
-	suppressions_path="$${suppressions_home}/suppressions/$(dependency_check_base_suppressions)"; \
-	if [  -f "$${suppressions_path}" ]; then \
-		cp -av "$${suppressions_path}" $(suppressions_file); \
-		mvn org.owasp:dependency-check-maven:check -DfailBuildOnCVSS=$(dependency_check_minimum_cvss) -DassemblyAnalyzerEnabled=$(dependency_check_assembly_analyzer_enabled) -DsuppressionFiles=$(suppressions_file); \
-	else \
-		printf -- "\n ERROR Cannot find suppressions file at '%s'\n" "$${suppressions_path}" >&2; \
-		exit 1; \
-	fi
+	printf -- 'suppressions_home="%s"\n' "$${suppressions_home}"; \
+	DEPENDENCY_CHECK_SUPPRESSIONS_HOME="$${suppressions_home}" "$${suppressions_home}/scripts/depcheck" --repopwd
 
 .PHONY: security-check
 security-check: dependency-check
 
-##### End of dependency-check block
