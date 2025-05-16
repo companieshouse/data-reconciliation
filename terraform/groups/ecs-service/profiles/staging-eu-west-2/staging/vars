@@ -4,6 +4,9 @@ aws_profile = "staging-eu-west-2"
 # service configs
 use_set_environment_files = true
 
+required_cpus = 4096
+required_memory = 20480
+
 # Scheduler configuration
 enable_scale_up_eventbridge_scheduler             = true
 enable_scale_down_eventbridge_scheduler           = true
