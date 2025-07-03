@@ -1,5 +1,5 @@
 resource "aws_iam_role" "ecs_task_role" {
-  name               = "${local.name_prefix}-${local.service_name}-ecs-task-role"
+  name               = "${local.name_prefix}-ecs-task-role"
   assume_role_policy = data.aws_iam_policy_document.ecs_task_policy_data_reconciliation.json
 }
 
