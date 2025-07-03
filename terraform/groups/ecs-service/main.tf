@@ -20,7 +20,7 @@ terraform {
 }
 
 module "secrets" {
-  source = "git@github.com:companieshouse/terraform-modules//aws/ecs/secrets?ref=1.0.318"
+  source = "git@github.com:companieshouse/terraform-modules//aws/ecs/secrets?ref=1.0.333"
 
   name_prefix = "${local.service_name}-${var.environment}"
   environment = var.environment
@@ -29,11 +29,12 @@ module "secrets" {
 }
 
 module "ecs-service" {
-  source = "git@github.com:companieshouse/terraform-modules//aws/ecs/ecs-service?ref=1.0.318"
+  source = "git@github.com:companieshouse/terraform-modules//aws/ecs/ecs-service?ref=1.0.333"
   
 
 
   # Environmental configuration
+  depends_on                      = [aws_iam_role.ecs_task_role]
   environment                     = var.environment
   aws_region                      = var.aws_region
   aws_profile                     = var.aws_profile
@@ -41,6 +42,7 @@ module "ecs-service" {
   ecs_cluster_id                  = data.aws_ecs_cluster.ecs_cluster.id
   ecs_cluster_arn                 = data.aws_ecs_cluster.ecs_cluster.arn
   task_execution_role_arn         = data.aws_iam_role.ecs_cluster_iam_role.arn
+  task_role_arn                   = aws_iam_role.ecs_task_role.arn
   eventbridge_scheduler_role_arn  = data.aws_iam_role.eventbridge_role.arn
   batch_service                   = true
   

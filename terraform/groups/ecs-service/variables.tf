@@ -133,6 +133,18 @@ variable "healthcheck_command" {
   default     = ""
 }
 
+variable "task_role_arn" {
+  type        = string
+  description = "The ARN of the IAM role used by the ECS tasks while running. If left blank, a task role will not be used."
+  default     = ""
+}
+
+variable "data_reconciliation_results_bucket_name" {
+  type        = string
+  description = "The name of the S3 bucket for used for storing results outputs."
+  default     = ""
+}
+
 
 # ------------------------------------------------------------------------------
 # Scheduler variables
