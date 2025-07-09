@@ -25,11 +25,11 @@ module "secrets" {
   name_prefix = "${local.service_name}-${var.environment}"
   environment = var.environment
   kms_key_id  = data.aws_kms_key.kms_key.id
-  secrets     = nonsensitive(local.service_secrets)
+  secrets     = nonsensitive(merge(local.service_secrets, local.aws_credentials))
 }
 
-module "data-reconcilliation-iam" {
-  source            = "./module-iam"
+module "data-reconciliation-iam" {
+  source            = "../module-iam"
   name_prefix       = local.name_prefix
   environment       = var.environment
   service_name      = local.service_name
