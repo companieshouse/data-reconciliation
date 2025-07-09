@@ -28,13 +28,20 @@ module "secrets" {
   secrets     = nonsensitive(local.service_secrets)
 }
 
+module "data-reconcilliation-iam" {
+  source            = "./module-iam"
+  name_prefix       = local.name_prefix
+  environment       = var.environment
+  service_name      = local.service_name
+  result_bucket_arn = "arn:aws:s3:::${var.data_reconciliation_results_bucket_name}"
+}
+
 module "ecs-service" {
   source = "git@github.com:companieshouse/terraform-modules//aws/ecs/ecs-service?ref=1.0.333"
   
 
 
   # Environmental configuration
-  depends_on                      = [aws_iam_role.ecs_task_role]
   environment                     = var.environment
   aws_region                      = var.aws_region
   aws_profile                     = var.aws_profile
@@ -42,7 +49,6 @@ module "ecs-service" {
   ecs_cluster_id                  = data.aws_ecs_cluster.ecs_cluster.id
   ecs_cluster_arn                 = data.aws_ecs_cluster.ecs_cluster.arn
   task_execution_role_arn         = data.aws_iam_role.ecs_cluster_iam_role.arn
-  task_role_arn                   = aws_iam_role.ecs_task_role.arn
   eventbridge_scheduler_role_arn  = data.aws_iam_role.eventbridge_role.arn
   batch_service                   = true
   

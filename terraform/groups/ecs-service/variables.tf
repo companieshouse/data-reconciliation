@@ -133,16 +133,26 @@ variable "healthcheck_command" {
   default     = ""
 }
 
-variable "task_role_arn" {
-  type        = string
-  description = "The ARN of the IAM role used by the ECS tasks while running. If left blank, a task role will not be used."
+variable "name_prefix" {
+  description = "A name identifying the deployed service"
+  type = string
+}
+
+variable "service_name" {
   default     = ""
+  description = "The name of the service that will be deployed."
+  type = string
 }
 
 variable "data_reconciliation_results_bucket_name" {
-  type        = string
-  description = "The name of the S3 bucket for used for storing results outputs."
   default     = ""
+  description = "The name of the S3 bucket for used for storing results outputs."
+  type        = string
+}
+
+variable "result_bucket_arn" {
+  description = "The ARN of the S3 bucket that results will be uploaded to"
+  type = string
 }
 
 
