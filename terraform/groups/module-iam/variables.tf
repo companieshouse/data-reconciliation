@@ -1,9 +1,11 @@
 variable "result_bucket_arn" {
+  default     = ""
   description = "The ARN of the S3 bucket that results will be uploaded to"
   type = string
 }
 
 variable "name_prefix" {
+  default     = ""
   description = "A name identifying the deployed service"
   type = string
 }

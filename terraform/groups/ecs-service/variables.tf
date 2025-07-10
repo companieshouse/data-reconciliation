@@ -134,6 +134,7 @@ variable "healthcheck_command" {
 }
 
 variable "name_prefix" {
+  default     = ""
   description = "A name identifying the deployed service"
   type = string
 }
@@ -151,6 +152,7 @@ variable "data_reconciliation_results_bucket_name" {
 }
 
 variable "result_bucket_arn" {
+  default     = ""
   description = "The ARN of the S3 bucket that results will be uploaded to"
   type = string
 }
