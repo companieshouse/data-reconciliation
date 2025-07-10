@@ -21,6 +21,11 @@ locals {
 
   account_id = data.aws_caller_identity.current.account_id
 
+  aws_credentials = {
+    aws_access_key_id     = module.data-reconciliation-iam.access_key_id
+    aws_secret_access_key = module.data-reconciliation-iam.secret_access_key
+  }
+
   # create a map of secret name => secret arn to pass into ecs service module
   # using the trimprefix function to remove the prefixed path from the secret name
   secrets_arn_map = {
