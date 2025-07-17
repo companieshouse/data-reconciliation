@@ -14,25 +14,26 @@
     <java.version>21</java.version>
 
     <!-- CH Internal -->
-    <kafka-models.version>3.0.8</kafka-models.version>
-    <structured-logging.version>3.0.26</structured-logging.version>
+    <kafka-models.version>3.0.18</kafka-models.version>
+    <structured-logging.version>3.0.36</structured-logging.version>
     <!-- Third party -->
     <elasticsearch.version>6.2.3</elasticsearch.version>
-    <oracle.ojdbc11.version>23.6.0.24.10</oracle.ojdbc11.version>
-    <apache.camel.version>4.11.0</apache.camel.version>
-    <spring.boot.version>3.4.1</spring.boot.version>
+    <oracle.ojdbc11.version>23.8.0.25.04</oracle.ojdbc11.version>
+    <apache.camel.version>4.13.0</apache.camel.version>
+    <spring.boot.version>3.5.3</spring.boot.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
     <amazon-sts.version>2.30.14</amazon-sts.version>
+    <opentelemetry-instrumentation-bom.version>2.14.0</opentelemetry-instrumentation-bom.version>
 
     <!-- Plugin -->
-    <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
-    <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
-    <jib-maven-plugin.version>3.4.4</jib-maven-plugin.version>
+    <maven-surefire-plugin.version>3.5.3</maven-surefire-plugin.version>
+    <jacoco-maven-plugin.version>0.8.13</jacoco-maven-plugin.version>
+    <jib-maven-plugin.version>3.4.6</jib-maven-plugin.version>
 
     <!-- Overrides -->
     <!-- CVE-2020-13956 -->
-    <apache-httpclient.version>4.5.13</apache-httpclient.version>
+    <apache-httpclient.version>4.5.14</apache-httpclient.version>
 
     <!-- CVE-2024-8184 -->
     <jetty-http2.version>11.0.24</jetty-http2.version>
@@ -40,6 +41,13 @@
   </properties>
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>io.opentelemetry.instrumentation</groupId>
+        <artifactId>opentelemetry-instrumentation-bom</artifactId>
+        <version>${opentelemetry-instrumentation-bom.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
       <!--https://camel.apache.org/camel-spring-boot/4.8.x/index.html#_camel_spring_boot_bom_vs_camel_spring_boot_dependencies_bom-->
       <dependency>
         <groupId>org.apache.camel.springboot</groupId>
@@ -65,6 +73,10 @@
     </dependencies>
   </dependencyManagement>
   <dependencies>
+    <dependency>
+      <groupId>io.opentelemetry.instrumentation</groupId>
+      <artifactId>opentelemetry-spring-boot-starter</artifactId>
+    </dependency>
     <!--https://users.camel.apache.narkive.com/pHkOVOnc/no-camelcontext-defined-yet-so-cannot-inject-into-bean-or-->
     <dependency>
       <groupId>org.apache.camel</groupId>
