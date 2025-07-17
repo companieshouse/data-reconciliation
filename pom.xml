@@ -38,6 +38,8 @@
     <!-- CVE-2024-8184 -->
     <jetty-http2.version>11.0.24</jetty-http2.version>
 
+    <skip.unit.tests>false</skip.unit.tests>
+
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -302,6 +304,7 @@
         <configuration>
           <argLine>@{argLine} -javaagent:${org.mockito:mockito-core:jar}</argLine>
           <forkCount>1</forkCount>
+          <skipTests>${skip.unit.tests}</skipTests>
         </configuration>
       </plugin>
       <plugin>
@@ -309,6 +312,12 @@
         <artifactId>jib-maven-plugin</artifactId>
         <version>${jib-maven-plugin.version}</version>
         <configuration>
+          <from>
+            <image>416670754337.dkr.ecr.eu-west-2.amazonaws.com/ci-corretto-build-21:latest</image>
+          </from>
+          <to>
+            <image>416670754337.dkr.ecr.eu-west-2.amazonaws.com/data-reconciliation:latest</image>
+          </to>
           <container>
             <expandClasspathDependencies>true</expandClasspathDependencies>
           </container>

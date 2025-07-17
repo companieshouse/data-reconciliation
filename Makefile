@@ -28,7 +28,7 @@ test-unit: clean
 
 .PHONY: test-integration
 test-integration: clean
-	mvn test -Dskip.unit.tests=true
+	mvn verify -Dskip.unit.tests=true
 
 .PHONY: package
 package:
@@ -56,4 +56,4 @@ sonar-pr-analysis:
 
 .PHONY: docker-build
 docker-build:
-	docker build -t $(artifact_name):$(version) .
+	mvn compile jib:dockerBuild
