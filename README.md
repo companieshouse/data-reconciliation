@@ -11,7 +11,7 @@
 ## System requirements
 
 * [Git](https://git-scm.com/downloads)
-* [Java](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
+* [Java](https://docs.aws.amazon.com/corretto/latest/corretto-21-ug/downloads-list.html)
 * [Maven](https://maven.apache.org/download.cgi)
 * [MongoDB](https://www.mongodb.com/)
 * [Apache Kafka](https://kafka.apache.org/)
