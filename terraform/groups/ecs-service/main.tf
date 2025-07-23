@@ -20,16 +20,24 @@ terraform {
 }
 
 module "secrets" {
-  source = "git@github.com:companieshouse/terraform-modules//aws/ecs/secrets?ref=1.0.318"
+  source = "git@github.com:companieshouse/terraform-modules//aws/ecs/secrets?ref=1.0.333"
 
   name_prefix = "${local.service_name}-${var.environment}"
   environment = var.environment
   kms_key_id  = data.aws_kms_key.kms_key.id
-  secrets     = nonsensitive(local.service_secrets)
+  secrets     = nonsensitive(merge(local.service_secrets, local.aws_credentials))
+}
+
+module "data-reconciliation-iam" {
+  source            = "../module-iam"
+  name_prefix       = local.name_prefix
+  environment       = var.environment
+  service_name      = local.service_name
+  result_bucket_arn = "arn:aws:s3:::${var.data_reconciliation_results_bucket_name}"
 }
 
 module "ecs-service" {
-  source = "git@github.com:companieshouse/terraform-modules//aws/ecs/ecs-service?ref=1.0.318"
+  source = "git@github.com:companieshouse/terraform-modules//aws/ecs/ecs-service?ref=1.0.333"
   
 
 

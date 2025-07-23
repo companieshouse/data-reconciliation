@@ -133,6 +133,30 @@ variable "healthcheck_command" {
   default     = ""
 }
 
+variable "name_prefix" {
+  default     = ""
+  description = "A name identifying the deployed service"
+  type = string
+}
+
+variable "service_name" {
+  default     = ""
+  description = "The name of the service that will be deployed."
+  type = string
+}
+
+variable "data_reconciliation_results_bucket_name" {
+  default     = ""
+  description = "The name of the S3 bucket for used for storing results outputs."
+  type        = string
+}
+
+variable "result_bucket_arn" {
+  default     = ""
+  description = "The ARN of the S3 bucket that results will be uploaded to"
+  type = string
+}
+
 
 # ------------------------------------------------------------------------------
 # Scheduler variables
