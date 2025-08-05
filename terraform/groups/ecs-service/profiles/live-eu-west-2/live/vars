@@ -5,7 +5,7 @@ aws_profile = "live-eu-west-2"
 use_set_environment_files = true
 
 required_cpus = 4096
-required_memory = 26624
+required_memory = 28672 
 
 # Scheduler configuration
 enable_scale_up_eventbridge_scheduler             = true
