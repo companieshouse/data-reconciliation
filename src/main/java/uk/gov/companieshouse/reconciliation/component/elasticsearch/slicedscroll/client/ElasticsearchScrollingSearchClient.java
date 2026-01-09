@@ -1,5 +1,11 @@
 package uk.gov.companieshouse.reconciliation.component.elasticsearch.slicedscroll.client;
 
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import org.elasticsearch.action.search.ClearScrollRequest;
 import org.elasticsearch.action.search.ClearScrollResponse;
 import org.elasticsearch.action.search.SearchRequest;
@@ -7,18 +13,17 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchScrollRequest;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.unit.TimeValue;
-import org.elasticsearch.common.xcontent.NamedXContentRegistry;
-import org.elasticsearch.common.xcontent.XContentParser;
-import org.elasticsearch.common.xcontent.json.JsonXContent;
-import org.elasticsearch.search.SearchModule;
+import org.elasticsearch.core.TimeValue;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.slice.SliceBuilder;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Retrieves search hits from an Elasticsearch search index using a sliced scrolling search.
@@ -56,18 +61,30 @@ public class ElasticsearchScrollingSearchClient implements AutoCloseable {
             throw new IllegalArgumentException("Invalid client configuration [sliceId=" + sliceId + ", noOfSlices=" + noOfSlices + "]");
         }
         SearchRequest searchRequest = new SearchRequest(index);
-        SearchModule module = new SearchModule(Settings.EMPTY, false, Collections.emptyList());
-        XContentParser parser = JsonXContent.jsonXContent.createParser(new NamedXContentRegistry(module.getNamedXContents()), query);
-        SearchSourceBuilder searchSourceBuilder = SearchSourceBuilder.fromXContent(parser);
-        SearchSourceBuilder scrollRequestSource = searchRequest.scroll(new TimeValue(timeout, TimeUnit.SECONDS))
-                .source()
-                .query(searchSourceBuilder.query())
-                .fetchSource(searchSourceBuilder.fetchSource())
-                .size(size);
-        if(noOfSlices > 1) {
-            scrollRequestSource.slice(new SliceBuilder(sliceField, sliceId, noOfSlices));
+        // Parse query JSON and build SearchSourceBuilder
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode root = mapper.readTree(query);
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        if (root.has("query")) {
+            JsonNode queryNode = root.get("query");
+            if (queryNode.has("match_all")) {
+                searchSourceBuilder.query(QueryBuilders.matchAllQuery());
+            }
+            // Add more query types as needed
         }
-        return client.search(searchRequest);
+        if (root.has("_source")) {
+            JsonNode sourceNode = root.get("_source");
+            if (sourceNode.has("includes")) {
+                JsonNode includesNode = sourceNode.get("includes");
+                String[] includes = mapper.convertValue(includesNode, String[].class);
+                searchSourceBuilder.fetchSource(includes, null);
+            }
+        }
+        searchRequest.source(searchSourceBuilder);
+        if(noOfSlices > 1) {
+            searchSourceBuilder.slice(new SliceBuilder(sliceField, sliceId, noOfSlices));
+        }
+        return client.search(searchRequest, org.elasticsearch.client.RequestOptions.DEFAULT);
     }
 
     /**
@@ -85,7 +102,7 @@ public class ElasticsearchScrollingSearchClient implements AutoCloseable {
         }
         SearchScrollRequest searchScrollRequest = new SearchScrollRequest(scrollId);
         searchScrollRequest.scroll(TimeValue.timeValueSeconds(timeout));
-        return client.searchScroll(searchScrollRequest);
+        return client.searchScroll(searchScrollRequest, org.elasticsearch.client.RequestOptions.DEFAULT);
     }
 
     /**
@@ -98,7 +115,7 @@ public class ElasticsearchScrollingSearchClient implements AutoCloseable {
     public ClearScrollResponse clearScroll(List<String> scrollIds) throws IOException {
         ClearScrollRequest clearScrollRequest = new ClearScrollRequest();
         clearScrollRequest.setScrollIds(scrollIds);
-        return client.clearScroll(clearScrollRequest);
+        return client.clearScroll(clearScrollRequest, org.elasticsearch.client.RequestOptions.DEFAULT);
     }
 
     @Override
