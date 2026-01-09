@@ -17,7 +17,7 @@
     <kafka-models.version>3.0.26</kafka-models.version>
     <structured-logging.version>3.0.36</structured-logging.version>
     <!-- Third party -->
-    <elasticsearch.version>6.2.3</elasticsearch.version>
+    <elasticsearch.version>7.17.29</elasticsearch.version>
     <oracle.ojdbc11.version>23.6.0.24.10</oracle.ojdbc11.version>
     <apache.camel.version>4.11.0</apache.camel.version>
     <spring.boot.version>3.5.9</spring.boot.version>
