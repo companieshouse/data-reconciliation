@@ -14,7 +14,7 @@
     <java.version>21</java.version>
 
     <!-- CH Internal -->
-    <kafka-models.version>3.0.8</kafka-models.version>
+    <kafka-models.version>3.0.26</kafka-models.version>
     <structured-logging.version>3.0.36</structured-logging.version>
     <!-- Third party -->
     <elasticsearch.version>6.2.3</elasticsearch.version>
@@ -37,6 +37,7 @@
     <!-- CVE-2024-8184 -->
     <jetty-http2.version>11.0.24</jetty-http2.version>
 
+    <commons-lang3.version>3.20.0</commons-lang3.version>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -61,6 +62,11 @@
         <version>${spring.boot.version}</version>
         <type>pom</type>
         <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <version>${commons-lang3.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
