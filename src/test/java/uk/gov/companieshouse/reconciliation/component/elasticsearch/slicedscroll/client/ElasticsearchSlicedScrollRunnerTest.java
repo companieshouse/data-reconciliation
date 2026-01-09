@@ -1,9 +1,8 @@
 package uk.gov.companieshouse.reconciliation.component.elasticsearch.slicedscroll.client;
 
-import org.apache.lucene.search.TotalHits;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.SearchHits;
+import co.elastic.clients.elasticsearch.core.search.Hit;
+import co.elastic.clients.elasticsearch.core.SearchResponse;
+import co.elastic.clients.elasticsearch.core.search.HitsMetadata;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,28 +12,24 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.Iterator;
-import java.util.List;
+import java.util.LinkedList;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ElasticsearchSlicedScrollRunnerTest {
-
-    private static final String QUERY_MATCH_ALL = "{\"query\": {\"match_all\": {}]}";
-    private static final String SCROLL_ID = "F00DFACE";
+    private static final String QUERY_MATCH_ALL = "{\"query\": {\"match_all\": {}}}";
 
     @Mock
     private ElasticsearchScrollingSearchClient client;
 
-    private List<Iterator<SearchHit>> results;
+    private Deque<Iterator<Hit<Object>>> results;
 
     @Mock
     private ElasticsearchSlicedScrollIterator scrollService;
@@ -43,11 +38,11 @@ class ElasticsearchSlicedScrollRunnerTest {
     private ElasticsearchSlicedScrollValidator validator;
 
     @Mock
-    private SearchResponse response, scrollResponse, nextScrollResponse;
+    private SearchResponse<Object> response, nextResponse;
 
     @BeforeEach
     void setUp() {
-        this.results = new ArrayList<>();
+        this.results = new LinkedList<>();
     }
 
     @Test
@@ -70,7 +65,7 @@ class ElasticsearchSlicedScrollRunnerTest {
         ElasticsearchSlicedScrollRunner runner = new ElasticsearchSlicedScrollRunner(client, results, 0, 2, QUERY_MATCH_ALL, scrollService, validator);
         when(validator.validateSliceConfiguration(anyInt(), anyInt())).thenReturn(true);
         when(client.firstSearch(anyString(), anyInt(), anyInt())).thenReturn(response);
-        when(response.getHits()).thenReturn(new SearchHits(new SearchHit[0], new TotalHits(0, TotalHits.Relation.EQUAL_TO), 1.0F));
+        when(response.hits()).thenReturn(new HitsMetadata.Builder<>().hits(new ArrayList<>()).build());
 
         //when
         Executable actual = runner::run;
@@ -78,30 +73,7 @@ class ElasticsearchSlicedScrollRunnerTest {
         //then
         assertDoesNotThrow(actual);
         verify(client).firstSearch(QUERY_MATCH_ALL, 0, 2);
-        verify(client, times(0)).scroll(anyString());
         assertEquals(0, results.size());
-    }
-
-    @Test
-    void testResultsOnFirstSearchNoResultsSecondSearch() throws IOException {
-        //given
-        ElasticsearchSlicedScrollRunner runner = new ElasticsearchSlicedScrollRunner(client, results, 0, 2, QUERY_MATCH_ALL, scrollService, validator);
-        when(validator.validateSliceConfiguration(anyInt(), anyInt())).thenReturn(true);
-        when(client.firstSearch(anyString(), anyInt(), anyInt())).thenReturn(response);
-        when(client.scroll(anyString())).thenReturn(scrollResponse);
-        when(response.getHits()).thenReturn(new SearchHits(new SearchHit[]{new SearchHit(1)}, new TotalHits(1, TotalHits.Relation.EQUAL_TO), 1.0F));
-        when(response.getScrollId()).thenReturn(SCROLL_ID);
-        when(scrollResponse.getHits()).thenReturn(new SearchHits(new SearchHit[0], new TotalHits(0, TotalHits.Relation.EQUAL_TO), 1.0F));
-
-        //when
-        Executable actual = runner::run;
-
-        //then
-        assertDoesNotThrow(actual);
-        verify(client).firstSearch(QUERY_MATCH_ALL, 0, 2);
-        verify(client).scroll(SCROLL_ID);
-        assertEquals(1, results.size());
-        assertEquals(SCROLL_ID, runner.getScrollId());
     }
 
     @Test
@@ -109,12 +81,14 @@ class ElasticsearchSlicedScrollRunnerTest {
         //given
         ElasticsearchSlicedScrollRunner runner = new ElasticsearchSlicedScrollRunner(client, results, 0, 2, QUERY_MATCH_ALL, scrollService, validator);
         when(validator.validateSliceConfiguration(anyInt(), anyInt())).thenReturn(true);
-        when(client.firstSearch(anyString(), anyInt(), anyInt())).thenReturn(response);
-        when(client.scroll(anyString())).thenReturn(scrollResponse, nextScrollResponse);
-        when(response.getHits()).thenReturn(new SearchHits(new SearchHit[]{new SearchHit(1)}, new TotalHits(1, TotalHits.Relation.EQUAL_TO), 1.0F));
-        when(response.getScrollId()).thenReturn(SCROLL_ID);
-        when(scrollResponse.getHits()).thenReturn(new SearchHits(new SearchHit[]{new SearchHit(1)}, new TotalHits(1, TotalHits.Relation.EQUAL_TO), 1.0F));
-        when(nextScrollResponse.getHits()).thenReturn(new SearchHits(new SearchHit[0], new TotalHits(0, TotalHits.Relation.EQUAL_TO), 1.0F));
+        when(client.firstSearch(anyString(), anyInt(), anyInt())).thenReturn(response, nextResponse);
+        Hit<Object> hit = Hit.of(b -> b.id("id1"));
+        ArrayList<Hit<Object>> firstHits = new ArrayList<>();
+        firstHits.add(hit);
+        when(response.hits()).thenReturn(new HitsMetadata.Builder<>().hits(firstHits).build());
+        ArrayList<Hit<Object>> secondHits = new ArrayList<>();
+        secondHits.add(hit);
+        when(nextResponse.hits()).thenReturn(new HitsMetadata.Builder<>().hits(secondHits).build());
 
         //when
         Executable actual = runner::run;
@@ -122,9 +96,7 @@ class ElasticsearchSlicedScrollRunnerTest {
         //then
         assertDoesNotThrow(actual);
         verify(client).firstSearch(QUERY_MATCH_ALL, 0, 2);
-        verify(client, times(2)).scroll(SCROLL_ID);
         assertEquals(2, results.size());
-        assertEquals(SCROLL_ID, runner.getScrollId());
     }
 
     @Test

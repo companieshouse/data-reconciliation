@@ -1,6 +1,6 @@
 package uk.gov.companieshouse.reconciliation.service.elasticsearch.alpha;
 
-import org.elasticsearch.search.SearchHit;
+import co.elastic.clients.elasticsearch.core.search.Hit;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.reconciliation.model.ResultModel;
 import uk.gov.companieshouse.reconciliation.service.elasticsearch.ElasticsearchResultMappable;
@@ -12,19 +12,24 @@ import java.util.Optional;
 public class ElasticsearchAlphaIndexResultMapper implements ElasticsearchResultMappable {
 
     @Override
-    public ResultModel mapWithSourceFields(SearchHit hit) {
-        String corporateName = getSourceField(hit, "corporate_name");
-        String companyStatus = getSourceField(hit, "company_status");
-        return new ResultModel(hit.getId(), corporateName, companyStatus);
+    public ResultModel mapWithSourceFields(Hit<Object> hit) {
+        Object src = hit.source();
+        if (!(src instanceof Map)) {
+            return new ResultModel(hit.id(), "", "");
+        }
+        Map<?,?> sourceMap = (Map<?,?>) src;
+        String corporateName = getSourceField(sourceMap, "corporate_name");
+        String companyStatus = getSourceField(sourceMap, "company_status");
+        return new ResultModel(hit.id(), corporateName, companyStatus);
     }
 
     @Override
-    public ResultModel mapExcludingSourceFields(SearchHit hit) {
-        return new ResultModel(hit.getId(), "");
+    public ResultModel mapExcludingSourceFields(Hit<Object> hit) {
+        return new ResultModel(hit.id(), "");
     }
 
-    private String getSourceField(SearchHit hit, String sourceField) {
-        return Optional.ofNullable(hit.getSourceAsMap().get("items"))
+    private String getSourceField(Map<?,?> sourceMap, String sourceField) {
+        return Optional.ofNullable(sourceMap.get("items"))
                 .map(item -> ((Map<?,?>)item).get(sourceField))
                 .map(Object::toString)
                 .map(String::trim)

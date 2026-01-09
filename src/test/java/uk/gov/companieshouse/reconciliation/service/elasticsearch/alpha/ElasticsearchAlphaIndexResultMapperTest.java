@@ -1,12 +1,9 @@
 package uk.gov.companieshouse.reconciliation.service.elasticsearch.alpha;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
+import co.elastic.clients.elasticsearch.core.search.Hit;
 import java.util.Map;
-import org.elasticsearch.common.bytes.BytesArray;
-import org.elasticsearch.search.SearchHit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -24,21 +21,14 @@ class ElasticsearchAlphaIndexResultMapperTest {
     @Test
     void testMapSearchHitToResultModel() {
         //given
-        String source = "{ \"items\": {\"corporate_name\": \"ACME LIMITED\", \"company_status\": \"active\"} }";
-        SearchHit hit = mock(SearchHit.class);
-        when(hit.getId()).thenReturn("12345678");
-        when(hit.getSourceRef()).thenReturn(new BytesArray(source));
-        // The mapper expects getSourceAsMap() to return a Map with an 'items' key
-        when(hit.getSourceAsMap()).thenReturn(Map.of(
+        Hit<Object> hit = Hit.of(b -> b.id("12345678").source(Map.of(
             "items", Map.of(
                 "corporate_name", "ACME LIMITED",
                 "company_status", "active"
             )
-        ));
-
+        )));
         //when
         ResultModel actual = mapper.mapWithSourceFields(hit);
-
         //then
         assertEquals(new ResultModel("12345678", "ACME LIMITED", "active"), actual);
     }
@@ -46,28 +36,24 @@ class ElasticsearchAlphaIndexResultMapperTest {
     @Test
     void testMapSearchHitWithoutSourceFields() {
         //given
-        SearchHit hit = mock(SearchHit.class);
-        when(hit.getId()).thenReturn("12345678");
-        when(hit.getSourceRef()).thenReturn(null);
-
+        Hit<Object> hit = Hit.of(b -> b.id("12345678").source(null));
         //when
         ResultModel actual = mapper.mapExcludingSourceFields(hit);
-
         //then
-        assertEquals(new ResultModel("12345678", "", ""), actual);
+        assertEquals(new ResultModel("12345678", ""), actual);
     }
 
     @Test
     void testMapSearchHitReplaceNullValuesWithEmptyStrings() {
         //given
-        String source = "{ \"items\": {\"corporate_name\": null, \"company_status\": null} }";
-        SearchHit hit = mock(SearchHit.class);
-        when(hit.getId()).thenReturn("12345678");
-        when(hit.getSourceRef()).thenReturn(new BytesArray(source));
-
+        Hit<Object> hit = Hit.of(b -> b.id("12345678").source(Map.of(
+            "items", Map.of(
+                "corporate_name", null,
+                "company_status", null
+            )
+        )));
         //when
         ResultModel actual = mapper.mapWithSourceFields(hit);
-
         //then
         assertEquals(new ResultModel("12345678", "", ""), actual);
     }
@@ -75,14 +61,11 @@ class ElasticsearchAlphaIndexResultMapperTest {
     @Test
     void testMapSearchHitHandleEmptyItemsObject() {
         //given
-        String source = "{ \"items\": {} }";
-        SearchHit hit = mock(SearchHit.class);
-        when(hit.getId()).thenReturn("12345678");
-        when(hit.getSourceRef()).thenReturn(new BytesArray(source));
-
+        Hit<Object> hit = Hit.of(b -> b.id("12345678").source(Map.of(
+            "items", Map.of()
+        )));
         //when
         ResultModel actual = mapper.mapWithSourceFields(hit);
-
         //then
         assertEquals(new ResultModel("12345678", "", ""), actual);
     }
@@ -90,14 +73,11 @@ class ElasticsearchAlphaIndexResultMapperTest {
     @Test
     void testMapSearchHitHandleNullItems() {
         //given
-        String source = "{ \"items\": null }";
-        SearchHit hit = mock(SearchHit.class);
-        when(hit.getId()).thenReturn("12345678");
-        when(hit.getSourceRef()).thenReturn(new BytesArray(source));
-
+        Hit<Object> hit = Hit.of(b -> b.id("12345678").source(Map.of(
+            "items", null
+        )));
         //when
         ResultModel actual = mapper.mapWithSourceFields(hit);
-
         //then
         assertEquals(new ResultModel("12345678", "", ""), actual);
     }
@@ -105,20 +85,14 @@ class ElasticsearchAlphaIndexResultMapperTest {
     @Test
     void testMapSearchHitTrimSourceFields() {
         //given
-        String source = "{ \"items\": {\"corporate_name\": \"   ACME LIMITED \", \"company_status\": \"  active   \"} }";
-        SearchHit hit = mock(SearchHit.class);
-        when(hit.getId()).thenReturn("12345678");
-        when(hit.getSourceRef()).thenReturn(new BytesArray(source));
-        when(hit.getSourceAsMap()).thenReturn(Map.of(
+        Hit<Object> hit = Hit.of(b -> b.id("12345678").source(Map.of(
             "items", Map.of(
                 "corporate_name", "   ACME LIMITED ",
                 "company_status", "  active   "
             )
-        ));
-
+        )));
         //when
         ResultModel actual = mapper.mapWithSourceFields(hit);
-
         //then
         assertEquals(new ResultModel("12345678", "ACME LIMITED", "active"), actual);
     }

@@ -1,10 +1,10 @@
 package uk.gov.companieshouse.reconciliation.component.elasticsearch.slicedscroll.client;
 
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.search.SearchHit;
+import co.elastic.clients.elasticsearch.core.SearchResponse;
+import co.elastic.clients.elasticsearch.core.search.Hit;
 
 import java.io.IOException;
-import java.util.Collection;
+import java.util.Deque;
 import java.util.Iterator;
 
 /**
@@ -19,11 +19,9 @@ public class ElasticsearchSlicedScrollRunner implements Runnable {
     private final ElasticsearchSlicedScrollIterator scrollService;
     private final ElasticsearchSlicedScrollValidator validator;
 
-    private final Collection<Iterator<SearchHit>> results;
-    private boolean done;
-    private String scrollId;
+    private final Deque<Iterator<Hit<Object>>> results;
 
-    public ElasticsearchSlicedScrollRunner(ElasticsearchScrollingSearchClient scrollingSearchClient, Collection<Iterator<SearchHit>> results, int sliceId, int noOfSlices, String query, ElasticsearchSlicedScrollIterator scrollService, ElasticsearchSlicedScrollValidator validator) {
+    public ElasticsearchSlicedScrollRunner(ElasticsearchScrollingSearchClient scrollingSearchClient, Deque<Iterator<Hit<Object>>> results, int sliceId, int noOfSlices, String query, ElasticsearchSlicedScrollIterator scrollService, ElasticsearchSlicedScrollValidator validator) {
         this.scrollingSearchClient = scrollingSearchClient;
         this.results = results;
         this.sliceId = sliceId;
@@ -40,43 +38,19 @@ public class ElasticsearchSlicedScrollRunner implements Runnable {
         }
         try {
             firstSearch();
-            if (scrollId == null) {
-                return;
-            }
-            while (!done) {
-                scrollSearch();
-            }
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new ElasticsearchException(e);
         }
     }
 
-    public String getScrollId() {
-        return scrollId;
-    }
-
     private void firstSearch() throws IOException {
-        SearchResponse searchResponse = scrollingSearchClient.firstSearch(query, sliceId, noOfSlices);
-        if (searchResponse.getHits().getHits() == null || searchResponse.getHits().getHits().length == 0) {
-            done = true;
+        SearchResponse<Object> searchResponse = scrollingSearchClient.firstSearch(query, sliceId, noOfSlices);
+        if (searchResponse.hits().hits() == null || searchResponse.hits().hits().isEmpty()) {
             return;
         }
-        results.add(searchResponse.getHits().iterator());
+        results.add(searchResponse.hits().hits().iterator());
         synchronized (scrollService) {
             scrollService.notify();
-        }
-        this.scrollId = searchResponse.getScrollId();
-    }
-
-    private void scrollSearch() throws IOException {
-        SearchResponse response = scrollingSearchClient.scroll(scrollId);
-        if (response.getHits().getHits() != null && response.getHits().getHits().length > 0) {
-            results.add(response.getHits().iterator());
-            synchronized (scrollService) {
-                scrollService.notify();
-            }
-        } else {
-            done = true;
         }
     }
 }

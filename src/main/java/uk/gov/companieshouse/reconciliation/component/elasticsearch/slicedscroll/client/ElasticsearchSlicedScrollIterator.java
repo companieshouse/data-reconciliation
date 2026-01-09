@@ -1,28 +1,25 @@
 package uk.gov.companieshouse.reconciliation.component.elasticsearch.slicedscroll.client;
 
-import org.elasticsearch.search.SearchHit;
+import co.elastic.clients.elasticsearch.core.search.Hit;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingDeque;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
 import uk.gov.companieshouse.reconciliation.App;
 
 /**
- * All {@link SearchHit search hits} returned by an Elasticsearch sliced scrolling search.
+ * All {@link Hit search hits} returned by an Elasticsearch sliced scrolling search.
  */
-public class ElasticsearchSlicedScrollIterator implements Runnable, Iterator<SearchHit> {
+public class ElasticsearchSlicedScrollIterator implements Runnable, Iterator<Hit<Object>> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(App.APPLICATION_NAMESPACE);
 
@@ -32,17 +29,16 @@ public class ElasticsearchSlicedScrollIterator implements Runnable, Iterator<Sea
     private final ElasticsearchSlicedScrollRunnerFactory runnerFactory;
     private final ExecutorService executorService;
 
-    private final Deque<Iterator<SearchHit>> hits;
-    private Iterator<SearchHit> current;
+    private final Deque<Iterator<Hit<Object>>> hits;
+    private Iterator<Hit<Object>> current;
     private volatile boolean running;
     private volatile boolean done;
-    private volatile boolean completedExceptionally;
 
     public ElasticsearchSlicedScrollIterator(ElasticsearchScrollingSearchClient client, int noOfSlices, String query, ElasticsearchSlicedScrollRunnerFactory runnerFactory, ExecutorService executorService) {
         this(client, noOfSlices, query, runnerFactory, executorService, new LinkedBlockingDeque<>());
     }
 
-    public ElasticsearchSlicedScrollIterator(ElasticsearchScrollingSearchClient client, int noOfSlices, String query, ElasticsearchSlicedScrollRunnerFactory runnerFactory, ExecutorService executorService, Deque<Iterator<SearchHit>> hits) {
+    public ElasticsearchSlicedScrollIterator(ElasticsearchScrollingSearchClient client, int noOfSlices, String query, ElasticsearchSlicedScrollRunnerFactory runnerFactory, ExecutorService executorService, Deque<Iterator<Hit<Object>>> hits) {
         this.client = client;
         this.noOfSlices = noOfSlices;
         this.query = query;
@@ -68,9 +64,6 @@ public class ElasticsearchSlicedScrollIterator implements Runnable, Iterator<Sea
                     }
                 }
             }
-            if(completedExceptionally) {
-                throw new ElasticsearchException("Failed to retrieve results from Elasticsearch");
-            }
             if (current == null || !current.hasNext()) {
                 current = hits.poll();
             }
@@ -82,7 +75,7 @@ public class ElasticsearchSlicedScrollIterator implements Runnable, Iterator<Sea
     }
 
     @Override
-    public SearchHit next() {
+    public Hit<Object> next() {
         if(current != null && current.hasNext()) {
             return current.next();
         }
@@ -93,7 +86,7 @@ public class ElasticsearchSlicedScrollIterator implements Runnable, Iterator<Sea
     public void run() {
         List<ElasticsearchSlicedScrollRunner> runners = IntStream.range(0, noOfSlices)
                 .mapToObj(sliceId -> runnerFactory.getRunner(client, hits, sliceId, noOfSlices, query, this))
-                .collect(Collectors.toList());
+                .toList();
         List<CompletableFuture<?>> futures = new ArrayList<>();
         try {
             runners.stream()
@@ -102,28 +95,11 @@ public class ElasticsearchSlicedScrollIterator implements Runnable, Iterator<Sea
             CompletableFuture.allOf(futures.toArray(new CompletableFuture<?>[0])).join();
         } catch (CompletionException e) {
             LOGGER.error(e);
-            // Temporary (?) workaround to still send elasticsearch emails in the event of an exception
-            // 404 responses from attempts to delete a scroll ID are incorrectly (?) interpreted as exceptions
-//            this.completedExceptionally = true;
-//            futures.forEach(f -> f.cancel(true));
-//            throw new ElasticsearchException(e);
         } finally {
-            try {
-                List<String> scrollIdsToClear = runners.stream()
-                        .map(ElasticsearchSlicedScrollRunner::getScrollId)
-                        .filter(Objects::nonNull)
-                        .collect(Collectors.toList());
-                if(!scrollIdsToClear.isEmpty()) {
-                    client.clearScroll(scrollIdsToClear);
-                }
-            } catch (IOException e) {
-                LOGGER.error("Error clearing scrolling search", e);
-            } finally {
-                synchronized (this) {
-                    this.executorService.shutdown();
-                    this.done = true;
-                    this.notifyAll();
-                }
+            synchronized (this) {
+                this.executorService.shutdown();
+                this.done = true;
+                this.notifyAll();
             }
         }
     }

@@ -14,7 +14,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class ElasticsearchPrimaryIndexTransformerTest {
+class ElasticsearchPrimaryIndexTransformerTest {
 
     @Mock
     private ElasticsearchSlicedScrollIterator iterator;
@@ -38,10 +38,10 @@ public class ElasticsearchPrimaryIndexTransformerTest {
     @Test
     void testTransformSearchHits() {
         //given
-        when(resultTransformer.transform(any(), any(), any())).thenReturn(results);
+        when(resultTransformer.transform(any(), any())).thenReturn(results);
 
         //when
-        Results actual = transformer.transform(iterator, 1);
+        Results actual = transformer.transform(iterator);
 
         //then
         assertSame(results, actual);

@@ -15,7 +15,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class ElasticsearchAlphaIndexTransformerTest {
+class ElasticsearchAlphaIndexTransformerTest {
 
     @Mock
     private ElasticsearchSlicedScrollIterator iterator;
@@ -39,13 +39,11 @@ public class ElasticsearchAlphaIndexTransformerTest {
     @Test
     void testTransformSearchHits() {
         //given
-        when(resultTransformer.transform(any(), any(), any())).thenReturn(results);
-
+        when(resultTransformer.transform(any(), any())).thenReturn(results);
         //when
-        Results actual = transformer.transform(iterator, 1);
-
+        Results actual = transformer.transform(iterator);
         //then
         assertSame(results, actual);
-        verify(resultTransformer).transform(iterator, 1, resultMapper);
+        verify(resultTransformer).transform(iterator, resultMapper);
     }
 }

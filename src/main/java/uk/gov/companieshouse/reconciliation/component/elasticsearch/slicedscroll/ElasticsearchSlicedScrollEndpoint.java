@@ -11,8 +11,6 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import uk.gov.companieshouse.reconciliation.component.elasticsearch.slicedscroll.client.ElasticsearchScrollingSearchClientFactory;
 
-import java.io.IOException;
-
 @UriEndpoint(
         firstVersion = "0.0.1",
         scheme = "es-builk-load",
@@ -60,14 +58,16 @@ public class ElasticsearchSlicedScrollEndpoint extends DefaultEndpoint {
     }
 
     public Producer createProducer() throws Exception {
-        return new ElasticsearchSlicedScrollProducer(this, clientFactory.build(hostname, portNumber, protocol, indexName, maximumSliceSize, timeoutInSeconds, sliceField));
+        // Updated to use the new factory signature (no unused params)
+        return new ElasticsearchSlicedScrollProducer(this, clientFactory.build(hostname, portNumber, protocol, indexName));
     }
 
     public Consumer createConsumer(Processor processor) {
         throw new UnsupportedOperationException("Consumer not supported");
     }
 
-    public void close() throws IOException {
+    @Override
+    public void close() {
         //do nothing
     }
 

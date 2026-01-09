@@ -1,8 +1,7 @@
 package uk.gov.companieshouse.reconciliation.service.elasticsearch.alpha;
 
+import co.elastic.clients.elasticsearch.core.search.Hit;
 import org.apache.camel.Body;
-import org.apache.camel.Header;
-import org.elasticsearch.search.SearchHit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.reconciliation.model.Results;
@@ -11,7 +10,7 @@ import uk.gov.companieshouse.reconciliation.service.elasticsearch.ElasticsearchT
 import java.util.Iterator;
 
 /**
- * Transform {@link SearchHit search hits} retrieved from the Elasticsearch alphabetical index into a collection
+ * Transform {@link Hit search hits} retrieved from the Elasticsearch alphabetical index into a collection
  * of {@link Results results}.
  */
 @Component
@@ -28,7 +27,7 @@ public class ElasticsearchAlphaIndexTransformer {
         this.searchHitMapper = searchHitMapper;
     }
 
-    public Results transform(@Body Iterator<SearchHit> it, @Header("ElasticsearchLogIndices") Integer logIndices) {
-        return resultTransformer.transform(it, logIndices, searchHitMapper);
+    public Results transform(@Body Iterator<Hit<Object>> it) {
+        return resultTransformer.transform(it, searchHitMapper);
     }
 }

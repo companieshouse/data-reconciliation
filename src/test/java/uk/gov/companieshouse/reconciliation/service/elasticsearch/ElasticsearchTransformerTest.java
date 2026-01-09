@@ -1,6 +1,6 @@
 package uk.gov.companieshouse.reconciliation.service.elasticsearch;
 
-import org.elasticsearch.search.SearchHit;
+import co.elastic.clients.elasticsearch.core.search.Hit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,10 +18,10 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class ElasticsearchTransformerTest {
+class ElasticsearchTransformerTest {
 
     @Mock
-    private SearchHit searchHit;
+    private Hit<Object> searchHit;
 
     @Mock
     private ElasticsearchSlicedScrollIterator iterator;
@@ -36,17 +36,15 @@ public class ElasticsearchTransformerTest {
 
     @BeforeEach
     void setUp() {
-        transformer = new ElasticsearchTransformer(1);
+        transformer = new ElasticsearchTransformer();
     }
 
     @Test
     void testReturnEmptyResultsObjectIfNoHitsReturned() {
         //given
         when(iterator.hasNext()).thenReturn(false);
-
         //when
-        Results actual = transformer.transform(iterator, 1, mappingFunction);
-
+        Results actual = transformer.transform(iterator, mappingFunction);
         //then
         assertEquals(0, actual.size());
         verifyNoInteractions(mappingFunction);
@@ -57,12 +55,9 @@ public class ElasticsearchTransformerTest {
         //given
         when(iterator.hasNext()).thenReturn(true, false);
         when(iterator.next()).thenReturn(searchHit);
-        when(searchHit.hasSource()).thenReturn(true);
         when(mappingFunction.mapWithSourceFields(any())).thenReturn(resultModel);
-
         //when
-        Results actual = transformer.transform(iterator, 1, mappingFunction);
-
+        Results actual = transformer.transform(iterator, mappingFunction);
         //then
         assertSame(resultModel, actual.getResultModels().iterator().next());
         verify(mappingFunction).mapWithSourceFields(searchHit);
@@ -73,12 +68,9 @@ public class ElasticsearchTransformerTest {
         //given
         when(iterator.hasNext()).thenReturn(true, false);
         when(iterator.next()).thenReturn(searchHit);
-        when(searchHit.hasSource()).thenReturn(false);
         when(mappingFunction.mapExcludingSourceFields(any())).thenReturn(resultModel);
-
         //when
-        Results actual = transformer.transform(iterator, 1, mappingFunction);
-
+        Results actual = transformer.transform(iterator, mappingFunction);
         //then
         assertSame(resultModel, actual.getResultModels().iterator().next());
         verify(mappingFunction).mapExcludingSourceFields(searchHit);

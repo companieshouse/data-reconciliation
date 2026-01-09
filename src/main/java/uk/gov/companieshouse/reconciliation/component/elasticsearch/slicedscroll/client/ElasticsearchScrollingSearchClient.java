@@ -4,38 +4,24 @@ package uk.gov.companieshouse.reconciliation.component.elasticsearch.slicedscrol
 import java.io.IOException;
 import java.util.List;
 
-import org.elasticsearch.action.search.ClearScrollRequest;
-import org.elasticsearch.action.search.ClearScrollResponse;
-import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.search.SearchScrollRequest;
-import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.core.TimeValue;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.builder.SearchSourceBuilder;
-import org.elasticsearch.search.slice.SliceBuilder;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch.core.ClearScrollRequest;
+import co.elastic.clients.elasticsearch.core.ClearScrollResponse;
+import co.elastic.clients.elasticsearch.core.SearchRequest;
+import co.elastic.clients.elasticsearch.core.SearchResponse;
 
 /**
  * Retrieves search hits from an Elasticsearch search index using a sliced scrolling search.
  */
 public class ElasticsearchScrollingSearchClient implements AutoCloseable {
 
-    private final RestHighLevelClient client;
+    private final ElasticsearchClient client;
     private final String index;
-    private final int size;
-    private final long timeout;
-    private final String sliceField;
     private final ElasticsearchSlicedScrollValidator validator;
 
-    public ElasticsearchScrollingSearchClient(RestHighLevelClient client, String index, int size, long timeout, String sliceField, ElasticsearchSlicedScrollValidator validator) {
+    public ElasticsearchScrollingSearchClient(ElasticsearchClient client, String index, ElasticsearchSlicedScrollValidator validator) {
         this.client = client;
         this.index = index;
-        this.size = size;
-        this.timeout = timeout;
-        this.sliceField = sliceField;
         this.validator = validator;
     }
 
@@ -49,53 +35,14 @@ public class ElasticsearchScrollingSearchClient implements AutoCloseable {
      * @return A {@link SearchResponse search response instance} containing search hits returned by the index.
      * @throws IOException If an error is raised by Elasticsearch.
      */
-    public SearchResponse firstSearch(String query, int sliceId, int noOfSlices) throws IOException {
+    public SearchResponse<Object> firstSearch(String query, int sliceId, int noOfSlices) throws IOException {
         if (!validator.validateSliceConfiguration(sliceId, noOfSlices)) {
             throw new IllegalArgumentException("Invalid client configuration [sliceId=" + sliceId + ", noOfSlices=" + noOfSlices + "]");
         }
-        SearchRequest searchRequest = new SearchRequest(index);
-        // Parse query JSON and build SearchSourceBuilder
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode root = mapper.readTree(query);
-        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        if (root.has("query")) {
-            JsonNode queryNode = root.get("query");
-            if (queryNode.has("match_all")) {
-                searchSourceBuilder.query(QueryBuilders.matchAllQuery());
-            }
-            // Add more query types as needed
-        }
-        if (root.has("_source")) {
-            JsonNode sourceNode = root.get("_source");
-            if (sourceNode.has("includes")) {
-                JsonNode includesNode = sourceNode.get("includes");
-                String[] includes = mapper.convertValue(includesNode, String[].class);
-                searchSourceBuilder.fetchSource(includes, null);
-            }
-        }
-        searchRequest.source(searchSourceBuilder);
-        if (noOfSlices > 1) {
-            searchSourceBuilder.slice(new SliceBuilder(sliceField, sliceId, noOfSlices));
-        }
-        return client.search(searchRequest, org.elasticsearch.client.RequestOptions.DEFAULT);
-    }
-
-    /**
-     * Retrieves further results using the scroll ID of the scrolling search session that was initiated.
-     *
-     * @param scrollId The scroll ID that was created during the first search.
-     * @return A {@link SearchResponse search response instance} containing further search hits returned by the index.
-     * @throws IOException If an error is raised by Elasticsearch.
-     */
-    public SearchResponse scroll(String scrollId) throws IOException {
-        if (scrollId == null) {
-            throw new IllegalArgumentException("Scroll ID is null");
-        } else if (scrollId.isEmpty()) {
-            throw new IllegalArgumentException("Scroll ID is empty");
-        }
-        SearchScrollRequest searchScrollRequest = new SearchScrollRequest(scrollId);
-        searchScrollRequest.scroll(TimeValue.timeValueSeconds(timeout));
-        return client.searchScroll(searchScrollRequest, org.elasticsearch.client.RequestOptions.DEFAULT);
+        SearchRequest.Builder searchBuilder = new SearchRequest.Builder().index(index);
+        searchBuilder.withJson(new java.io.StringReader(query));
+        SearchRequest searchRequest = searchBuilder.build();
+        return client.search(searchRequest, Object.class);
     }
 
     /**
@@ -106,13 +53,12 @@ public class ElasticsearchScrollingSearchClient implements AutoCloseable {
      * @throws IOException If an error is raised by Elasticsearch.
      */
     public ClearScrollResponse clearScroll(List<String> scrollIds) throws IOException {
-        ClearScrollRequest clearScrollRequest = new ClearScrollRequest();
-        clearScrollRequest.setScrollIds(scrollIds);
-        return client.clearScroll(clearScrollRequest, org.elasticsearch.client.RequestOptions.DEFAULT);
+        ClearScrollRequest clearScrollRequest = new ClearScrollRequest.Builder().scrollId(scrollIds).build();
+        return client.clearScroll(clearScrollRequest);
     }
 
     @Override
     public void close() throws IOException {
-        this.client.close();
+        // No explicit close needed for ElasticsearchClient
     }
 }

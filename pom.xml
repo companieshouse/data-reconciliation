@@ -17,7 +17,9 @@
     <kafka-models.version>3.0.26</kafka-models.version>
     <structured-logging.version>3.0.36</structured-logging.version>
     <!-- Third party -->
-    <elasticsearch.version>7.17.29</elasticsearch.version>
+<!--        <elasticsearch.version>8.0.0</elasticsearch.version>-->
+        <elasticsearch.version>8.19.9</elasticsearch.version>
+<!--    <elasticsearch.version>7.17.29</elasticsearch.version>-->
     <oracle.ojdbc11.version>23.6.0.24.10</oracle.ojdbc11.version>
     <apache.camel.version>4.11.0</apache.camel.version>
     <spring.boot.version>3.5.9</spring.boot.version>
@@ -67,6 +69,17 @@
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-lang3</artifactId>
         <version>${commons-lang3.version}</version>
+      </dependency>
+      <!--todo-->
+<!--      <dependency>-->
+<!--        <groupId>at.yawk.lz4</groupId>-->
+<!--        <artifactId>lz4-java</artifactId>-->
+<!--        <version>1.10.2</version>-->
+<!--      </dependency>-->
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-core</artifactId>
+        <version>2.25.3</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -156,6 +169,16 @@
       <groupId>org.elasticsearch</groupId>
       <artifactId>elasticsearch</artifactId>
       <version>${elasticsearch.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>at.yawk.lz4</groupId>
+          <artifactId>lz4-java</artifactId>
+        </exclusion>
+<!--        <exclusion>-->
+<!--          <groupId>org.lz4</groupId>-->
+<!--          <artifactId>lz4-java</artifactId>-->
+<!--        </exclusion>-->
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.elasticsearch.client</groupId>
@@ -163,15 +186,14 @@
       <version>${elasticsearch.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.elasticsearch.client</groupId>
-      <artifactId>elasticsearch-rest-high-level-client</artifactId>
+      <groupId>co.elastic.clients</groupId>
+      <artifactId>elasticsearch-java</artifactId>
       <version>${elasticsearch.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>com.vividsolutions</groupId>
-          <artifactId>jts</artifactId>
-        </exclusion>
-      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>2.17.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.camel.springboot</groupId>
@@ -217,6 +239,10 @@
         <exclusion>
           <groupId>org.eclipse.jetty</groupId>
           <artifactId>jetty-webapp</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.lz4</groupId>
+          <artifactId>lz4-java</artifactId>
         </exclusion>
       </exclusions>
     </dependency>

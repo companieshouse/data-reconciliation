@@ -1,7 +1,8 @@
 package uk.gov.companieshouse.reconciliation.service.elasticsearch.alpha;
 
+import co.elastic.clients.elasticsearch.core.search.Hit;
+
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -12,7 +13,6 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
-import org.elasticsearch.search.SearchHit;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -34,7 +34,7 @@ import uk.gov.companieshouse.reconciliation.model.Results;
 @TestPropertySource(locations = "classpath:application-stubbed.properties")
 @ExtendWith(MockitoExtension.class)
 @Import(S3ClientConfig.class)
-public class ElasticsearchAlphaIndexRouteTest {
+class ElasticsearchAlphaIndexRouteTest {
 
     @Autowired
     private CamelContext context;
@@ -49,15 +49,12 @@ public class ElasticsearchAlphaIndexRouteTest {
     void testTransformAlphaIndexResponseIntoResults() {
         // given
         when(iterator.hasNext()).thenReturn(true, false);
-        SearchHit hit = mock(SearchHit.class);
-        when(hit.getId()).thenReturn("12345678");
-        when(hit.getSourceAsMap()).thenReturn(java.util.Map.of(
+        Hit<Object> hit = Hit.of(b -> b.id("12345678").source(java.util.Map.of(
                 "items", java.util.Map.of(
                         "corporate_name", "ACME LIMITED",
                         "company_status", ""
                 )
-        ));
-        when(hit.hasSource()).thenReturn(true);
+        )));
         when(iterator.next()).thenReturn(hit);
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(iterator);

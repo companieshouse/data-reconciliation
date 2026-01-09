@@ -1,12 +1,13 @@
 package uk.gov.companieshouse.reconciliation.service.elasticsearch.primary;
 
+import co.elastic.clients.elasticsearch.core.search.Hit;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Map;
+import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -14,7 +15,6 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
-import org.elasticsearch.search.SearchHit;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,7 @@ import uk.gov.companieshouse.reconciliation.model.Results;
 @DirtiesContext
 @TestPropertySource(locations = "classpath:application-stubbed.properties")
 @Import(S3ClientConfig.class)
-public class ElasticsearchPrimaryIndexRouteTest {
+class ElasticsearchPrimaryIndexRouteTest {
 
     @Autowired
     private CamelContext context;
@@ -48,18 +48,14 @@ public class ElasticsearchPrimaryIndexRouteTest {
     void testTransformAlphaIndexResponseIntoResults() {
         // given
         when(iterator.hasNext()).thenReturn(true, false);
-        SearchHit hit = mock(SearchHit.class);
-        when(hit.getId()).thenReturn("12345678");
-        // Simulate the expected source map structure for the transformer/mapper
-        when(hit.getSourceAsMap()).thenReturn(Map.of(
-                "items", java.util.List.of(
+        Hit<Object> hit = Hit.of(b -> b.id("12345678").source(Map.of(
+                "items", List.of(
                         Map.of(
                                 "corporate_name_start", "ACME",
                                 "corporate_name_ending", " LIMITED"
                         )
                 )
-        ));
-        when(hit.hasSource()).thenReturn(true);
+        )));
         when(iterator.next()).thenReturn(hit);
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(iterator);
