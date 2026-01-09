@@ -2,9 +2,7 @@ package uk.gov.companieshouse.reconciliation.component.elasticsearch.slicedscrol
 
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import org.elasticsearch.action.search.ClearScrollRequest;
 import org.elasticsearch.action.search.ClearScrollResponse;
@@ -12,15 +10,10 @@ import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchScrollRequest;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.core.TimeValue;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.slice.SliceBuilder;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -49,15 +42,15 @@ public class ElasticsearchScrollingSearchClient implements AutoCloseable {
     /**
      * Initiates a new sliced scrolling search session.
      *
-     * @param query A JSON entity used to control both the query that will be executed against the search index and the
-     *              source fields that should be returned in the response.
-     * @param sliceId The id of the sliced scrolling search session that will be created.
+     * @param query      A JSON entity used to control both the query that will be executed against the search index and the
+     *                   source fields that should be returned in the response.
+     * @param sliceId    The id of the sliced scrolling search session that will be created.
      * @param noOfSlices The total number of slices that will be created.
      * @return A {@link SearchResponse search response instance} containing search hits returned by the index.
      * @throws IOException If an error is raised by Elasticsearch.
      */
     public SearchResponse firstSearch(String query, int sliceId, int noOfSlices) throws IOException {
-        if(!validator.validateSliceConfiguration(sliceId, noOfSlices)) {
+        if (!validator.validateSliceConfiguration(sliceId, noOfSlices)) {
             throw new IllegalArgumentException("Invalid client configuration [sliceId=" + sliceId + ", noOfSlices=" + noOfSlices + "]");
         }
         SearchRequest searchRequest = new SearchRequest(index);
@@ -81,7 +74,7 @@ public class ElasticsearchScrollingSearchClient implements AutoCloseable {
             }
         }
         searchRequest.source(searchSourceBuilder);
-        if(noOfSlices > 1) {
+        if (noOfSlices > 1) {
             searchSourceBuilder.slice(new SliceBuilder(sliceField, sliceId, noOfSlices));
         }
         return client.search(searchRequest, org.elasticsearch.client.RequestOptions.DEFAULT);
@@ -95,9 +88,9 @@ public class ElasticsearchScrollingSearchClient implements AutoCloseable {
      * @throws IOException If an error is raised by Elasticsearch.
      */
     public SearchResponse scroll(String scrollId) throws IOException {
-        if(scrollId == null) {
+        if (scrollId == null) {
             throw new IllegalArgumentException("Scroll ID is null");
-        } else if(scrollId.isEmpty()) {
+        } else if (scrollId.isEmpty()) {
             throw new IllegalArgumentException("Scroll ID is empty");
         }
         SearchScrollRequest searchScrollRequest = new SearchScrollRequest(scrollId);

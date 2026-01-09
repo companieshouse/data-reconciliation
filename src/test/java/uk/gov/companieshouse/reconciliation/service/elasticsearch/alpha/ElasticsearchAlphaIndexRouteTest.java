@@ -12,7 +12,6 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
-import org.elasticsearch.common.bytes.BytesArray;
 import org.elasticsearch.search.SearchHit;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
