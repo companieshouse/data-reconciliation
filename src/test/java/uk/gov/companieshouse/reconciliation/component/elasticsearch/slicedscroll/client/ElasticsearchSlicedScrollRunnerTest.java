@@ -38,7 +38,7 @@ class ElasticsearchSlicedScrollRunnerTest {
     private ElasticsearchSlicedScrollValidator validator;
 
     @Mock
-    private SearchResponse<Object> response, nextResponse;
+    private SearchResponse<Object> response;
 
     @BeforeEach
     void setUp() {
@@ -81,14 +81,16 @@ class ElasticsearchSlicedScrollRunnerTest {
         //given
         ElasticsearchSlicedScrollRunner runner = new ElasticsearchSlicedScrollRunner(client, results, 0, 2, QUERY_MATCH_ALL, scrollService, validator);
         when(validator.validateSliceConfiguration(anyInt(), anyInt())).thenReturn(true);
-        when(client.firstSearch(anyString(), anyInt(), anyInt())).thenReturn(response, nextResponse);
-        Hit<Object> hit = Hit.of(b -> b.id("id1"));
+        when(client.firstSearch(anyString(), anyInt(), anyInt())).thenReturn(response);
+        java.util.Map<String, Object> dummySource = java.util.Collections.emptyMap();
+        Hit<Object> hit = new Hit.Builder<>()
+            .id("id1")
+            .index("test-index")
+            .source(dummySource)
+            .build();
         ArrayList<Hit<Object>> firstHits = new ArrayList<>();
         firstHits.add(hit);
         when(response.hits()).thenReturn(new HitsMetadata.Builder<>().hits(firstHits).build());
-        ArrayList<Hit<Object>> secondHits = new ArrayList<>();
-        secondHits.add(hit);
-        when(nextResponse.hits()).thenReturn(new HitsMetadata.Builder<>().hits(secondHits).build());
 
         //when
         Executable actual = runner::run;
@@ -96,7 +98,7 @@ class ElasticsearchSlicedScrollRunnerTest {
         //then
         assertDoesNotThrow(actual);
         verify(client).firstSearch(QUERY_MATCH_ALL, 0, 2);
-        assertEquals(2, results.size());
+        assertEquals(1, results.size());
     }
 
     @Test

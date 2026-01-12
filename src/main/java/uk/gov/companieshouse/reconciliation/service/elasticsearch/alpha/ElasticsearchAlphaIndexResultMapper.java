@@ -29,11 +29,13 @@ public class ElasticsearchAlphaIndexResultMapper implements ElasticsearchResultM
     }
 
     private String getSourceField(Map<?,?> sourceMap, String sourceField) {
-        return Optional.ofNullable(sourceMap.get("items"))
-                .map(item -> ((Map<?,?>)item).get(sourceField))
-                .map(Object::toString)
-                .map(String::trim)
-                .filter(nameEnding -> !nameEnding.isEmpty())
-                .orElse("");
+        Object itemsObj = sourceMap.get("items");
+        if (!(itemsObj instanceof Map)) {
+            return "";
+        }
+        Object value = ((Map<?,?>)itemsObj).get(sourceField);
+        if (value == null) return "";
+        String str = value == null ? "" : value.toString().trim();
+        return str.isEmpty() ? "" : str;
     }
 }

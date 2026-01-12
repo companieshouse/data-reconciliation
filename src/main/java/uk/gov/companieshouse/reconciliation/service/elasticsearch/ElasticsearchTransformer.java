@@ -19,13 +19,16 @@ public class ElasticsearchTransformer {
      *
      * @param it An iterator from which {@link Hit search hits} can be obtained.
      * @param mappingFunction The mapping function.
+     * @param includeSourceFields Flag indicating whether to include source fields in the mapping.
      * @return A {@link Results results object} containing mapped result models.
      */
-    public Results transform(Iterator<Hit<Object>> it, ElasticsearchResultMappable mappingFunction) {
+    public Results transform(Iterator<Hit<Object>> it, ElasticsearchResultMappable mappingFunction, boolean includeSourceFields) {
         Results results = new Results(new java.util.ArrayList<>());
         while (it.hasNext()) {
             Hit<Object> hit = it.next();
-            ResultModel resultModel = mappingFunction.mapWithSourceFields(hit); // always use with source fields for now
+            ResultModel resultModel = includeSourceFields
+                ? mappingFunction.mapWithSourceFields(hit)
+                : mappingFunction.mapExcludingSourceFields(hit);
             results.add(resultModel);
         }
         return results;

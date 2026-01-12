@@ -92,7 +92,7 @@ class ElasticsearchSlicedScrollIteratorTest {
     @Test
     void testFurtherResultsInIterator() throws InterruptedException {
         //given
-        Hit<Object> expectedResult = Hit.of(b -> b.id("test-id"));
+        Hit<Object> expectedResult = Hit.of(b -> b.id("test-id").index("test-index"));
         when(factory.getRunner(any(ElasticsearchScrollingSearchClient.class), any(), anyInt(), anyInt(), anyString(), any())).thenReturn(runner);
         doAnswer(a -> {
             synchronized (syncLock) {

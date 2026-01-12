@@ -27,6 +27,6 @@ public class ElasticsearchPrimaryIndexTransformer {
     }
 
     public Results transform(@Body Iterator<Hit<Object>> it) {
-        return resultTransformer.transform(it, searchHitMapper);
+        return resultTransformer.transform(it, searchHitMapper, true); // pass true to include source fields
     }
 }

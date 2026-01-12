@@ -24,7 +24,8 @@ public class ElasticsearchPrimaryIndexResultMapper implements ElasticsearchResul
         addSourceFieldToNameList(names, sourceMap, "corporate_name_start");
         addSourceFieldToNameList(names, sourceMap, "corporate_name_ending");
         String companyStatus = getFieldValue(sourceMap, "company_status").orElse("");
-        return new ResultModel(hit.id(), String.join(" ", names), companyStatus);
+        String companyName = String.join(" ", names).trim();
+        return new ResultModel(hit.id(), companyName, companyStatus);
     }
 
     @Override
@@ -39,10 +40,17 @@ public class ElasticsearchPrimaryIndexResultMapper implements ElasticsearchResul
     }
 
     private Optional<String> getFieldValue(Map<?,?> sourceMap, String sourceField) {
-        return Optional.ofNullable(sourceMap.get("items"))
-                .flatMap(items -> ((List<?>)items).stream().findFirst())
-                .map(item -> ((Map<?,?>)item).get(sourceField))
-                .map(Object::toString)
-                .map(String::trim);
+        Object itemsObj = sourceMap.get("items");
+        if (!(itemsObj instanceof List) || ((List<?>)itemsObj).isEmpty()) {
+            return Optional.empty();
+        }
+        Object first = ((List<?>)itemsObj).get(0);
+        if (!(first instanceof Map)) {
+            return Optional.empty();
+        }
+        Object value = ((Map<?,?>)first).get(sourceField);
+        if (value == null) return Optional.empty();
+        String str = value == null ? "" : value.toString().trim();
+        return str.isEmpty() ? Optional.empty() : Optional.of(str);
     }
 }

@@ -44,7 +44,7 @@ class ElasticsearchTransformerTest {
         //given
         when(iterator.hasNext()).thenReturn(false);
         //when
-        Results actual = transformer.transform(iterator, mappingFunction);
+        Results actual = transformer.transform(iterator, mappingFunction, true);
         //then
         assertEquals(0, actual.size());
         verifyNoInteractions(mappingFunction);
@@ -57,7 +57,7 @@ class ElasticsearchTransformerTest {
         when(iterator.next()).thenReturn(searchHit);
         when(mappingFunction.mapWithSourceFields(any())).thenReturn(resultModel);
         //when
-        Results actual = transformer.transform(iterator, mappingFunction);
+        Results actual = transformer.transform(iterator, mappingFunction, true);
         //then
         assertSame(resultModel, actual.getResultModels().iterator().next());
         verify(mappingFunction).mapWithSourceFields(searchHit);
@@ -70,7 +70,7 @@ class ElasticsearchTransformerTest {
         when(iterator.next()).thenReturn(searchHit);
         when(mappingFunction.mapExcludingSourceFields(any())).thenReturn(resultModel);
         //when
-        Results actual = transformer.transform(iterator, mappingFunction);
+        Results actual = transformer.transform(iterator, mappingFunction, false);
         //then
         assertSame(resultModel, actual.getResultModels().iterator().next());
         verify(mappingFunction).mapExcludingSourceFields(searchHit);

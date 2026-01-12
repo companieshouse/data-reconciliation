@@ -48,7 +48,7 @@ class ElasticsearchPrimaryIndexRouteTest {
     void testTransformAlphaIndexResponseIntoResults() {
         // given
         when(iterator.hasNext()).thenReturn(true, false);
-        Hit<Object> hit = Hit.of(b -> b.id("12345678").source(Map.of(
+        Hit<Object> hit = Hit.of(b -> b.id("12345678").index("test-index").source(Map.of(
                 "items", List.of(
                         Map.of(
                                 "corporate_name_start", "ACME",

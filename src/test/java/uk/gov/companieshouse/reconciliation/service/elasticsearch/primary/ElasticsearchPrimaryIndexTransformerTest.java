@@ -11,6 +11,7 @@ import uk.gov.companieshouse.reconciliation.service.elasticsearch.ElasticsearchT
 
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -38,11 +39,9 @@ class ElasticsearchPrimaryIndexTransformerTest {
     @Test
     void testTransformSearchHits() {
         //given
-        when(resultTransformer.transform(any(), any())).thenReturn(results);
-
+        when(resultTransformer.transform(any(), any(), anyBoolean())).thenReturn(results);
         //when
         Results actual = transformer.transform(iterator);
-
         //then
         assertSame(results, actual);
     }

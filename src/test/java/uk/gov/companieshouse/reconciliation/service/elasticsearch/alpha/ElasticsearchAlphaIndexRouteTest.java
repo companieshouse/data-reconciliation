@@ -49,7 +49,7 @@ class ElasticsearchAlphaIndexRouteTest {
     void testTransformAlphaIndexResponseIntoResults() {
         // given
         when(iterator.hasNext()).thenReturn(true, false);
-        Hit<Object> hit = Hit.of(b -> b.id("12345678").source(java.util.Map.of(
+        Hit<Object> hit = Hit.of(b -> b.id("12345678").index("test-index").source(java.util.Map.of(
                 "items", java.util.Map.of(
                         "corporate_name", "ACME LIMITED",
                         "company_status", ""
