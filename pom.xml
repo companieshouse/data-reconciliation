@@ -187,6 +187,10 @@
           <groupId>com.vividsolutions</groupId>
           <artifactId>jts</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.elasticsearch.plugin</groupId>
+          <artifactId>aggs-matrix-stats-client</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
