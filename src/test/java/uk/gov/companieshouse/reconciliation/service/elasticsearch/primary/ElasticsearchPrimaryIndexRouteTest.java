@@ -21,7 +21,7 @@ import uk.gov.companieshouse.reconciliation.config.aws.S3ClientConfig;
 import uk.gov.companieshouse.reconciliation.model.ResultModel;
 import uk.gov.companieshouse.reconciliation.model.Results;
 
-import java.util.HashMap;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.times;
@@ -48,7 +48,7 @@ public class ElasticsearchPrimaryIndexRouteTest {
     void testTransformAlphaIndexResponseIntoResults() {
         // given
         when(iterator.hasNext()).thenReturn(true, false);
-        SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), new HashMap<>());
+        SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), Collections.emptyMap(), Collections.emptyMap());
         hit.sourceRef(new BytesArray("{\"items\":[{\"corporate_name_start\":\"ACME\",\"corporate_name_ending\":\" LIMITED\"}]}"));
         when(iterator.next()).thenReturn(hit);
         Exchange exchange = new DefaultExchange(context);

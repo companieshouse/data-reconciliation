@@ -5,6 +5,7 @@ import org.elasticsearch.common.text.Text;
 import org.elasticsearch.search.SearchHit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import uk.gov.companieshouse.reconciliation.model.ResultModel;
 
 import java.util.Collections;
@@ -24,7 +25,7 @@ public class ElasticsearchAlphaIndexResultMapperTest {
     void testMapSearchHitToResultModel() {
         //given
         String source = "{ \"items\": {\"corporate_name\": \"ACME LIMITED\", \"company_status\": \"active\"} }";
-        SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), Collections.emptyMap());
+        SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), Collections.emptyMap(), Collections.emptyMap());
         hit.sourceRef(new BytesArray(source));
 
         //when
@@ -37,7 +38,7 @@ public class ElasticsearchAlphaIndexResultMapperTest {
     @Test
     void testMapSearchHitWithoutSourceFields() {
         //given
-        SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), Collections.emptyMap());
+        SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), Collections.emptyMap(), Collections.emptyMap());
 
         //when
         ResultModel actual = mapper.mapExcludingSourceFields(hit);
@@ -50,7 +51,7 @@ public class ElasticsearchAlphaIndexResultMapperTest {
     void testMapSearchHitReplaceNullValuesWithEmptyStrings() {
         //given
         String source = "{ \"items\": {\"corporate_name\": null, \"company_status\": null} }";
-        SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), Collections.emptyMap());
+        SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), Collections.emptyMap(), Collections.emptyMap());
         hit.sourceRef(new BytesArray(source));
 
         //when
@@ -64,7 +65,7 @@ public class ElasticsearchAlphaIndexResultMapperTest {
     void testMapSearchHitHandleEmptyItemsObject() {
         //given
         String source = "{ \"items\": {} }";
-        SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), Collections.emptyMap());
+        SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), Collections.emptyMap(), Collections.emptyMap());
         hit.sourceRef(new BytesArray(source));
 
         //when
@@ -78,7 +79,7 @@ public class ElasticsearchAlphaIndexResultMapperTest {
     void testMapSearchHitHandleNullItems() {
         //given
         String source = "{ \"items\": null }";
-        SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), Collections.emptyMap());
+        SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), Collections.emptyMap(), Collections.emptyMap());
         hit.sourceRef(new BytesArray(source));
 
         //when
@@ -92,7 +93,7 @@ public class ElasticsearchAlphaIndexResultMapperTest {
     void testMapSearchHitTrimSourceFields() {
         //given
         String source = "{ \"items\": {\"corporate_name\": \"   ACME LIMITED \", \"company_status\": \"  active   \"} }";
-        SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), Collections.emptyMap());
+        SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), Collections.emptyMap(), Collections.emptyMap());
         hit.sourceRef(new BytesArray(source));
 
         //when

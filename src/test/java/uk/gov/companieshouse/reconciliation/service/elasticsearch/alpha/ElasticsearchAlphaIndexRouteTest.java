@@ -23,6 +23,7 @@ import uk.gov.companieshouse.reconciliation.config.aws.S3ClientConfig;
 import uk.gov.companieshouse.reconciliation.model.ResultModel;
 import uk.gov.companieshouse.reconciliation.model.Results;
 
+import java.util.Collections;
 import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -51,7 +52,7 @@ public class ElasticsearchAlphaIndexRouteTest {
     void testTransformAlphaIndexResponseIntoResults() {
         // given
         when(iterator.hasNext()).thenReturn(true, false);
-        SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), new HashMap<>());
+        SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), Collections.emptyMap(), Collections.emptyMap());
         hit.sourceRef(new BytesArray("{\"items\":{\"corporate_name\":\"ACME LIMITED\"}}"));
         when(iterator.next()).thenReturn(hit);
         Exchange exchange = new DefaultExchange(context);
