@@ -37,6 +37,21 @@
     <!-- CVE-2024-8184 -->
     <jetty-http2.version>11.0.24</jetty-http2.version>
 
+    <!--sonar configuration-->
+    <sonar-maven-plugin.version>5.1.0.4751</sonar-maven-plugin.version>
+    <sonar.projectKey>uk.gov.companieshouse:data-reconciliation</sonar.projectKey>
+    <sonar.projectName>data-reconciliation</sonar.projectName>
+    <sonar.token>${CODE_ANALYSIS_TOKEN}</sonar.token>
+    <sonar.sources>src/main</sonar.sources>
+    <sonar.tests>src/test</sonar.tests>
+    <sonar.verbose>true</sonar.verbose>
+    <sonar.coverage.jacoco.xmlReportPaths>
+      ${project.basedir}/target/site/jacoco/jacoco.xml,
+      ${project.basedir}/target/site/jacoco-it/jacoco.xml
+    </sonar.coverage.jacoco.xmlReportPaths>
+    <sonar.jacoco.reports>${project.basedir}/target/site</sonar.jacoco.reports>
+    <sonar.java.binaries>${project.basedir}/target,${project.basedir}/target/*</sonar.java.binaries>
+
   </properties>
   <dependencyManagement>
     <dependencies>
