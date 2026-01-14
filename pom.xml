@@ -323,30 +323,6 @@
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
         <version>${jacoco-maven-plugin.version}</version>
-        <configuration>
-          <append>true</append>
-          <destFile>${sonar.jacoco.reports}/jacoco.exec</destFile>
-          <dataFile>${sonar.jacoco.reports}/jacoco.exec</dataFile>
-          <outputDirectory>${sonar.jacoco.reports}/jacoco</outputDirectory>
-        </configuration>
-        <executions>
-          <execution>
-            <id>pre-unit-test</id>
-            <goals>
-              <goal>prepare-agent</goal>
-            </goals>
-            <configuration>
-              <propertyName>surefireArgLine</propertyName>
-            </configuration>
-          </execution>
-          <execution>
-            <id>post-unit-test</id>
-            <phase>verify</phase>
-            <goals>
-              <goal>report</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
   </build>
