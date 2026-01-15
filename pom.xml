@@ -40,6 +40,24 @@
     <commons-fileupload.version>1.6.0</commons-fileupload.version>
     <commons-lang3.version>3.20.0</commons-lang3.version>
     <log4j-api.version>2.25.3</log4j-api.version>
+
+    <!--sonar configuration-->
+    <sonar-maven-plugin.version>5.1.0.4751</sonar-maven-plugin.version>
+    <sonar.projectKey>uk.gov.companieshouse:data-reconciliation</sonar.projectKey>
+    <sonar.projectName>data-reconciliation</sonar.projectName>
+    <sonar.token>${CODE_ANALYSIS_TOKEN}</sonar.token>
+    <sonar.login></sonar.login>
+    <sonar.password></sonar.password>
+    <sonar.sources>src/main</sonar.sources>
+    <sonar.tests>src/test</sonar.tests>
+    <sonar.verbose>true</sonar.verbose>
+    <sonar.coverage.jacoco.xmlReportPaths>
+      ${project.basedir}/target/site/jacoco/jacoco.xml,
+      ${project.basedir}/target/site/jacoco-it/jacoco.xml
+    </sonar.coverage.jacoco.xmlReportPaths>
+    <sonar.jacoco.reports>${project.basedir}/target/site</sonar.jacoco.reports>
+    <sonar.java.binaries>${project.basedir}/target,${project.basedir}/target/*</sonar.java.binaries>
+
   </properties>
   <dependencyManagement>
     <dependencies>
