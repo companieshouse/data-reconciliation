@@ -7,19 +7,16 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchScrollRequest;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.common.xcontent.DeprecationHandler;
 import org.elasticsearch.common.xcontent.NamedXContentRegistry;
 import org.elasticsearch.common.xcontent.XContentParser;
 import org.elasticsearch.common.xcontent.XContentType;
-import org.elasticsearch.search.SearchModule;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.slice.SliceBuilder;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -45,31 +42,40 @@ public class ElasticsearchScrollingSearchClient implements AutoCloseable {
     }
 
     /**
-     * Initiates a new sliced scrolling search session from a JSON query string (production usage).
+     * Initiates a new sliced scrolling search session.
+     *
+     * @param query    A JSON string representing the Elasticsearch query DSL, including optional source fields to return.
+     *                 Example: '{"query": {"match_all": {}}}'
+     * @param sliceId  The zero-based ID of the slice for this search session. Used for parallelizing scrolls.
+     * @param noOfSlices The total number of slices to split the search into. If 1, no slicing is applied.
+     * @return A {@link SearchResponse} containing the initial batch of search hits for the given slice and query.
+     * @throws IOException If an error is raised by Elasticsearch or the query is invalid.
+     * @throws IllegalArgumentException If the slice configuration is invalid.
+     *
+     * <p>
+     * This method sets up a scroll context on the Elasticsearch index and returns the first page of results.
+     * If slicing is enabled (noOfSlices > 1), only the results for the specified sliceId are returned.
+     * The scroll context can be continued using the scroll(String scrollId) method.
+     * </p>
      */
     public SearchResponse firstSearch(String query, int sliceId, int noOfSlices) throws IOException {
-        SearchModule module = new SearchModule(Settings.EMPTY, false, Collections.emptyList());
-        XContentParser parser = XContentType.JSON.xContent().createParser(
-            NamedXContentRegistry.EMPTY,
-            DeprecationHandler.THROW_UNSUPPORTED_OPERATION,
-            query.getBytes(StandardCharsets.UTF_8)
-        );
-        SearchSourceBuilder searchSourceBuilder = SearchSourceBuilder.fromXContent(parser);
-        return firstSearch(searchSourceBuilder, sliceId, noOfSlices);
-    }
-
-    /**
-     * Initiates a new sliced scrolling search session from a SearchSourceBuilder (test-friendly overload).
-     */
-    public SearchResponse firstSearch(SearchSourceBuilder searchSourceBuilder, int sliceId, int noOfSlices) throws IOException {
         if(!validator.validateSliceConfiguration(sliceId, noOfSlices)) {
             throw new IllegalArgumentException("Invalid client configuration [sliceId=" + sliceId + ", noOfSlices=" + noOfSlices + "]");
         }
         SearchRequest searchRequest = new SearchRequest(index);
-        searchRequest.source(searchSourceBuilder);
-        searchRequest.scroll(new TimeValue(timeout, TimeUnit.SECONDS));
+        XContentParser parser = XContentType.JSON.xContent().createParser(
+                NamedXContentRegistry.EMPTY,
+                DeprecationHandler.THROW_UNSUPPORTED_OPERATION,
+                query.getBytes(StandardCharsets.UTF_8)
+        );
+        SearchSourceBuilder searchSourceBuilder = SearchSourceBuilder.fromXContent(parser);
+        SearchSourceBuilder scrollRequestSource = searchRequest.scroll(new TimeValue(timeout, TimeUnit.SECONDS))
+                .source()
+                .query(searchSourceBuilder.query())
+                .fetchSource(searchSourceBuilder.fetchSource())
+                .size(size);
         if(noOfSlices > 1) {
-            searchSourceBuilder.slice(new SliceBuilder(sliceField, sliceId, noOfSlices));
+            scrollRequestSource.slice(new SliceBuilder(sliceField, sliceId, noOfSlices));
         }
         return client.search(searchRequest, RequestOptions.DEFAULT);
     }
@@ -102,7 +108,7 @@ public class ElasticsearchScrollingSearchClient implements AutoCloseable {
     public ClearScrollResponse clearScroll(List<String> scrollIds) throws IOException {
         ClearScrollRequest clearScrollRequest = new ClearScrollRequest();
         clearScrollRequest.setScrollIds(scrollIds);
-        return client.clearScroll(clearScrollRequest, RequestOptions.DEFAULT);
+        return client.clearScroll(clearScrollRequest, RequestOptions.DEFAULT );
     }
 
     @Override
