@@ -36,7 +36,7 @@ class ElasticsearchScrollingSearchClientTest {
 
     private static final String QUERY_MATCH_ALL = "{\"query\": {\"match_all\":{}}}";
     private static final String SCROLL_ID = "F00DFACE";
-    private static final String SLICE_FIELD = "_uid";
+    private static final String SLICE_FIELD = "_id";
     private static final String MINIMAL_VALID_QUERY = "{}";
 
     @Mock
@@ -178,7 +178,7 @@ class ElasticsearchScrollingSearchClientCloseTest {
     private ElasticsearchScrollingSearchClient client;
     @BeforeEach
     void setUp() {
-        client = new ElasticsearchScrollingSearchClient(restHighLevelClient, "index", 500, 30L, "_uid", validator);
+        client = new ElasticsearchScrollingSearchClient(restHighLevelClient, "index", 500, 30L, "_id", validator);
     }
     @Test
     void testClose() throws IOException {
