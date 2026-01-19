@@ -95,7 +95,7 @@ public class ElasticsearchScrollingSearchClient implements AutoCloseable {
         }
         SearchScrollRequest searchScrollRequest = new SearchScrollRequest(scrollId);
         searchScrollRequest.scroll(TimeValue.timeValueSeconds(timeout));
-        return client.searchScroll(searchScrollRequest, RequestOptions.DEFAULT);
+        return client.scroll(searchScrollRequest, RequestOptions.DEFAULT);
     }
 
     /**

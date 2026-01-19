@@ -61,7 +61,6 @@ class ElasticsearchScrollingSearchClientTest {
         client = new ElasticsearchScrollingSearchClient(restHighLevelClient, "index", 500, 30L, SLICE_FIELD, validator);
         try {
             lenient().when(restHighLevelClient.search(any(), any())).thenReturn(expectedResponse);
-            lenient().when(restHighLevelClient.searchScroll(any(org.elasticsearch.action.search.SearchScrollRequest.class), eq(RequestOptions.DEFAULT))).thenReturn(expectedResponse);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -127,12 +126,12 @@ class ElasticsearchScrollingSearchClientTest {
     void testScroll() throws IOException {
         //given
         ArgumentCaptor<org.elasticsearch.action.search.SearchScrollRequest> scrollRequestCaptor = ArgumentCaptor.forClass(org.elasticsearch.action.search.SearchScrollRequest.class);
-        when(restHighLevelClient.searchScroll(any(org.elasticsearch.action.search.SearchScrollRequest.class), eq(RequestOptions.DEFAULT))).thenReturn(expectedResponse);
+        when(restHighLevelClient.scroll(any(org.elasticsearch.action.search.SearchScrollRequest.class), eq(RequestOptions.DEFAULT))).thenReturn(expectedResponse);
         //when
         SearchResponse actual = client.scroll(SCROLL_ID);
         //then
         assertSame(expectedResponse, actual);
-        verify(restHighLevelClient).searchScroll(scrollRequestCaptor.capture(), eq(RequestOptions.DEFAULT));
+        verify(restHighLevelClient).scroll(scrollRequestCaptor.capture(), eq(RequestOptions.DEFAULT));
         assertEquals(SCROLL_ID, scrollRequestCaptor.getValue().scrollId());
     }
 
