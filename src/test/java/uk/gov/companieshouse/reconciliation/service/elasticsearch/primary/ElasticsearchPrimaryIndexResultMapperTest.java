@@ -24,7 +24,7 @@ public class ElasticsearchPrimaryIndexResultMapperTest {
     void testMapSearchHitIntoResultModel() {
         //given
         String source = "{ \"items\": [{\"corporate_name_start\": \"ACME\", \"corporate_name_ending\": \" LIMITED\", \"company_status\": \"active\"}] }";
-        SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), Collections.emptyMap());
+        SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), Collections.emptyMap(), Collections.emptyMap());
         hit.sourceRef(new BytesArray(source));
 
         //when
@@ -37,7 +37,7 @@ public class ElasticsearchPrimaryIndexResultMapperTest {
     @Test
     void testMapSearchHitWithoutSourceFields() {
         //given
-        SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), Collections.emptyMap());
+        SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), Collections.emptyMap(), Collections.emptyMap());
 
         //when
         ResultModel actual = mapper.mapExcludingSourceFields(hit);
@@ -50,7 +50,7 @@ public class ElasticsearchPrimaryIndexResultMapperTest {
     void testMapSearchHitReplaceNullValuesWithEmptyStrings() {
         //given
         String source = "{ \"items\": [{\"corporate_name_start\": null, \"corporate_name_ending\": null, \"company_status\": null}] }";
-        SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), Collections.emptyMap());
+        SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), Collections.emptyMap(), Collections.emptyMap());
         hit.sourceRef(new BytesArray(source));
 
         //when
@@ -64,7 +64,7 @@ public class ElasticsearchPrimaryIndexResultMapperTest {
     void testMapSearchHitHandleEmptyItemsArray() {
         //given
         String source = "{ \"items\": [] }";
-        SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), Collections.emptyMap());
+        SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), Collections.emptyMap(), Collections.emptyMap());
         hit.sourceRef(new BytesArray(source));
 
         //when
@@ -78,7 +78,7 @@ public class ElasticsearchPrimaryIndexResultMapperTest {
     void testMapSearchHitHandleNullItems() {
         //given
         String source = "{ \"items\": null }";
-        SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), Collections.emptyMap());
+        SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), Collections.emptyMap(), Collections.emptyMap());
         hit.sourceRef(new BytesArray(source));
 
         //when
@@ -92,7 +92,7 @@ public class ElasticsearchPrimaryIndexResultMapperTest {
     void testMapSearchHitNoSpaceBetweenNameStartAndNameEnding() {
         //given
         String source = "{ \"items\": [{\"corporate_name_start\": \"ACME\", \"corporate_name_ending\": \"LIMITED\", \"company_status\": \"active\"}] }";
-        SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), Collections.emptyMap());
+        SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), Collections.emptyMap(), Collections.emptyMap());
         hit.sourceRef(new BytesArray(source));
 
         //when
@@ -106,7 +106,7 @@ public class ElasticsearchPrimaryIndexResultMapperTest {
     void testMapSearchHitNameEndingAbsent() {
         //given
         String source = "{ \"items\": [{\"corporate_name_start\": \"ACME\", \"corporate_name_ending\": \"\", \"company_status\": \"active\"}] }";
-        SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), Collections.emptyMap());
+        SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), Collections.emptyMap(), Collections.emptyMap());
         hit.sourceRef(new BytesArray(source));
 
         //when
@@ -120,7 +120,7 @@ public class ElasticsearchPrimaryIndexResultMapperTest {
     void testMapSearchHitNameStartAbsent() {
         //given
         String source = "{ \"items\": [{\"corporate_name_start\": \"\", \"corporate_name_ending\": \" LIMITED\", \"company_status\": \"active\"}] }";
-        SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), Collections.emptyMap());
+        SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), Collections.emptyMap(), Collections.emptyMap());
         hit.sourceRef(new BytesArray(source));
 
         //when
@@ -134,7 +134,7 @@ public class ElasticsearchPrimaryIndexResultMapperTest {
     void testMapSearchHitWithWhitespaceOnCompanyStatus() {
         //given
         String source = "{ \"items\": [{\"corporate_name_start\": \"\", \"corporate_name_ending\": \" LIMITED\", \"company_status\": \" active \"}] }";
-        SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), Collections.emptyMap());
+        SearchHit hit = new SearchHit(123, "12345678", new Text("{}"), Collections.emptyMap(), Collections.emptyMap());
         hit.sourceRef(new BytesArray(source));
 
         //when

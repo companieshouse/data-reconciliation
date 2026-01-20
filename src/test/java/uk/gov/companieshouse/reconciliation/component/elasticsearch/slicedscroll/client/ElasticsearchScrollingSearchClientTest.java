@@ -3,7 +3,9 @@ package uk.gov.companieshouse.reconciliation.component.elasticsearch.slicedscrol
 import org.elasticsearch.action.search.ClearScrollResponse;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,16 +24,20 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 @ExtendWith(MockitoExtension.class)
-public class ElasticsearchScrollingSearchClientTest {
+class ElasticsearchScrollingSearchClientTest {
 
     private static final String QUERY_MATCH_ALL = "{\"query\": {\"match_all\":{}}}";
     private static final String SCROLL_ID = "F00DFACE";
-    private static final String SLICE_FIELD = "_uid";
+    private static final String SLICE_FIELD = "_id";
+    private static final String MINIMAL_VALID_QUERY = "{}";
 
     @Mock
     private RestHighLevelClient restHighLevelClient;
@@ -53,20 +59,27 @@ public class ElasticsearchScrollingSearchClientTest {
     @BeforeEach
     void setUp() {
         client = new ElasticsearchScrollingSearchClient(restHighLevelClient, "index", 500, 30L, SLICE_FIELD, validator);
+        try {
+            lenient().when(restHighLevelClient.search(any(), any())).thenReturn(expectedResponse);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @AfterEach
+    void tearDown() {
+        client = null;
     }
 
     @Test
     void testFirstSearchMultipleSlices() throws IOException {
         //given
-        when(restHighLevelClient.search(any())).thenReturn(expectedResponse);
         when(validator.validateSliceConfiguration(anyInt(), anyInt())).thenReturn(true);
-
         //when
-        SearchResponse actual = client.firstSearch(QUERY_MATCH_ALL, 0, 2);
-
+        SearchResponse actual = client.firstSearch(MINIMAL_VALID_QUERY, 0, 2);
         //then
         assertEquals(expectedResponse, actual);
-        verify(restHighLevelClient).search(request.capture());
+        verify(restHighLevelClient).search(request.capture(), eq(RequestOptions.DEFAULT));
         SearchRequest req = request.getValue();
         assertNotNull(req.source().slice());
     }
@@ -74,15 +87,12 @@ public class ElasticsearchScrollingSearchClientTest {
     @Test
     void testFirstSearchSingleSlice() throws IOException {
         //given
-        when(restHighLevelClient.search(any())).thenReturn(expectedResponse);
         when(validator.validateSliceConfiguration(anyInt(), anyInt())).thenReturn(true);
-
         //when
-        SearchResponse actual = client.firstSearch(QUERY_MATCH_ALL, 0, 1);
-
+        SearchResponse actual = client.firstSearch(MINIMAL_VALID_QUERY, 0, 1);
         //then
         assertEquals(expectedResponse, actual);
-        verify(restHighLevelClient).search(request.capture());
+        verify(restHighLevelClient).search(request.capture(), eq(RequestOptions.DEFAULT));
         SearchRequest req = request.getValue();
         assertNull(req.source().slice());
     }
@@ -104,12 +114,10 @@ public class ElasticsearchScrollingSearchClientTest {
     @Test
     void testFirstSearchPropagatesIOExceptionThrownByClient() throws IOException {
         //given
-        when(restHighLevelClient.search(any())).thenThrow(IOException.class);
+        when(restHighLevelClient.search(any(), any())).thenThrow(new IOException("IO error"));
         when(validator.validateSliceConfiguration(anyInt(), anyInt())).thenReturn(true);
-
         //when
-        Executable actual = () -> client.firstSearch(QUERY_MATCH_ALL, 0, 2);
-
+        Executable actual = () -> client.firstSearch(MINIMAL_VALID_QUERY, 0, 2);
         //then
         assertThrows(IOException.class, actual);
     }
@@ -117,13 +125,14 @@ public class ElasticsearchScrollingSearchClientTest {
     @Test
     void testScroll() throws IOException {
         //given
-        when(restHighLevelClient.searchScroll(any())).thenReturn(expectedResponse);
-
+        ArgumentCaptor<org.elasticsearch.action.search.SearchScrollRequest> scrollRequestCaptor = ArgumentCaptor.forClass(org.elasticsearch.action.search.SearchScrollRequest.class);
+        when(restHighLevelClient.scroll(any(org.elasticsearch.action.search.SearchScrollRequest.class), eq(RequestOptions.DEFAULT))).thenReturn(expectedResponse);
         //when
         SearchResponse actual = client.scroll(SCROLL_ID);
-
         //then
-        assertEquals(expectedResponse, actual);
+        assertSame(expectedResponse, actual);
+        verify(restHighLevelClient).scroll(scrollRequestCaptor.capture(), eq(RequestOptions.DEFAULT));
+        assertEquals(SCROLL_ID, scrollRequestCaptor.getValue().scrollId());
     }
 
     @Test
@@ -149,7 +158,7 @@ public class ElasticsearchScrollingSearchClientTest {
     @Test
     void testClearScroll() throws IOException {
         //given
-        when(restHighLevelClient.clearScroll(any())).thenReturn(expectedClearScrollResponse);
+        when(restHighLevelClient.clearScroll(any(), any())).thenReturn(expectedClearScrollResponse);
 
         //when
         ClearScrollResponse actual = client.clearScroll(Collections.singletonList(SCROLL_ID));
@@ -157,13 +166,23 @@ public class ElasticsearchScrollingSearchClientTest {
         //then
         assertEquals(expectedClearScrollResponse, actual);
     }
+}
 
+// Add a separate test class for close()
+@ExtendWith(MockitoExtension.class)
+class ElasticsearchScrollingSearchClientCloseTest {
+    @Mock
+    private RestHighLevelClient restHighLevelClient;
+    @Mock
+    private ElasticsearchSlicedScrollValidator validator;
+    private ElasticsearchScrollingSearchClient client;
+    @BeforeEach
+    void setUp() {
+        client = new ElasticsearchScrollingSearchClient(restHighLevelClient, "index", 500, 30L, "_id", validator);
+    }
     @Test
     void testClose() throws IOException {
-        //when
         client.close();
-
-        //then
         verify(restHighLevelClient).close();
     }
 }

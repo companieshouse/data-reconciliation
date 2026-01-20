@@ -78,14 +78,14 @@
 |ELASTICSEARCH_ALPHA_PROTOCOL      |The protocol that will be used to connect to the Elasticsearch alphabetical search cluster   |https      |
 |ELASTICSEARCH_ALPHA_SEGMENTS      |The number of slices that the scrolling search will be split into                            |3          |
 |ELASTICSEARCH_ALPHA_SLICE_SIZE    |The number of hits that the scrolling search will return in each response                    |10000      |
-|ELASTICSEARCH_ALPHA_SLICE_FIELD   |The field that will be used to split results of a scrolling search                           |_uid       |
+|ELASTICSEARCH_ALPHA_SLICE_FIELD   |The field that will be used to split results of a scrolling search                           |_id       |
 |ELASTICSEARCH_PRIMARY_HOST        |The hostname that will be used to connect to the Elasticsearch primary search cluster        |example.com|
 |ELASTICSEARCH_PRIMARY_INDEX       |The name of the index that primary search hits will be retrieved from                        |index_name |
 |ELASTICSEARCH_PRIMARY_PORT        |The port number that will be used to connect to the Elasticsearch primary search cluster     |9200       |
 |ELASTICSEARCH_PRIMARY_PROTOCOL    |The protocol that will be used to connect to the Elasticsearch primary search cluster        |https      |
 |ELASTICSEARCH_PRIMARY_SEGMENTS    |The number of slices that the scrolling search will be split into                            |3          |
 |ELASTICSEARCH_PRIMARY_SLICE_SIZE  |The number of hits that the scrolling search will return in each response                    |10000      |
-|ELASTICSEARCH_PRIMARY_SLICE_FIELD |The field that will be used to split results of a scrolling search                           |_uid       |
+|ELASTICSEARCH_PRIMARY_SLICE_FIELD |The field that will be used to split results of a scrolling search                           |_id       |
 |ENDPOINT_ELASTICSEARCH_LOG_INDICES|Used to log a tally of the number of Elasticsearch search hits that have been processed      |10000      |
 
 ### AWS

@@ -1,13 +1,16 @@
 package uk.gov.companieshouse.reconciliation.component.elasticsearch.slicedscroll.client;
 
+import java.util.Collections;
 import org.elasticsearch.action.search.ClearScrollRequest;
 import org.elasticsearch.action.search.ClearScrollResponse;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchScrollRequest;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.unit.TimeValue;
+import org.elasticsearch.common.xcontent.DeprecationHandler;
 import org.elasticsearch.common.xcontent.NamedXContentRegistry;
 import org.elasticsearch.common.xcontent.XContentParser;
 import org.elasticsearch.common.xcontent.json.JsonXContent;
@@ -16,7 +19,6 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.slice.SliceBuilder;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -57,7 +59,7 @@ public class ElasticsearchScrollingSearchClient implements AutoCloseable {
         }
         SearchRequest searchRequest = new SearchRequest(index);
         SearchModule module = new SearchModule(Settings.EMPTY, false, Collections.emptyList());
-        XContentParser parser = JsonXContent.jsonXContent.createParser(new NamedXContentRegistry(module.getNamedXContents()), query);
+        XContentParser parser = JsonXContent.jsonXContent.createParser(new NamedXContentRegistry(module.getNamedXContents()), DeprecationHandler.THROW_UNSUPPORTED_OPERATION, query);
         SearchSourceBuilder searchSourceBuilder = SearchSourceBuilder.fromXContent(parser);
         SearchSourceBuilder scrollRequestSource = searchRequest.scroll(new TimeValue(timeout, TimeUnit.SECONDS))
                 .source()
@@ -67,7 +69,7 @@ public class ElasticsearchScrollingSearchClient implements AutoCloseable {
         if(noOfSlices > 1) {
             scrollRequestSource.slice(new SliceBuilder(sliceField, sliceId, noOfSlices));
         }
-        return client.search(searchRequest);
+        return client.search(searchRequest, RequestOptions.DEFAULT);
     }
 
     /**
@@ -85,7 +87,7 @@ public class ElasticsearchScrollingSearchClient implements AutoCloseable {
         }
         SearchScrollRequest searchScrollRequest = new SearchScrollRequest(scrollId);
         searchScrollRequest.scroll(TimeValue.timeValueSeconds(timeout));
-        return client.searchScroll(searchScrollRequest);
+        return client.scroll(searchScrollRequest, RequestOptions.DEFAULT);
     }
 
     /**
@@ -98,7 +100,7 @@ public class ElasticsearchScrollingSearchClient implements AutoCloseable {
     public ClearScrollResponse clearScroll(List<String> scrollIds) throws IOException {
         ClearScrollRequest clearScrollRequest = new ClearScrollRequest();
         clearScrollRequest.setScrollIds(scrollIds);
-        return client.clearScroll(clearScrollRequest);
+        return client.clearScroll(clearScrollRequest, RequestOptions.DEFAULT );
     }
 
     @Override

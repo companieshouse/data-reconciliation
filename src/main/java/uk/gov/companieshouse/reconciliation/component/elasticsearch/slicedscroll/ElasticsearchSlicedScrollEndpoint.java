@@ -46,8 +46,8 @@ public class ElasticsearchSlicedScrollEndpoint extends DefaultEndpoint {
     @UriParam(defaultValue = "500")
     private Integer maximumSliceSize = 500;
 
-    @UriParam(defaultValue = "_uid")
-    private String sliceField = "_uid";
+    @UriParam(defaultValue = "_id")
+    private String sliceField = "_id";
 
     @UriParam(defaultValue = "60")
     private Long timeoutInSeconds = 60L;

@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.reconciliation.component.elasticsearch.slicedscroll.client;
 
+import org.apache.lucene.search.TotalHits;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
@@ -69,7 +70,7 @@ public class ElasticsearchSlicedScrollRunnerTest {
         ElasticsearchSlicedScrollRunner runner = new ElasticsearchSlicedScrollRunner(client, results, 0, 2, QUERY_MATCH_ALL, scrollService, validator);
         when(validator.validateSliceConfiguration(anyInt(), anyInt())).thenReturn(true);
         when(client.firstSearch(anyString(), anyInt(), anyInt())).thenReturn(response);
-        when(response.getHits()).thenReturn(new SearchHits(new SearchHit[0], 0, 1.0F));
+        when(response.getHits()).thenReturn(new SearchHits(new SearchHit[0], new TotalHits(0, TotalHits.Relation.EQUAL_TO), 1.0F));
 
         //when
         Executable actual = runner::run;
@@ -88,9 +89,9 @@ public class ElasticsearchSlicedScrollRunnerTest {
         when(validator.validateSliceConfiguration(anyInt(), anyInt())).thenReturn(true);
         when(client.firstSearch(anyString(), anyInt(), anyInt())).thenReturn(response);
         when(client.scroll(anyString())).thenReturn(scrollResponse);
-        when(response.getHits()).thenReturn(new SearchHits(new SearchHit[]{new SearchHit(1)}, 1, 1.0F));
+        when(response.getHits()).thenReturn(new SearchHits(new SearchHit[]{new SearchHit(1)}, new TotalHits(1, TotalHits.Relation.EQUAL_TO), 1.0F));
         when(response.getScrollId()).thenReturn(SCROLL_ID);
-        when(scrollResponse.getHits()).thenReturn(new SearchHits(new SearchHit[0], 0, 1.0F));
+        when(scrollResponse.getHits()).thenReturn(new SearchHits(new SearchHit[0], new TotalHits(0, TotalHits.Relation.EQUAL_TO), 1.0F));
 
         //when
         Executable actual = runner::run;
@@ -110,10 +111,10 @@ public class ElasticsearchSlicedScrollRunnerTest {
         when(validator.validateSliceConfiguration(anyInt(), anyInt())).thenReturn(true);
         when(client.firstSearch(anyString(), anyInt(), anyInt())).thenReturn(response);
         when(client.scroll(anyString())).thenReturn(scrollResponse, nextScrollResponse);
-        when(response.getHits()).thenReturn(new SearchHits(new SearchHit[]{new SearchHit(1)}, 1, 1.0F));
+        when(response.getHits()).thenReturn(new SearchHits(new SearchHit[]{new SearchHit(1)}, new TotalHits(1, TotalHits.Relation.EQUAL_TO), 1.0F));
         when(response.getScrollId()).thenReturn(SCROLL_ID);
-        when(scrollResponse.getHits()).thenReturn(new SearchHits(new SearchHit[]{new SearchHit(1)}, 1, 1.0F));
-        when(nextScrollResponse.getHits()).thenReturn(new SearchHits(new SearchHit[0], 0, 1.0F));
+        when(scrollResponse.getHits()).thenReturn(new SearchHits(new SearchHit[]{new SearchHit(1)}, new TotalHits(1, TotalHits.Relation.EQUAL_TO), 1.0F));
+        when(nextScrollResponse.getHits()).thenReturn(new SearchHits(new SearchHit[0], new TotalHits(0, TotalHits.Relation.EQUAL_TO), 1.0F));
 
         //when
         Executable actual = runner::run;
