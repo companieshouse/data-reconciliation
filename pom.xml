@@ -15,7 +15,7 @@
 
     <!-- CH Internal -->
     <kafka-models.version>3.0.8</kafka-models.version>
-    <structured-logging.version>3.0.36</structured-logging.version>
+    <structured-logging.version>3.0.38</structured-logging.version>
     <!-- Third party -->
     <elasticsearch.version>7.10.2</elasticsearch.version>
     <oracle.ojdbc11.version>23.6.0.24.10</oracle.ojdbc11.version>
@@ -86,6 +86,13 @@
         <scope>import</scope>
       </dependency>
       <dependency>
+        <groupId>io.opentelemetry.instrumentation</groupId>
+        <artifactId>opentelemetry-instrumentation-bom</artifactId>
+        <version>2.24.0</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
         <groupId>commons-fileupload</groupId>
         <artifactId>commons-fileupload</artifactId>
         <version>${commons-fileupload.version}</version>
@@ -148,6 +155,10 @@
           <artifactId>*</artifactId>
         </exclusion>
       </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>io.opentelemetry.instrumentation</groupId>
+      <artifactId>opentelemetry-spring-boot-starter</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
